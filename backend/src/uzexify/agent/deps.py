@@ -18,9 +18,12 @@ class EntityLookup:
 class EvidenceLog:
     sql: list[SqlResult] = field(default_factory=list)
     entities: list[EntityLookup] = field(default_factory=list)
+    _issued: int = 0
 
     def next_sql_id(self) -> str:
-        return f"q{len(self.sql) + 1}"
+        """Reserve a unique id before the query runs; parallel run_sql calls must not share one."""
+        self._issued += 1
+        return f"q{self._issued}"
 
 
 @dataclass

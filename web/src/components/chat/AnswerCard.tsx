@@ -35,7 +35,18 @@ export function AnswerCard({
         <span className="answer-kind">{t[answer.kind]}</span>
       )}
       <div className="answer-text markdown">
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>{answer.text}</ReactMarkdown>
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          components={{
+            table: ({ node: _node, ...props }) => (
+              <div className="md-table">
+                <table {...props} />
+              </div>
+            ),
+          }}
+        >
+          {answer.text}
+        </ReactMarkdown>
       </div>
       {candidates.length > 0 && onPick && (
         <AnimatedList

@@ -59,11 +59,24 @@ export const copy = {
     newChat: "Yangi suhbat",
   },
 } as const;
+/** Example questions, each verified against the production agent; the welcome screen shows a random few. */
 export const examples = [
   "Сколько сделок было заключено в 2024 году?",
   "Какой брокер провёл больше всего сделок на стороне покупателя в 2023 году?",
   "Общая сумма экспортных сделок в 2025 году в сумах",
+  "Как менялось число сделок по месяцам в 2025 году?",
+  "Топ-5 покупателей цемента за всё время",
+  "У каких брокеров самая высокая доля аннулированных сделок?",
+  "Объём экспорта в долларах и в сумах по годам",
+  "Из какого региона склада продают больше всего карбамида?",
+  "Какая доля сделок 2025 года аннулирована?",
+  "Насколько итоговая цена в среднем выше стартовой на английских аукционах в 2025 году?",
   "2023-yilda nechta bitim tuzilgan?",
   "bug‘doy 2025-yilda jami qancha sotilgan?",
   "2024-yilda Farg‘ona viloyatida eng ko‘p bug‘doy sotib olgan 5 ta kompaniya",
+  "2026-yilda qaysi tovar toifasi bo‘yicha savdo summasi eng katta?",
+  "Sementning 1 tonnasi 2025-yilda qaysi viloyatda eng arzon sotilgan?",
+  "2024-yilda eng yuqori dollar kursi qaysi kunda bo‘lgan?",
+  "Qaysi broker eksport bitimlarini eng ko‘p olib borgan?",
+  "Ҳарайўм Кимё МЧЖ энг кўп қайси харидорларга сотган?",
 ];
