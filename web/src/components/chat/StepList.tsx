@@ -1,27 +1,33 @@
+import { ThoughtLine } from "@/components/bits";
 import type { Step } from "@/lib/api";
 import { copy, type Locale } from "@/lib/i18n";
+
+/** Live (working) or settled trace of agent tool steps. */
 export function StepList({
   steps,
-  seconds,
   locale,
+  working,
+  elapsed,
 }: {
   steps: Step[];
-  seconds: number;
   locale: Locale;
+  working: boolean;
+  elapsed?: number;
 }) {
+  const t = copy[locale];
   return (
-    <output className="progress" aria-live="polite">
-      <div className="progress-heading">
-        <span className="pulse" /> {copy[locale].thinking}
-        <span className="elapsed">
-          {seconds} {copy[locale].seconds}
-        </span>
-      </div>
-      {steps.map((step, index) => (
-        <div className="step" key={`${step.tool}-${index}`}>
-          {locale === "ru" ? step.label_ru : step.label_uz}
-        </div>
-      ))}
-    </output>
+    <ThoughtLine
+      className="steps"
+      working={working}
+      elapsed={working ? undefined : elapsed}
+      label={t.working}
+      doneLabel={t.done}
+      steps={steps.map((s) => (locale === "ru" ? s.label_ru : s.label_uz))}
+      glyph="sparkle"
+      color="#b9c0d0"
+      glyphColor="#7fb2ff"
+      fontSize={14}
+      collapseOnSettle
+    />
   );
 }

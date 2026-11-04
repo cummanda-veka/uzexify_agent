@@ -37,8 +37,15 @@ export function EvidencePanel({
                 <div key={`${entity.kind}-${entity.query}-${i}`}>
                   <strong>{entity.query}</strong>:{" "}
                   {entity.matches
-                    .map((match) => `${match.label} (${match.id})`)
-                    .join(", ") || "—"}
+                    .slice(0, 5)
+                    .map((match) =>
+                      match.id === match.label
+                        ? match.label
+                        : `${match.label} (${match.id})`,
+                    )
+                    .join(" · ") || "—"}
+                  {entity.matches.length > 5 &&
+                    ` · +${entity.matches.length - 5}`}
                 </div>
               ))}
             </div>
