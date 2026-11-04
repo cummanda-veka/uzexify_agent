@@ -72,3 +72,26 @@ def test_chart_values_come_only_from_sql_rows():
 def test_rejects_unfaithful_charts(res, x, y, reason):
     with pytest.raises(ChartRejected, match=reason):
         validate_chart("c1", res, "bar", x, y, ["шт"], "t")
+
+
+def test_panels_cannot_merge_usd_and_uzs_by_declaring_one_unit():
+    with pytest.raises(ChartRejected, match="different units"):
+        validate_chart(
+            "c1", EXPORT, "panels", "year", ["total_usd", "total_uzs"], ["so‘m", "so‘m"], "Eksport"
+        )
+
+
+def test_prefix_unit_aliases_are_recognised():
+    real = result(
+        ["year", "usd_all", "usd_not_cancelled", "uzs_all", "uzs_not_cancelled"],
+        [[2024, 2.1e8, 2.0e8, 2.6e12, 2.4e12], [2025, 2.2e8, 2.0e8, 2.7e12, 2.5e12]],
+    )
+    cols = ["usd_all", "usd_not_cancelled", "uzs_all", "uzs_not_cancelled"]
+    with pytest.raises(ChartRejected, match="different units"):
+        validate_chart("c1", real, "grouped_bar", "year", cols, ["сумов"] * 4, "Экспорт")
+    with pytest.raises(ChartRejected, match="different units"):
+        validate_chart("c1", real, "panels", "year", cols, ["сумов"] * 4, "Экспорт")
+    spec = validate_chart(
+        "c1", real, "panels", "year", cols, ["долларов США", "долларов США", "сумов", "сумов"], "Экспорт"
+    )
+    assert len(vega_lite(spec, real)["vconcat"]) == 2

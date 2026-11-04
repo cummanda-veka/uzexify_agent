@@ -21,10 +21,51 @@ ChartType = Literal["bar", "hbar", "line", "grouped_bar", "panels"]
 MIN_POINTS = 2
 MAX_POINTS = 40
 MAX_SERIES = 4
-# Column-name suffixes that pin a unit; two different ones may not share an axis.
-_UNIT_SUFFIX = re.compile(
-    r"_(usd|uzs|sum|som|tonn?e?s?|kg|litr?e?s?|pct|percent|count|cnt|n)$", re.IGNORECASE
-)
+# Words in a column alias that pin its unit ("usd_all", "total_uzs", "volume_tonnes"); two different
+# units may never share an axis, whatever unit labels the model declares.
+_UNIT_WORDS = {
+    "usd": "usd",
+    "dollar": "usd",
+    "dollars": "usd",
+    "uzs": "uzs",
+    "sum": "uzs",
+    "som": "uzs",
+    "soum": "uzs",
+    "ton": "t",
+    "tons": "t",
+    "tonne": "t",
+    "tonnes": "t",
+    "tonna": "t",
+    "kg": "kg",
+    "litr": "l",
+    "litre": "l",
+    "liter": "l",
+    "pct": "pct",
+    "percent": "pct",
+    "share": "pct",
+    "count": "count",
+    "cnt": "count",
+}
+
+
+def _column_units(column: str) -> set[str]:
+    return {_UNIT_WORDS[w] for w in re.split(r"[^0-9a-z]+", column.casefold()) if w in _UNIT_WORDS}
+
+
+def _check_axis(columns: list[str], declared: list[str]) -> None:
+    """One axis = one unit: by the declared units and by the units the column aliases name."""
+    if len({u.strip().casefold() for u in declared}) != 1:
+        raise ChartRejected(
+            f"series {columns} have different units {declared}; they cannot share an axis — use panels"
+        )
+    named = set().union(*(_column_units(c) for c in columns))
+    if len(named) > 1:
+        raise ChartRejected(
+            f"columns {columns} are in different units ({sorted(named)}); give each unit its own panel "
+            "with its real unit"
+        )
+
+
 _UNIT_COLUMNS = ("currency", "unit")
 
 
@@ -113,17 +154,16 @@ def validate_chart(
     if chart_type == "grouped_bar":
         if len(y) < 2:
             raise ChartRejected("grouped_bar needs 2+ comparable y columns")
-        if len({u.strip().casefold() for u in units}) != 1:
-            raise ChartRejected(
-                f"grouped_bar series have different units {units}; they cannot share an axis — use panels"
-            )
-        suffixes = {m.group(1).casefold() for c in y if (m := _UNIT_SUFFIX.search(c))}
-        if len(suffixes) > 1:
-            raise ChartRejected(
-                f"columns {y} look like different units ({sorted(suffixes)}); use panels, not grouped_bar"
-            )
-    if chart_type == "panels" and len(y) < 2:
-        raise ChartRejected("panels needs 2+ y columns (one panel each)")
+        _check_axis(y, units)
+    if chart_type == "panels":
+        if len(y) < 2:
+            raise ChartRejected("panels needs 2+ y columns (one panel each)")
+        # Each panel groups the series with the same declared unit; every such group is one axis.
+        groups: dict[str, list[int]] = {}
+        for i, u in enumerate(units):
+            groups.setdefault(u.strip().casefold(), []).append(i)
+        for idx in groups.values():
+            _check_axis([y[i] for i in idx], [units[i] for i in idx])
 
     return ChartSpec(
         id=chart_id,
