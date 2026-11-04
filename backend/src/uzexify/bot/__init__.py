@@ -1,6 +1,7 @@
 import asyncio
 import html
 import json
+import logging
 import re
 import secrets
 from contextlib import suppress
@@ -10,9 +11,13 @@ import httpx
 from aiogram import Bot, Dispatcher, F
 from aiogram.enums import ChatAction, ChatType
 from aiogram.filters import CommandStart
-from aiogram.types import Message
+from aiogram.types import BufferedInputFile, Message
 
+from uzexify.charts import ChartSpec, chart_png
 from uzexify.settings import get_settings
+from uzexify.sqlguard import SqlResult
+
+log = logging.getLogger(__name__)
 
 START = (
     "Задайте вопрос о сделках UZEX / UZEX bitimlari haqida savol bering.\n\n"
@@ -146,6 +151,33 @@ async def _typing(bot: Bot, chat_id: int) -> None:
         await asyncio.sleep(4)
 
 
+def chart_images(answer: dict[str, Any]) -> list[tuple[str, bytes]]:
+    """PNG for each chart of the answer, rendered from the answer's own SQL evidence rows."""
+    results = {
+        item["sql_id"]: SqlResult(
+            item["sql_id"],
+            item["sql"],
+            item["columns"],
+            item["rows"],
+            item["row_count"],
+            item["truncated"],
+            item["duration_ms"],
+        )
+        for item in answer.get("evidence") or []
+    }
+    images = []
+    for raw in answer.get("charts") or []:
+        spec = ChartSpec.model_validate(raw)
+        result = results.get(spec.sql_id)
+        if result is None:
+            continue
+        try:
+            images.append((f"{spec.id}.png", chart_png(spec, result)))
+        except Exception:  # a failed render must not lose the text answer that was already sent
+            log.exception("chart render failed: %s", spec.id)
+    return images
+
+
 async def run_bot() -> None:
     settings = get_settings()
     if not settings.telegram_bot_token.strip():
@@ -188,6 +220,8 @@ async def run_bot() -> None:
                                 )
                         elif event == "answer":
                             await message.answer(format_answer(payload), parse_mode="HTML")
+                            for name, png in await asyncio.to_thread(chart_images, payload):
+                                await message.answer_photo(BufferedInputFile(png, filename=name))
                             return
                         elif event == "error":
                             error = payload.get(f"message_{language}") or error

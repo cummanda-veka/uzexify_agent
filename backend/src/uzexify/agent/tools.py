@@ -6,6 +6,7 @@ from pydantic_ai import ModelRetry, RunContext
 
 from uzexify import search
 from uzexify.agent.deps import AgentDeps, EntityLookup
+from uzexify.charts import ChartRejected, validate_chart
 from uzexify.settings import get_settings
 from uzexify.sqlguard import SqlRejected, run_readonly
 
@@ -92,4 +93,40 @@ async def run_sql(ctx: RunContext[AgentDeps], sql: str, purpose: str) -> dict:
     return out
 
 
-TOOLS = [search_companies, search_brokers, search_products, run_sql]
+async def make_chart(
+    ctx: RunContext[AgentDeps],
+    sql_id: str,
+    type: Literal["bar", "hbar", "line", "grouped_bar", "panels"],
+    x: str,
+    y: list[str],
+    units: list[str],
+    labels: list[str],
+    title: str,
+) -> dict:
+    """Attach a chart to the answer, drawn from the rows of a run_sql result. You pass NO values.
+
+    Use it when a picture helps: a trend over 3+ periods (line), a ranking or category split of
+    3+ rows (bar; hbar when labels are long), or 2+ comparable measures in the SAME unit, e.g. all vs
+    without cancelled (grouped_bar). Measures in different units/currencies (USD vs so‘m, tonnes vs
+    deals) never share an axis: use panels (one panel per measure) or chart one of them.
+    `sql_id`: a run_sql result of this answer whose rows are exactly the chart (2..40 rows, ordered
+    as they should appear; compute and round in SQL). `x`: category/period column. `y`: numeric
+    column(s). `units`: one human unit per y column in the answer language (e.g. "so‘m", "USD",
+    "тонна", "сделок"). `labels`: one short legend label per y column in the answer language (e.g.
+    "Все сделки", "Без аннулированных"). `title`: short title in the answer language, without numbers.
+    """
+    ev = ctx.deps.evidence
+    result = next((r for r in ev.sql if r.sql_id == sql_id), None)
+    if result is None:
+        raise ModelRetry(f"unknown sql_id {sql_id!r}; use one returned by run_sql in this answer")
+    if any(ch.isdigit() for ch in title + "".join(labels)):
+        raise ModelRetry("chart title and labels must not contain numbers; put numbers in the answer text")
+    try:
+        spec = validate_chart(f"c{len(ev.charts) + 1}", result, type, x, y, units, title, labels)
+    except ChartRejected as e:
+        raise ModelRetry(f"chart rejected: {e}") from e
+    ev.charts.append(spec)
+    return {"chart_id": spec.id, "points": result.row_count}
+
+
+TOOLS = [search_companies, search_brokers, search_products, run_sql, make_chart]

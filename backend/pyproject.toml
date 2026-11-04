@@ -15,6 +15,7 @@ dependencies = [
     "aiogram==3.31.0",
     "langfuse==5.1.0",
     "httpx",
+    "vl-convert-python>=1.9.0.post1",
 ]
 
 [project.scripts]

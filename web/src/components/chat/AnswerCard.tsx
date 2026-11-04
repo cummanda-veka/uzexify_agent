@@ -3,6 +3,7 @@ import remarkGfm from "remark-gfm";
 import { AnimatedList } from "@/components/bits";
 import type { AskResponse } from "@/lib/api";
 import { copy, type Locale } from "@/lib/i18n";
+import { AnswerChart } from "./AnswerChart";
 import { EvidencePanel } from "./EvidencePanel";
 
 export function AnswerCard({
@@ -48,6 +49,14 @@ export function AnswerCard({
           {answer.text}
         </ReactMarkdown>
       </div>
+      {answer.charts?.map((chart) => (
+        <AnswerChart
+          key={chart.id}
+          spec={chart}
+          evidence={answer.evidence}
+          language={answer.language}
+        />
+      ))}
       {candidates.length > 0 && onPick && (
         <AnimatedList
           className="candidates"

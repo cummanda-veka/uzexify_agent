@@ -3,6 +3,7 @@ from typing import Any
 
 from psycopg_pool import AsyncConnectionPool
 
+from uzexify.charts import ChartSpec
 from uzexify.embeddings import Embedder
 from uzexify.sqlguard import SqlResult
 
@@ -18,6 +19,7 @@ class EntityLookup:
 class EvidenceLog:
     sql: list[SqlResult] = field(default_factory=list)
     entities: list[EntityLookup] = field(default_factory=list)
+    charts: list[ChartSpec] = field(default_factory=list)
     _issued: int = 0
 
     def next_sql_id(self) -> str:

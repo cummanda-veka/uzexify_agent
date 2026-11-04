@@ -26,6 +26,7 @@ from pydantic_ai.run import AgentRunResultEvent
 from uzexify import observability
 from uzexify.agent.deps import AgentDeps, EvidenceLog
 from uzexify.agent.runtime import get_runtime
+from uzexify.charts import ChartSpec
 from uzexify.settings import get_settings
 from uzexify.text import detect_lang
 
@@ -68,6 +69,7 @@ class AskResult(BaseModel):
     text: str
     evidence: list[EvidenceItem]
     entities: list[EntityItem]
+    charts: list[ChartSpec] = []
     model: str
     duration_ms: int
     trace_id: str | None = None
@@ -104,6 +106,7 @@ TOOL_LABELS = {
     "search_brokers": ("Ищу брокера: «{q}»", "Broker qidirilmoqda: «{q}»"),
     "search_products": ("Ищу товар: «{q}»", "Tovar qidirilmoqda: «{q}»"),
     "run_sql": ("Выполняю SQL-запрос", "SQL so‘rov bajarilmoqda"),
+    "make_chart": ("Строю график", "Grafik chizilmoqda"),
 }
 
 
@@ -123,6 +126,15 @@ def _result_event(call_id: str, name: str, content: Any, outcome: str) -> dict[s
     """SSE step for a finished tool call; `outcome` is Pydantic AI's ToolReturnPart.outcome."""
     n: int | None = None
     if outcome == "success":
+        if isinstance(content, dict) and "chart_id" in content:
+            return {
+                "type": "tool_result",
+                "call_id": call_id,
+                "tool": name,
+                "ok": True,
+                "label_ru": f"Точек на графике: {content['points']}",
+                "label_uz": f"Grafikdagi nuqtalar: {content['points']}",
+            }
         if isinstance(content, dict) and "row_count" in content:
             n = content["row_count"]
         elif isinstance(content, list):
@@ -280,6 +292,7 @@ async def answer_question(
                     log.warning("transient model transport error, rerunning agent (%.0fs left)", remaining)
                     ev.sql.clear()
                     ev.entities.clear()
+                    ev.charts.clear()
                     continue
                 kind, error_code, text = "error", "unavailable", MESSAGES["unavailable"][lang]
                 break
@@ -294,6 +307,8 @@ async def answer_question(
         text=text,
         evidence=evidence,
         entities=entities,
+        # Charts accompany a grounded answer only; no_data/clarify/error never carry one.
+        charts=ev.charts if kind == "answer" else [],
         model=model_name,
         duration_ms=int((time.perf_counter() - started) * 1000),
         trace_id=trace_id,

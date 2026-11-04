@@ -17,6 +17,15 @@ export type Evidence = {
   truncated: boolean;
   duration_ms: number;
 };
+export type ChartSeries = { column: string; unit: string; label: string };
+export type ChartSpec = {
+  id: string;
+  sql_id: string;
+  type: "bar" | "hbar" | "line" | "grouped_bar" | "panels";
+  x: string;
+  series: ChartSeries[];
+  title: string;
+};
 export type Entity = {
   kind: "company" | "broker" | "product";
   query: string;
@@ -31,6 +40,7 @@ export type AskResponse = {
   text: string;
   evidence: Evidence[];
   entities: Entity[];
+  charts?: ChartSpec[];
   model: string;
   duration_ms: number;
   trace_id: string | null;
