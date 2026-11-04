@@ -1,0 +1,53 @@
+# Each expected item is a product-name substring, or a list of alternative substrings.
+- {query: "хлопок сырец", expected: ["хлопок"]}
+- {query: "пахта хом ашёси", expected: ["хлопок"]}
+- {query: "paxta xomashyosi", expected: ["хлопок"]}
+- {query: "сырой хлопок", expected: ["хлопок"]}
+- {query: "пшеница", expected: ["пшеница"]}
+- {query: "буғдой", expected: ["пшеница"]}
+- {query: "bug'doy", expected: ["пшеница"]}
+- {query: "мука пшеничная", expected: ["мука"]}
+- {query: "буғдой уни", expected: ["мука"]}
+- {query: "bug'doy uni", expected: ["мука"]}
+- {query: "ун", expected: ["мука"]}
+- {query: "рис", expected: ["рис"]}
+- {query: "гуруч", expected: ["рис"]}
+- {query: "guruch", expected: ["рис"]}
+- {query: "цемент", expected: ["цемент"]}
+- {query: "цемент портландский", expected: ["цемент"]}
+- {query: "sement", expected: ["цемент"]}
+- {query: "бензин", expected: ["бензин"]}
+- {query: "бензин автомобильный", expected: ["бензин"]}
+- {query: "benzin", expected: ["бензин"]}
+- {query: "дизельное топливо", expected: ["дизель"]}
+- {query: "дизел ёқилғиси", expected: ["дизель"]}
+- {query: "dizel yoqilg'isi", expected: ["дизель"]}
+- {query: "yoqilg'i", expected: ["бензин", "дизель"]}
+- {query: "ёқилғи", expected: ["бензин", "дизель"]}
+- {query: "топливо", expected: ["бензин", "дизель"]}
+- {query: "карбамид", expected: [["карбамид", "мочевина"]]}
+- {query: "мочевина", expected: [["карбамид", "мочевина"]]}
+- {query: "karbamid", expected: [["карбамид", "мочевина"]]}
+- {query: "селитра", expected: ["селитра"]}
+- {query: "аммиачная селитра", expected: ["селитра"]}
+- {query: "o'g'itlar", expected: [["карбамид", "мочевина"], "селитра"]}
+- {query: "ўғитлар", expected: [["карбамид", "мочевина"], "селитра"]}
+- {query: "удобрения", expected: [["карбамид", "мочевина"], "селитра"]}
+- {query: "хлопковое масло", expected: ["масло хлопковое"]}
+- {query: "пахта ёғи", expected: ["масло хлопковое"]}
+- {query: "paxta yog'i", expected: ["масло хлопковое"]}
+- {query: "полиэтилен", expected: ["полиэтилен"]}
+- {query: "полиэтилен гранулированный", expected: ["полиэтилен"]}
+- {query: "polietilen", expected: ["полиэтилен"]}
+- {query: "сахар", expected: ["сахар"]}
+- {query: "шакар", expected: ["сахар"]}
+- {query: "shakar", expected: ["сахар"]}
+- {query: "соль пищевая", expected: ["соль"]}
+- {query: "ош тузи", expected: ["соль"]}
+- {query: "osh tuzi", expected: ["соль"]}
+- {query: "стальной лист", expected: ["лист стальной"]}
+- {query: "пўлат лист", expected: ["лист стальной"]}
+- {query: "po'lat list", expected: ["лист стальной"]}
+- {query: "серная кислота", expected: ["кислота серная"]}
+- {query: "олтингугурт кислотаси", expected: ["кислота серная"]}
+- {query: "oltingugurt kislotasi", expected: ["кислота серная"]}

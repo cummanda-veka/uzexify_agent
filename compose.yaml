@@ -1,0 +1,73 @@
+x-backend-env: &backend-env
+  env_file: .env
+  environment:
+    DATABASE_URL: postgresql://uzex:${POSTGRES_PASSWORD}@db:5432/uzex
+    AGENT_DATABASE_URL: postgresql://uzex_agent:${AGENT_DB_PASSWORD}@db:5432/uzex
+    API_BASE_URL: http://api:8000
+    CORS_ORIGINS: https://${PUBLIC_HOST}
+
+services:
+  db:
+    image: pgvector/pgvector:0.8.7-pg18-trixie
+    environment:
+      POSTGRES_DB: uzex
+      POSTGRES_USER: uzex
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U uzex -d uzex"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  api:
+    profiles: [app]
+    build: ./backend
+    image: uzexify-backend
+    <<: *backend-env
+    volumes:
+      - ./data/uzex_spot_data:/data:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  bot:
+    profiles: [bot]
+    image: uzexify-backend
+    <<: *backend-env
+    command: ["uzexify", "bot"]
+    depends_on: [api]
+    restart: unless-stopped
+
+  web:
+    profiles: [app]
+    build:
+      context: ./web
+      args:
+        NEXT_PUBLIC_API_BASE: ""
+    restart: unless-stopped
+
+  caddy:
+    profiles: [app]
+    image: caddy:2
+    environment:
+      PUBLIC_HOST: ${PUBLIC_HOST}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on: [api, web]
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  caddy_data:
+  caddy_config:

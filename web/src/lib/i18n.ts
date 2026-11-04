@@ -1,0 +1,63 @@
+export type Locale = "ru" | "uz";
+export const copy = {
+  ru: {
+    eyebrow: "АНАЛИТИКА БИРЖЕВЫХ СДЕЛОК",
+    title: "Спросите о данных UZEX",
+    intro:
+      "Задайте вопрос обычными словами — ответ будет основан на данных сделок и сопровожден запросом к базе.",
+    placeholder: "Например: сколько сделок было заключено в 2024 году?",
+    send: "Отправить",
+    examples: "Попробуйте спросить",
+    hint: "Enter — отправить · Shift + Enter — новая строка",
+    thinking: "Изучаю данные",
+    evidence: "Основание ответа",
+    entities: "Найденные сущности",
+    rows: "строк",
+    copy: "Копировать SQL",
+    copied: "Скопировано",
+    truncated: "Результат неполный",
+    answer: "Ответ",
+    no_data: "Нет данных",
+    clarify: "Уточнение",
+    error: "Ошибка",
+    retry: "Повторить",
+    network:
+      "Не удалось получить ответ. Проверьте соединение и попробуйте ещё раз.",
+    seconds: "с",
+    results: "Показаны первые 20 строк",
+  },
+  uz: {
+    eyebrow: "BIRJA BITIMLARI TAHLILI",
+    title: "UZEX ma’lumotlaridan so‘rang",
+    intro:
+      "Savolingizni oddiy so‘zlar bilan bering — javob bitimlar ma’lumotlariga asoslanadi va baza so‘rovi bilan ko‘rsatiladi.",
+    placeholder: "Masalan: 2023-yilda nechta bitim tuzilgan?",
+    send: "Yuborish",
+    examples: "Savol berib ko‘ring",
+    hint: "Enter — yuborish · Shift + Enter — yangi qator",
+    thinking: "Ma’lumotlar o‘rganilmoqda",
+    evidence: "Javob asosi",
+    entities: "Topilgan obyektlar",
+    rows: "qator",
+    copy: "SQL nusxalash",
+    copied: "Nusxalandi",
+    truncated: "Natija to‘liq emas",
+    answer: "Javob",
+    no_data: "Ma’lumot yo‘q",
+    clarify: "Aniqlashtirish",
+    error: "Xato",
+    retry: "Qayta urinish",
+    network:
+      "Javobni olib bo‘lmadi. Ulanishni tekshirib, qayta urinib ko‘ring.",
+    seconds: "s",
+    results: "Birinchi 20 qator ko‘rsatilgan",
+  },
+} as const;
+export const examples = [
+  "Сколько сделок было заключено в 2024 году?",
+  "Какой брокер провёл больше всего сделок на стороне покупателя в 2023 году?",
+  "Общая сумма экспортных сделок в 2025 году в сумах",
+  "2023-yilda nechta bitim tuzilgan?",
+  "bug‘doy 2025-yilda jami qancha sotilgan?",
+  "2024-yilda Farg‘ona viloyatida eng ko‘p bug‘doy sotib olgan 5 ta kompaniya",
+];

@@ -1,0 +1,229 @@
+cases:
+  - id: count_2022
+    lang: ru
+    question: Сколько всего сделок заключено в 2022 году, включая аннулированные?
+    expect_kind: answer
+    reference_sql: "SELECT count(*) AS total FROM deals WHERE deal_date >= '2022-01-01' AND deal_date < '2023-01-01'"
+    checks: [{column: total, match: number}]
+  - id: count_2023
+    lang: uz_latn
+    question: 2023-yilda bekor qilinganlarini ham qo‘shib jami nechta bitim tuzilgan?
+    expect_kind: answer
+    reference_sql: "SELECT count(*) AS total FROM deals WHERE deal_date >= '2023-01-01' AND deal_date < '2024-01-01'"
+    checks: [{column: total, match: number}]
+  - id: count_2024
+    lang: uz_cyrl
+    question: 2024 йилда бекор қилинганларини ҳам қўшиб жами нечта битим тузилган?
+    expect_kind: answer
+    reference_sql: "SELECT count(*) AS total FROM deals WHERE deal_date >= '2024-01-01' AND deal_date < '2025-01-01'"
+    checks: [{column: total, match: number}]
+  - id: sum_sugar
+    lang: ru
+    question: Какова общая сумма в сумах по сделкам с товаром «Сахар белый» за 3 января 2022 года, включая аннулированные?
+    expect_kind: answer
+    reference_sql: "SELECT sum(amount_uzs) AS total FROM v_deals WHERE product = 'Сахар белый' AND deal_date = '2022-01-03'"
+    checks: [{column: total, match: number}]
+  - id: sum_carbamide
+    lang: uz_latn
+    question: 2022-yil 3-yanvarda «Карбамид Марка Б» tovari bo‘yicha barcha bitimlar summasi so‘mda qancha?
+    expect_kind: answer
+    reference_sql: "SELECT sum(amount_uzs) AS total FROM v_deals WHERE product = 'Карбамид Марка Б' AND deal_date = '2022-01-03'"
+    checks: [{column: total, match: number}]
+  - id: sum_cement
+    lang: uz_cyrl
+    question: 2022 йил 3 январда «Портландцемент ЦЕМ I 42,5 Н» товарининг барча битимлари суммаси сўмда қанча?
+    expect_kind: answer
+    reference_sql: "SELECT sum(amount_uzs) AS total FROM v_deals WHERE product = 'Портландцемент ЦЕМ I 42,5 Н' AND deal_date = '2022-01-03'"
+    checks: [{column: total, match: number}]
+  - id: sum_yarn_usd
+    lang: uz_latn
+    question: 2022-yil 3-yanvarda «Пряжа хлопковая Марка Ne 20/1» bo‘yicha barcha bitimlar summasi AQSh dollarida qancha?
+    expect_kind: answer
+    reference_sql: "SELECT sum(amount_usd) AS total FROM v_deals WHERE product = 'Пряжа хлопковая Марка Ne 20/1' AND deal_date = '2022-01-03'"
+    checks: [{column: total, match: number}]
+  - id: avg_cement
+    lang: uz_latn
+    question: 2022-yil 3-yanvardagi «Портландцемент ЦЕМ I 42,5 Н» bitimlarida hajm bo‘yicha o‘rtacha tortilgan bir tonna narxi so‘mda qancha? Barcha holatlarni kiriting.
+    expect_kind: answer
+    reference_sql: "SELECT sum(amount_uzs)/NULLIF(sum(volume),0) AS price FROM v_deals WHERE product = 'Портландцемент ЦЕМ I 42,5 Н' AND deal_date = '2022-01-03'"
+    checks: [{column: price, match: number}]
+  - id: avg_carbamide
+    lang: ru
+    question: Какова средневзвешенная по объёму цена за тонну товара «Карбамид Марка Б» 3 января 2022 года в сумах, по всем статусам?
+    expect_kind: answer
+    reference_sql: "SELECT sum(amount_uzs)/NULLIF(sum(volume),0) AS price FROM v_deals WHERE product = 'Карбамид Марка Б' AND deal_date = '2022-01-03'"
+    checks: [{column: price, match: number}]
+  - id: top_seller
+    lang: uz_latn
+    question: 2022-yil 3-yanvarda barcha holatlardagi bitimlar soni bo‘yicha eng ko‘p sotgan sotuvchi kim?
+    expect_kind: answer
+    reference_sql: "SELECT seller_name, count(*) AS total FROM v_deals WHERE deal_date = '2022-01-03' GROUP BY seller_inn, seller_name ORDER BY total DESC, seller_name LIMIT 1"
+    checks: [{column: seller_name, match: text}, {column: total, match: number}]
+  - id: top_buyer
+    lang: uz_cyrl
+    question: 2022 йил 3 январда барча ҳолатлардаги битимлар сони бўйича энг кўп харид қилган харидор ким?
+    expect_kind: answer
+    reference_sql: "SELECT buyer_name, count(*) AS total FROM v_deals WHERE deal_date = '2022-01-03' GROUP BY buyer_inn, buyer_name ORDER BY total DESC, buyer_name LIMIT 1"
+    checks: [{column: buyer_name, match: text}, {column: total, match: number}]
+  - id: top_seller_sum
+    lang: uz_latn
+    question: 2022-yil 3-yanvarda barcha bitimlarining so‘mdagi umumiy summasi eng katta sotuvchi kim va summa qancha?
+    expect_kind: answer
+    reference_sql: "SELECT seller_name, sum(amount_uzs) AS total FROM v_deals WHERE deal_date = '2022-01-03' GROUP BY seller_inn, seller_name ORDER BY total DESC, seller_name LIMIT 1"
+    checks: [{column: seller_name, match: text}, {column: total, match: number}]
+  - id: company_rukusho_ru
+    lang: ru
+    question: Сколько сделок как продавец заключила компания Рукушо Фермер МЧЖ за 2022 год, включая все статусы?
+    expect_kind: answer
+    reference_sql: "SELECT count(*) AS total FROM deals WHERE seller_inn = '921912462' AND deal_date >= '2022-01-01' AND deal_date < '2023-01-01'"
+    checks: [{column: total, match: number}]
+  - id: company_rukusho_uz
+    lang: uz_cyrl
+    question: Рукушо Фермер МЧЖ 2022 йилда сотувчи сифатида барча ҳолатларда нечта битим тузган?
+    expect_kind: answer
+    reference_sql: "SELECT count(*) AS total FROM deals WHERE seller_inn = '921912462' AND deal_date >= '2022-01-01' AND deal_date < '2023-01-01'"
+    checks: [{column: total, match: number}]
+  - id: company_ruxok_latin
+    lang: uz_latn
+    question: Ruxok Oziq-ovqat MChJ 2022-yilda sotuvchi sifatida barcha holatlarda nechta bitim tuzgan?
+    expect_kind: answer
+    reference_sql: "SELECT count(*) AS total FROM deals WHERE seller_inn = '993681515' AND deal_date >= '2022-01-01' AND deal_date < '2023-01-01'"
+    checks: [{column: total, match: number}]
+  - id: company_ruxok_latin_region
+    lang: uz_latn
+    question: Ruxok Oziq-ovqat MChJning ishtirokchilar reyestridagi STIR raqami qanday?
+    expect_kind: answer
+    reference_sql: "SELECT inn FROM participants WHERE inn = '993681515'"
+    checks: [{column: inn, match: text}]
+  - id: broker_seller
+    lang: uz_latn
+    question: 100001 raqamli bitimda sotuvchining brokeri kim?
+    expect_kind: answer
+    reference_sql: "SELECT seller_broker_name FROM v_deals WHERE deal_no = 100001"
+    checks: [{column: seller_broker_name, match: text}]
+  - id: broker_buyer
+    lang: uz_cyrl
+    question: 100002 рақамли битимда харидорнинг брокери ким?
+    expect_kind: answer
+    reference_sql: "SELECT buyer_broker_name FROM v_deals WHERE deal_no = 100002"
+    checks: [{column: buyer_broker_name, match: text}]
+  - id: contract_100001
+    lang: uz_latn
+    question: 100001-shartnoma kartochkasida mahsulot nomi va bazis narxi qanday?
+    expect_kind: answer
+    reference_sql: "SELECT product_name, base_price FROM contracts WHERE contract_no = '100001'"
+    checks: [{column: product_name, match: text}, {column: base_price, match: number}]
+  - id: contract_100002
+    lang: ru
+    question: Какой товар и базисная цена указаны в карточке контракта 100002?
+    expect_kind: answer
+    reference_sql: "SELECT product_name, base_price FROM contracts WHERE contract_no = '100002'"
+    checks: [{column: product_name, match: text}, {column: base_price, match: number}]
+  - id: deal_100001
+    lang: uz_latn
+    question: 100001-sonli bitimning hajmi kilogrammda va summasi so‘mda qancha?
+    expect_kind: answer
+    reference_sql: "SELECT volume, amount_uzs FROM v_deals WHERE deal_no = 100001"
+    checks: [{column: volume, match: number}, {column: amount_uzs, match: number}]
+  - id: deal_100007
+    lang: uz_cyrl
+    question: 100007-сонли битимда қанча дона товар сотилган ва сумма сўмда қанча?
+    expect_kind: answer
+    reference_sql: "SELECT volume, amount_uzs FROM v_deals WHERE deal_no = 100007"
+    checks: [{column: volume, match: number}, {column: amount_uzs, match: number}]
+  - id: status_paid
+    lang: uz_latn
+    question: 2026-yil 29-oktabrda «Оплачен» holatidagi nechta bitim tuzilgan?
+    expect_kind: answer
+    reference_sql: "SELECT count(*) AS total FROM deals WHERE deal_date = '2026-10-29' AND status = 'Оплачен'"
+    checks: [{column: total, match: number}]
+  - id: status_cancelled
+    lang: ru
+    question: Сколько сделок от 3 января 2022 года имеют статус «Аннулирован(Не оплачен)»?
+    expect_kind: answer
+    reference_sql: "SELECT count(*) AS total FROM deals WHERE deal_date = '2022-01-03' AND status = 'Аннулирован(Не оплачен)'"
+    checks: [{column: total, match: number}]
+  - id: export_100024
+    lang: uz_latn
+    question: 100024-raqamli eksport bitimi summasini bitim kunidagi kurs bo‘yicha so‘mga aylantiring. Kurs va natija qancha?
+    expect_kind: answer
+    reference_sql: "SELECT usd_rate, amount_uzs FROM v_deals WHERE deal_no = 100024"
+    checks: [{column: usd_rate, match: number}, {column: amount_uzs, match: number}]
+  - id: export_100025
+    lang: uz_cyrl
+    question: 100025-рақамли экспорт битими суммасини битим кунидаги курс бўйича сўмга айлантиринг. Курс ва натижа қанча?
+    expect_kind: answer
+    reference_sql: "SELECT usd_rate, amount_uzs FROM v_deals WHERE deal_no = 100025"
+    checks: [{column: usd_rate, match: number}, {column: amount_uzs, match: number}]
+  - id: region_100001
+    lang: uz_latn
+    question: 100001-raqamli bitim bo‘yicha sotuvchi ombori qaysi hududda?
+    expect_kind: answer
+    reference_sql: "SELECT region_uz FROM v_deals WHERE deal_no = 100001"
+    checks: [{column: region_uz, match: text}]
+  - id: region_100003
+    lang: ru
+    question: В каком регионе находится склад продавца по сделке 100003?
+    expect_kind: answer
+    reference_sql: "SELECT region_ru FROM v_deals WHERE deal_no = 100003"
+    checks: [{column: region_ru, match: text}]
+  - id: relative_previous_month
+    lang: uz_latn
+    question: Bugun 2026-yil 5-noyabr deb hisoblang. O‘tgan kalendar oyda, barcha holatlarni qo‘shib, nechta bitim tuzilgan?
+    expect_kind: answer
+    reference_sql: "SELECT count(*) AS total FROM deals WHERE deal_date >= '2026-10-01' AND deal_date < '2026-11-01'"
+    checks: [{column: total, match: number}]
+  - id: relative_previous_year
+    lang: uz_latn
+    question: Bugun 2026-yil 5-noyabr deb hisoblang. O‘tgan kalendar yilda barcha holatlardagi bitimlar soni qancha?
+    expect_kind: answer
+    reference_sql: "SELECT count(*) AS total FROM deals WHERE deal_date >= '2025-01-01' AND deal_date < '2026-01-01'"
+    checks: [{column: total, match: number}]
+  - id: clarify_price
+    lang: ru
+    question: Сколько сделок у компании RUKU?
+    expect_kind: clarify
+    reference_sql: "SELECT inn, name FROM participants WHERE name ILIKE '%RUKU%' ORDER BY name"
+    checks: []
+  - id: clarify_company
+    lang: uz_latn
+    question: SHIQO kompaniyasining bitimlari nechta?
+    expect_kind: clarify
+    reference_sql: "SELECT inn, name FROM participants WHERE name ILIKE '%SHIQO%' ORDER BY name"
+    checks: []
+  - id: no_2021
+    lang: uz_latn
+    question: 2021-yildagi bitimlar ro‘yxatini ko‘rsating.
+    expect_kind: no_data
+    reference_sql: "SELECT deal_no FROM deals WHERE deal_date >= '2021-01-01' AND deal_date < '2022-01-01' LIMIT 1"
+    checks: []
+  - id: no_2027
+    lang: uz_cyrl
+    question: 2027 йилдаги битимлар рўйхатини кўрсатинг.
+    expect_kind: no_data
+    reference_sql: "SELECT deal_no FROM deals WHERE deal_date >= '2027-01-01' AND deal_date < '2028-01-01' LIMIT 1"
+    checks: []
+  - id: no_company
+    lang: uz_latn
+    question: STIR 000000000 bo‘lgan kompaniya haqida reyestrda qanday ma’lumot bor?
+    expect_kind: no_data
+    reference_sql: "SELECT inn FROM participants WHERE inn = '000000000'"
+    checks: []
+  - id: no_director
+    lang: ru
+    question: Как зовут директора компании с ИНН 921912462 и каков его телефон?
+    expect_kind: no_data
+    reference_sql: "SELECT column_name FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'participants' AND column_name IN ('director', 'phone')"
+    checks: []
+  - id: no_gold
+    lang: uz_latn
+    question: Oltin bo‘yicha bitimlar bormi? Oltin rangli boshqa tovarlarni hisoblamang.
+    expect_kind: no_data
+    reference_sql: "SELECT product FROM products WHERE product ILIKE '%золото%' OR product ILIKE '%золотой слиток%' LIMIT 1"
+    checks: []
+  - id: no_eur_rate
+    lang: uz_latn
+    question: 2022-yil 3-yanvarda yevroning so‘mga nisbatan kursi qancha edi?
+    expect_kind: no_data
+    reference_sql: "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'eur_rates'"
+    checks: []

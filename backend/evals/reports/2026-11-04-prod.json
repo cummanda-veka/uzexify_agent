@@ -1,0 +1,3544 @@
+{
+  "target": "http",
+  "model_override": null,
+  "label": "prod",
+  "created_at": "2026-11-04T20:08:03.974034+00:00",
+  "summary": {
+    "answer_accuracy": {
+      "passed": 28,
+      "total": 30
+    },
+    "unsafe_no_data": 0,
+    "no_data_total": 6,
+    "clarify_accuracy": {
+      "passed": 1,
+      "total": 2
+    },
+    "language": {
+      "passed": 36,
+      "total": 38
+    },
+    "p50_ms": 7681.0,
+    "p95_ms": 14400.699999999999,
+    "cost": null
+  },
+  "cases": [
+    {
+      "id": "count_2022",
+      "question": "Сколько всего сделок заключено в 2022 году, включая аннулированные?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "40035a0a-abbf-4d39-8417-e0d20474062c",
+        "session_id": "eval:count_2022",
+        "question": "Сколько всего сделок заключено в 2022 году, включая аннулированные?",
+        "language": "ru",
+        "kind": "answer",
+        "text": "За 2022 год заключено **84 299 сделок**, включая аннулированные. Без учёта аннулированных — **78 567 сделок**.",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "Количество сделок за 2022 год, включая и исключая аннулированные",
+            "sql": "SELECT count(*) AS deals_total, count(*) FILTER (WHERE status <> 'Аннулирован(Не оплачен)') AS deals_not_cancelled FROM v_deals WHERE deal_date >= DATE '2022-01-01' AND deal_date < DATE '2023-01-01'",
+            "columns": [
+              "deals_total",
+              "deals_not_cancelled"
+            ],
+            "rows": [
+              [
+                84299,
+                78567
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 24
+          }
+        ],
+        "entities": [],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 8131,
+        "trace_id": "0ee2803d9cc9c1282cbbb1ee968201da",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "total": 84299
+        }
+      ]
+    },
+    {
+      "id": "count_2023",
+      "question": "2023-yilda bekor qilinganlarini ham qo‘shib jami nechta bitim tuzilgan?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "d509fb29-90ea-4999-b247-d16003fe4113",
+        "session_id": "eval:count_2023",
+        "question": "2023-yilda bekor qilinganlarini ham qo‘shib jami nechta bitim tuzilgan?",
+        "language": "uz",
+        "kind": "answer",
+        "text": "2023-yilda bekor qilinganlarini ham qo‘shib jami 93 985 ta bitim tuzilgan.",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "2023-yildagi barcha bitimlarni, bekor qilinganlarini ham qo‘shib sanash",
+            "sql": "SELECT count(*) AS jami FROM v_deals WHERE deal_date >= DATE '2023-01-01' AND deal_date < DATE '2024-01-01'",
+            "columns": [
+              "jami"
+            ],
+            "rows": [
+              [
+                93985
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 25
+          }
+        ],
+        "entities": [],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 6847,
+        "trace_id": "c73884e057c1923e2972e6e6c23c1605",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "total": 93985
+        }
+      ]
+    },
+    {
+      "id": "count_2024",
+      "question": "2024 йилда бекор қилинганларини ҳам қўшиб жами нечта битим тузилган?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "98e9d685-f418-4812-8efa-ab1956feac49",
+        "session_id": "eval:count_2024",
+        "question": "2024 йилда бекор қилинганларини ҳам қўшиб жами нечта битим тузилган?",
+        "language": "uz",
+        "kind": "answer",
+        "text": "2024 йилда бекор қилинганларни ҳам қўшганда жами 106 647 та битим тузилган.",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "2024 йилда барча мақомдаги битимлар сони",
+            "sql": "SELECT count(*) AS total FROM v_deals WHERE deal_date >= DATE '2024-01-01' AND deal_date < DATE '2025-01-01'",
+            "columns": [
+              "total"
+            ],
+            "rows": [
+              [
+                106647
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 29
+          }
+        ],
+        "entities": [],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 5988,
+        "trace_id": "4ac3b5ee331b351134353c60deade400",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "total": 106647
+        }
+      ]
+    },
+    {
+      "id": "sum_sugar",
+      "question": "Какова общая сумма в сумах по сделкам с товаром «Сахар белый» за 3 января 2022 года, включая аннулированные?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "38fc32d9-27d0-4f9f-bd1f-138e587fd9a6",
+        "session_id": "eval:sum_sugar",
+        "question": "Какова общая сумма в сумах по сделкам с товаром «Сахар белый» за 3 января 2022 года, включая аннулированные?",
+        "language": "ru",
+        "kind": "answer",
+        "text": "За 3 января 2022 года общая сумма сделок с товаром «Сахар белый», включая аннулированные, составила **1 715 062 686 сумов**. Сделки в долларах пересчитаны в сумы по курсу на дату сделки.",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "Общая сумма сделок с белым сахаром за указанную дату, включая аннулированные",
+            "sql": "SELECT round(sum(amount_uzs),2) AS total_uzs, count(*) AS deals FROM v_deals WHERE product_name = 'Сахар белый' AND deal_date >= DATE '2022-01-03' AND deal_date < DATE '2022-01-04'",
+            "columns": [
+              "total_uzs",
+              "deals"
+            ],
+            "rows": [
+              [
+                1715062686,
+                8
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 2
+          }
+        ],
+        "entities": [
+          {
+            "kind": "product",
+            "query": "Сахар белый",
+            "matches": [
+              {
+                "id": "Сахар белый",
+                "label": "Сахар белый",
+                "score": 0.04918
+              },
+              {
+                "id": "САХАР-ПЕСОК",
+                "label": "САХАР-ПЕСОК",
+                "score": 0.04839
+              },
+              {
+                "id": "Рис Сорт высший сорт",
+                "label": "Рис Сорт высший сорт",
+                "score": 0.01587
+              },
+              {
+                "id": "Рис Сорт первый сорт",
+                "label": "Рис Сорт первый сорт",
+                "score": 0.01562
+              },
+              {
+                "id": "Рис Сорт Высший сорт",
+                "label": "Рис Сорт Высший сорт",
+                "score": 0.01538
+              },
+              {
+                "id": "Рис шлифованный высший сорт",
+                "label": "Рис шлифованный высший сорт",
+                "score": 0.01515
+              },
+              {
+                "id": "Рис Сорт 1 сорт",
+                "label": "Рис Сорт 1 сорт",
+                "score": 0.01493
+              },
+              {
+                "id": "Мука пшеничная Сорт Высший сорт Тип хлебопекарная",
+                "label": "Мука пшеничная Сорт Высший сорт Тип хлебопекарная",
+                "score": 0.01471
+              },
+              {
+                "id": "Рис шлифованный Сорт высший сорт",
+                "label": "Рис шлифованный Сорт высший сорт",
+                "score": 0.01449
+              },
+              {
+                "id": "Рис шлифованный Сорт Высший сорт",
+                "label": "Рис шлифованный Сорт Высший сорт",
+                "score": 0.01429
+              },
+              {
+                "id": "МУКА ПШЕНИЧНАЯ Сорт высший сорт Тип хлебопекарная",
+                "label": "МУКА ПШЕНИЧНАЯ Сорт высший сорт Тип хлебопекарная",
+                "score": 0.01408
+              },
+              {
+                "id": "Мука Сорт высший сорт Тип хлебопекарная",
+                "label": "Мука Сорт высший сорт Тип хлебопекарная",
+                "score": 0.01389
+              },
+              {
+                "id": "Мука пшеничная Сорт высшего сорта Тип хлебопекарная",
+                "label": "Мука пшеничная Сорт высшего сорта Тип хлебопекарная",
+                "score": 0.0137
+              },
+              {
+                "id": "МУКА ПШЕНИЧНАЯ Сорт в/с Тип хлебопекарная",
+                "label": "МУКА ПШЕНИЧНАЯ Сорт в/с Тип хлебопекарная",
+                "score": 0.01351
+              },
+              {
+                "id": "МУКА ПШЕНИЧНАЯ Сорт Высший сорт Тип хлебопекарная",
+                "label": "МУКА ПШЕНИЧНАЯ Сорт Высший сорт Тип хлебопекарная",
+                "score": 0.01333
+              }
+            ]
+          }
+        ],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 11071,
+        "trace_id": "9c5084c9add57cd6fc6d6eb9c05b00b4",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "total": "1715062686"
+        }
+      ]
+    },
+    {
+      "id": "sum_carbamide",
+      "question": "2022-yil 3-yanvarda «Карбамид Марка Б» tovari bo‘yicha barcha bitimlar summasi so‘mda qancha?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "638a5df8-2279-45a7-bc0d-51e089a69ebc",
+        "session_id": "eval:sum_carbamide",
+        "question": "2022-yil 3-yanvarda «Карбамид Марка Б» tovari bo‘yicha barcha bitimlar summasi so‘mda qancha?",
+        "language": "uz",
+        "kind": "answer",
+        "text": "2022-yil 3-yanvarda «Карбамид Марка Б» bo‘yicha barcha bitimlar summasi **498 376 276 so‘m**; bekor qilingan bitimlar chiqarib tashlanganda ham **498 376 276 so‘m**. Valyutadagi bitimlar bitim kunidagi kurs bo‘yicha so‘mga o‘girilgan.",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "Sum carbamide grade B deals in UZS for the requested date, including and excluding cancelled deals",
+            "sql": "SELECT count(*) AS deals, round(sum(amount_uzs)::numeric,2) AS total_uzs, round(sum(amount_uzs) FILTER (WHERE status <> 'Аннулирован(Не оплачен)')::numeric,2) AS noncancelled_uzs FROM v_deals WHERE product IN ('Карбамид Марка Б','КАРБАМИД МАРКА Б','Мочевина (карбамид) Марка Б') AND deal_date >= DATE '2022-01-03' AND deal_date < DATE '2022-01-04'",
+            "columns": [
+              "deals",
+              "total_uzs",
+              "noncancelled_uzs"
+            ],
+            "rows": [
+              [
+                2,
+                498376276,
+                498376276
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 1
+          }
+        ],
+        "entities": [
+          {
+            "kind": "product",
+            "query": "Карбамид Марка Б",
+            "matches": [
+              {
+                "id": "КАРБАМИД МАРКА Б",
+                "label": "КАРБАМИД МАРКА Б",
+                "score": 0.04892
+              },
+              {
+                "id": "Карбамид Марка Б",
+                "label": "Карбамид Марка Б",
+                "score": 0.04865
+              },
+              {
+                "id": "Мочевина (карбамид) Марка Б",
+                "label": "Мочевина (карбамид) Марка Б",
+                "score": 0.04762
+              },
+              {
+                "id": "Селитра аммиачная Марка Б",
+                "label": "Селитра аммиачная Марка Б",
+                "score": 0.04663
+              },
+              {
+                "id": "Аммиачная селитра Марка Б",
+                "label": "Аммиачная селитра Марка Б",
+                "score": 0.04639
+              },
+              {
+                "id": "Битум Марка БНД 90/130 Тип дорожный",
+                "label": "Битум Марка БНД 90/130 Тип дорожный",
+                "score": 0.04346
+              },
+              {
+                "id": "Битум Марка БНД 60/90 Тип дорожный",
+                "label": "Битум Марка БНД 60/90 Тип дорожный",
+                "score": 0.04336
+              },
+              {
+                "id": "Комбикорм Марка КС-70",
+                "label": "Комбикорм Марка КС-70",
+                "score": 0.04309
+              },
+              {
+                "id": "Поливинилхлорид Марка SG-5 Тип суспензионный",
+                "label": "Поливинилхлорид Марка SG-5 Тип суспензионный",
+                "score": 0.04307
+              },
+              {
+                "id": "Комбикорм Марка КС-65",
+                "label": "Комбикорм Марка КС-65",
+                "score": 0.04255
+              },
+              {
+                "id": "Битум Марка БНД 70/100 Тип дорожный",
+                "label": "Битум Марка БНД 70/100 Тип дорожный",
+                "score": 0.04036
+              },
+              {
+                "id": "Кормосмесь Марка КС-65",
+                "label": "Кормосмесь Марка КС-65",
+                "score": 0.03847
+              },
+              {
+                "id": "Поливинилхлорид Марка SG-7 Тип суспензионный",
+                "label": "Поливинилхлорид Марка SG-7 Тип суспензионный",
+                "score": 0.02941
+              },
+              {
+                "id": "Кормосмесь Марка КС-70",
+                "label": "Кормосмесь Марка КС-70",
+                "score": 0.02857
+              },
+              {
+                "id": "Битум нефтяной Марка БНД 60/90 Тип дорожный",
+                "label": "Битум нефтяной Марка БНД 60/90 Тип дорожный",
+                "score": 0.02778
+              }
+            ]
+          }
+        ],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 15317,
+        "trace_id": "33b842db1e31c874bb8814c81d9eebd8",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "total": "498376276"
+        }
+      ]
+    },
+    {
+      "id": "sum_cement",
+      "question": "2022 йил 3 январда «Портландцемент ЦЕМ I 42,5 Н» товарининг барча битимлари суммаси сўмда қанча?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "7abde8ee-f857-4b74-94c4-0d7d7b0be605",
+        "session_id": "eval:sum_cement",
+        "question": "2022 йил 3 январда «Портландцемент ЦЕМ I 42,5 Н» товарининг барча битимлари суммаси сўмда қанча?",
+        "language": "uz",
+        "kind": "answer",
+        "text": "2022 йил 3 январда «Портландцемент ЦЕМ I 42,5 Н» бўйича барча битимлар суммаси **1 386 021 150 сўм**, бекор қилинган битимларсиз эса **1 316 923 389 сўм**ни ташкил этган. Доллардаги битимлар суммаси битим санасидаги курс бўйича сўмга ўгирилган.",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "Сумма сделок по указанному товару за дату в сумах",
+            "sql": "SELECT count(*) AS deals, round(sum(amount_uzs),2) AS total_uzs, round(sum(amount_uzs) FILTER (WHERE status <> 'Аннулирован(Не оплачен)'),2) AS noncancelled_uzs FROM v_deals WHERE product = 'Портландцемент ЦЕМ I 42,5 Н' AND deal_date >= DATE '2022-01-03' AND deal_date < DATE '2022-01-04'",
+            "columns": [
+              "deals",
+              "total_uzs",
+              "noncancelled_uzs"
+            ],
+            "rows": [
+              [
+                14,
+                1386021150,
+                1316923389
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 1
+          }
+        ],
+        "entities": [
+          {
+            "kind": "product",
+            "query": "Портландцемент ЦЕМ I 42,5 Н",
+            "matches": [
+              {
+                "id": "Портландцемент ЦЕМ I 42,5 Н",
+                "label": "Портландцемент ЦЕМ I 42,5 Н",
+                "score": 0.03279
+              },
+              {
+                "id": "Цемент портландский ЦЕМ I 42,5Н",
+                "label": "Цемент портландский ЦЕМ I 42,5Н",
+                "score": 0.03175
+              },
+              {
+                "id": "ПОРТЛАНДЦЕМЕНТ Марка ЦЕМ I 42,5 Н",
+                "label": "ПОРТЛАНДЦЕМЕНТ Марка ЦЕМ I 42,5 Н",
+                "score": 0.03175
+              },
+              {
+                "id": "ПОРТЛАНДЦЕМЕНТ Марка ЦЕМ I 42,5Н",
+                "label": "ПОРТЛАНДЦЕМЕНТ Марка ЦЕМ I 42,5Н",
+                "score": 0.03101
+              },
+              {
+                "id": "Портландцемент Марка ЦЕМ I 42,5 Н",
+                "label": "Портландцемент Марка ЦЕМ I 42,5 Н",
+                "score": 0.03083
+              },
+              {
+                "id": "Портландцемент Марка ЦЕМ I 42,5Н",
+                "label": "Портландцемент Марка ЦЕМ I 42,5Н",
+                "score": 0.03054
+              },
+              {
+                "id": "ПОРТЛАНДЦЕМЕНТ МАРКА ЦЕМ I 42,5Н",
+                "label": "ПОРТЛАНДЦЕМЕНТ МАРКА ЦЕМ I 42,5Н",
+                "score": 0.03008
+              },
+              {
+                "id": "Цемент портландский Марка ЦЕМ I 42,5 Н",
+                "label": "Цемент портландский Марка ЦЕМ I 42,5 Н",
+                "score": 0.02881
+              },
+              {
+                "id": "ЦЕМЕНТ ПОРТЛАНДСКИЙ МАРКА ЦЕМ I 42,5 Н",
+                "label": "ЦЕМЕНТ ПОРТЛАНДСКИЙ МАРКА ЦЕМ I 42,5 Н",
+                "score": 0.02837
+              },
+              {
+                "id": "ЦЕМЕНТ ПОРТЛАНДСКИЙ МАРКА ЦЕМ I 42,5Н",
+                "label": "ЦЕМЕНТ ПОРТЛАНДСКИЙ МАРКА ЦЕМ I 42,5Н",
+                "score": 0.02819
+              },
+              {
+                "id": "ПОРТЛАНДЦЕМЕНТ ЦЕМ II/А-Ш 32,5 Н",
+                "label": "ПОРТЛАНДЦЕМЕНТ ЦЕМ II/А-Ш 32,5 Н",
+                "score": 0.02679
+              },
+              {
+                "id": "Цемент портландский Марка ЦЕМ II/В-К 32,5 Н",
+                "label": "Цемент портландский Марка ЦЕМ II/В-К 32,5 Н",
+                "score": 0.02667
+              },
+              {
+                "id": "Цемент портландский Марка ЦЕМ II/А-Ш 32,5 Н",
+                "label": "Цемент портландский Марка ЦЕМ II/А-Ш 32,5 Н",
+                "score": 0.02565
+              },
+              {
+                "id": "Портландцемент ЦЕМ II/В-К 32,5 Н",
+                "label": "Портландцемент ЦЕМ II/В-К 32,5 Н",
+                "score": 0.01471
+              },
+              {
+                "id": "ПОРТЛАНДЦЕМЕНТ ЦЕМ II/В-К 32,5 Н",
+                "label": "ПОРТЛАНДЦЕМЕНТ ЦЕМ II/В-К 32,5 Н",
+                "score": 0.01449
+              }
+            ]
+          }
+        ],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 12052,
+        "trace_id": "72aa25f805961ac92a039ab9744511e5",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "total": "1386021150"
+        }
+      ]
+    },
+    {
+      "id": "sum_yarn_usd",
+      "question": "2022-yil 3-yanvarda «Пряжа хлопковая Марка Ne 20/1» bo‘yicha barcha bitimlar summasi AQSh dollarida qancha?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "51134cc6-15e2-44c1-bd3c-a41408b60be9",
+        "session_id": "eval:sum_yarn_usd",
+        "question": "2022-yil 3-yanvarda «Пряжа хлопковая Марка Ne 20/1» bo‘yicha barcha bitimlar summasi AQSh dollarida qancha?",
+        "language": "uz",
+        "kind": "answer",
+        "text": "2022-yil 3-yanvarda «Пряжа хлопковая Марка Ne 20/1» bo‘yicha barcha bitimlar summasi **43 176,64 AQSh dollari**, bekor qilingan bitimlarni hisobga olmaganda ham **43 176,64 AQSh dollari**. Summalar bitim sanasidagi kurs bo‘yicha dollarda hisoblangan.",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "Sum deal values in USD for the specified product and date, including and excluding cancelled deals",
+            "sql": "SELECT count(*) AS deals, round(sum(amount_usd)::numeric,2) AS total_usd, round(coalesce(sum(amount_usd) FILTER (WHERE status <> 'Аннулирован(Не оплачен)'),0)::numeric,2) AS noncancelled_usd, count(*) FILTER (WHERE amount_usd IS NULL) AS missing_usd FROM v_deals WHERE product = 'Пряжа хлопковая Марка Ne 20/1' AND deal_date >= DATE '2022-01-03' AND deal_date < DATE '2022-01-04'",
+            "columns": [
+              "deals",
+              "total_usd",
+              "noncancelled_usd",
+              "missing_usd"
+            ],
+            "rows": [
+              [
+                1,
+                43176.64,
+                43176.64,
+                0
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 2
+          }
+        ],
+        "entities": [
+          {
+            "kind": "product",
+            "query": "Пряжа хлопковая Марка Ne 20/1",
+            "matches": [
+              {
+                "id": "Пряжа хлопковая Марка Ne 20/1",
+                "label": "Пряжа хлопковая Марка Ne 20/1",
+                "score": 0.03279
+              },
+              {
+                "id": "Пряжа хлопковая Марка Ne 24/1",
+                "label": "Пряжа хлопковая Марка Ne 24/1",
+                "score": 0.03151
+              },
+              {
+                "id": "ПРЯЖА ХЛОПЧАТОБУМАЖНАЯ МАРКА NE 20/1",
+                "label": "ПРЯЖА ХЛОПЧАТОБУМАЖНАЯ МАРКА NE 20/1",
+                "score": 0.0315
+              },
+              {
+                "id": "Пряжа хлопчатобумажная Марка Ne 20/1",
+                "label": "Пряжа хлопчатобумажная Марка Ne 20/1",
+                "score": 0.0315
+              },
+              {
+                "id": "Пряжа хлопчатобумажная Ne 20/1",
+                "label": "Пряжа хлопчатобумажная Ne 20/1",
+                "score": 0.03105
+              },
+              {
+                "id": "Пряжа хлопчатобумажная Марка Ne 24/1",
+                "label": "Пряжа хлопчатобумажная Марка Ne 24/1",
+                "score": 0.03054
+              },
+              {
+                "id": "ПРЯЖА ХЛОПЧАТОБУМАЖНАЯ МАРКА NE 24/1",
+                "label": "ПРЯЖА ХЛОПЧАТОБУМАЖНАЯ МАРКА NE 24/1",
+                "score": 0.03008
+              },
+              {
+                "id": "Пряжа хлопчатобумажная Ne 24/1",
+                "label": "Пряжа хлопчатобумажная Ne 24/1",
+                "score": 0.02941
+              },
+              {
+                "id": "Эмаль алкидная Марка ПФ-115",
+                "label": "Эмаль алкидная Марка ПФ-115",
+                "score": 0.01449
+              },
+              {
+                "id": "Хлопок-сырец (спот) Сорт первый сорт Класс 1-класс",
+                "label": "Хлопок-сырец (спот) Сорт первый сорт Класс 1-класс",
+                "score": 0.01449
+              },
+              {
+                "id": "ПРОВОЛОКА АРМАТУРНАЯ МАРКА ВР-1 РАЗМЕР Ø5ММ",
+                "label": "ПРОВОЛОКА АРМАТУРНАЯ МАРКА ВР-1 РАЗМЕР Ø5ММ",
+                "score": 0.01429
+              },
+              {
+                "id": "Хлопок-сырец (спот) Сорт первый сорт Класс 1 класс",
+                "label": "Хлопок-сырец (спот) Сорт первый сорт Класс 1 класс",
+                "score": 0.01429
+              },
+              {
+                "id": "ПРОВОЛОКА АРМАТУРНАЯ МАРКА ВР-1 РАЗМЕР Ø4ММ",
+                "label": "ПРОВОЛОКА АРМАТУРНАЯ МАРКА ВР-1 РАЗМЕР Ø4ММ",
+                "score": 0.01408
+              },
+              {
+                "id": "ХЛОПОК-СЫРЕЦ (ФОРВАРД) СОРТ ПЕРВЫЙ СОРТ КЛАСС I КЛАСС",
+                "label": "ХЛОПОК-СЫРЕЦ (ФОРВАРД) СОРТ ПЕРВЫЙ СОРТ КЛАСС I КЛАСС",
+                "score": 0.01408
+              },
+              {
+                "id": "Масло хлопковое 1-сорта рафинированное дезодорированное",
+                "label": "Масло хлопковое 1-сорта рафинированное дезодорированное",
+                "score": 0.01389
+              }
+            ]
+          }
+        ],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 14239,
+        "trace_id": "1007cdd51784df739b23c35f92d76f67",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "total": "43176.64"
+        }
+      ]
+    },
+    {
+      "id": "avg_cement",
+      "question": "2022-yil 3-yanvardagi «Портландцемент ЦЕМ I 42,5 Н» bitimlarida hajm bo‘yicha o‘rtacha tortilgan bir tonna narxi so‘mda qancha? Barcha holatlarni kiriting.",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "1f928bd8-9090-440e-8600-f3b88a196cf5",
+        "session_id": "eval:avg_cement",
+        "question": "2022-yil 3-yanvardagi «Портландцемент ЦЕМ I 42,5 Н» bitimlarida hajm bo‘yicha o‘rtacha tortilgan bir tonna narxi so‘mda qancha? Barcha holatlarni kiriting.",
+        "language": "uz",
+        "kind": "answer",
+        "text": "2022-yil 3-yanvarda «Портландцемент ЦЕМ I 42,5 Н» uchun barcha holatlar hisobga olinganda hajm bo‘yicha o‘rtacha tortilgan narx **754 502,53 so‘m/tonna** bo‘lgan. Bekor qilingan bitimlarsiz u 755 116,62 so‘m/tonna; oddiy arifmetik o‘rtacha esa barcha holatlar bo‘yicha 749 182,93, bekor qilinganlarsiz 750 466,55 so‘m/tonnani tashkil etgan. Dollarli bitimlar summasi bitim sanasidagi kurs bo‘yicha so‘mga o‘girilgan.",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "Calculate all-status and non-cancelled weighted and simple prices in UZS per unit",
+            "sql": "SELECT unit, round(sum(amount_uzs)/nullif(sum(volume),0),2) AS weighted_all, round(sum(amount_uzs) FILTER (WHERE status <> 'Аннулирован(Не оплачен)')/nullif(sum(volume) FILTER (WHERE status <> 'Аннулирован(Не оплачен)'),0),2) AS weighted_active, round(avg(amount_uzs/nullif(volume,0)),2) AS simple_all, round(avg(amount_uzs/nullif(volume,0)) FILTER (WHERE status <> 'Аннулирован(Не оплачен)'),2) AS simple_active, count(*) AS n FROM v_deals WHERE product = 'Портландцемент ЦЕМ I 42,5 Н' AND deal_date >= DATE '2022-01-03' AND deal_date < DATE '2022-01-04' GROUP BY unit LIMIT 10",
+            "columns": [
+              "unit",
+              "weighted_all",
+              "weighted_active",
+              "simple_all",
+              "simple_active",
+              "n"
+            ],
+            "rows": [
+              [
+                "тонна",
+                754502.53,
+                755116.62,
+                749182.93,
+                750466.55,
+                14
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 1
+          }
+        ],
+        "entities": [
+          {
+            "kind": "product",
+            "query": "Портландцемент ЦЕМ I 42,5 Н",
+            "matches": [
+              {
+                "id": "Портландцемент ЦЕМ I 42,5 Н",
+                "label": "Портландцемент ЦЕМ I 42,5 Н",
+                "score": 0.03279
+              },
+              {
+                "id": "Цемент портландский ЦЕМ I 42,5Н",
+                "label": "Цемент портландский ЦЕМ I 42,5Н",
+                "score": 0.03175
+              },
+              {
+                "id": "ПОРТЛАНДЦЕМЕНТ Марка ЦЕМ I 42,5 Н",
+                "label": "ПОРТЛАНДЦЕМЕНТ Марка ЦЕМ I 42,5 Н",
+                "score": 0.03175
+              },
+              {
+                "id": "ПОРТЛАНДЦЕМЕНТ Марка ЦЕМ I 42,5Н",
+                "label": "ПОРТЛАНДЦЕМЕНТ Марка ЦЕМ I 42,5Н",
+                "score": 0.03101
+              },
+              {
+                "id": "Портландцемент Марка ЦЕМ I 42,5 Н",
+                "label": "Портландцемент Марка ЦЕМ I 42,5 Н",
+                "score": 0.03083
+              },
+              {
+                "id": "Портландцемент Марка ЦЕМ I 42,5Н",
+                "label": "Портландцемент Марка ЦЕМ I 42,5Н",
+                "score": 0.03054
+              },
+              {
+                "id": "ПОРТЛАНДЦЕМЕНТ МАРКА ЦЕМ I 42,5Н",
+                "label": "ПОРТЛАНДЦЕМЕНТ МАРКА ЦЕМ I 42,5Н",
+                "score": 0.03008
+              },
+              {
+                "id": "Цемент портландский Марка ЦЕМ I 42,5 Н",
+                "label": "Цемент портландский Марка ЦЕМ I 42,5 Н",
+                "score": 0.02881
+              },
+              {
+                "id": "ЦЕМЕНТ ПОРТЛАНДСКИЙ МАРКА ЦЕМ I 42,5 Н",
+                "label": "ЦЕМЕНТ ПОРТЛАНДСКИЙ МАРКА ЦЕМ I 42,5 Н",
+                "score": 0.02837
+              },
+              {
+                "id": "ЦЕМЕНТ ПОРТЛАНДСКИЙ МАРКА ЦЕМ I 42,5Н",
+                "label": "ЦЕМЕНТ ПОРТЛАНДСКИЙ МАРКА ЦЕМ I 42,5Н",
+                "score": 0.02819
+              },
+              {
+                "id": "ПОРТЛАНДЦЕМЕНТ ЦЕМ II/А-Ш 32,5 Н",
+                "label": "ПОРТЛАНДЦЕМЕНТ ЦЕМ II/А-Ш 32,5 Н",
+                "score": 0.02679
+              },
+              {
+                "id": "Цемент портландский Марка ЦЕМ II/В-К 32,5 Н",
+                "label": "Цемент портландский Марка ЦЕМ II/В-К 32,5 Н",
+                "score": 0.02667
+              },
+              {
+                "id": "Цемент портландский Марка ЦЕМ II/А-Ш 32,5 Н",
+                "label": "Цемент портландский Марка ЦЕМ II/А-Ш 32,5 Н",
+                "score": 0.02565
+              },
+              {
+                "id": "Портландцемент ЦЕМ II/В-К 32,5 Н",
+                "label": "Портландцемент ЦЕМ II/В-К 32,5 Н",
+                "score": 0.01471
+              },
+              {
+                "id": "ПОРТЛАНДЦЕМЕНТ ЦЕМ II/В-К 32,5 Н",
+                "label": "ПОРТЛАНДЦЕМЕНТ ЦЕМ II/В-К 32,5 Н",
+                "score": 0.01449
+              }
+            ]
+          }
+        ],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 14068,
+        "trace_id": "77a89fa2b252b7f522661a260b17debf",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "price": "754502.531301034295"
+        }
+      ]
+    },
+    {
+      "id": "avg_carbamide",
+      "question": "Какова средневзвешенная по объёму цена за тонну товара «Карбамид Марка Б» 3 января 2022 года в сумах, по всем статусам?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "fae0b79d-e3dc-43e6-8bbe-de2cbcb8b0f1",
+        "session_id": "eval:avg_carbamide",
+        "question": "Какова средневзвешенная по объёму цена за тонну товара «Карбамид Марка Б» 3 января 2022 года в сумах, по всем статусам?",
+        "language": "ru",
+        "kind": "answer",
+        "text": "На 3 января 2022 года средневзвешенная по объёму цена «Карбамид Марка Б» по всем статусам составила **3 460 946,36 сума за тонну**. Без аннулированных сделок она составила 3 460 946,36 сума за тонну; простая средняя цена по всем статусам — 3 468 936 сумов за тонну. Сделки в долларах пересчитаны в сумы по курсу на дату сделки.",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "Средневзвешенная и простая средняя цена карбамида марки Б в сумах за тонну",
+            "sql": "SELECT unit, ROUND(SUM(amount_uzs)/NULLIF(SUM(volume),0),2) AS weighted_all, ROUND(SUM(amount_uzs) FILTER (WHERE status <> 'Аннулирован(Не оплачен)')/NULLIF(SUM(volume) FILTER (WHERE status <> 'Аннулирован(Не оплачен)'),0),2) AS weighted_active, ROUND(AVG(amount_uzs/NULLIF(volume,0)),2) AS simple_all FROM v_deals WHERE product IN ('Карбамид Марка Б','КАРБАМИД МАРКА Б','Мочевина (карбамид) Марка Б') AND deal_date >= DATE '2022-01-03' AND deal_date < DATE '2022-01-04' GROUP BY unit",
+            "columns": [
+              "unit",
+              "weighted_all",
+              "weighted_active",
+              "simple_all"
+            ],
+            "rows": [
+              [
+                "тонна",
+                3460946.36,
+                3460946.36,
+                3468936
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 1
+          }
+        ],
+        "entities": [
+          {
+            "kind": "product",
+            "query": "Карбамид Марка Б",
+            "matches": [
+              {
+                "id": "КАРБАМИД МАРКА Б",
+                "label": "КАРБАМИД МАРКА Б",
+                "score": 0.04892
+              },
+              {
+                "id": "Карбамид Марка Б",
+                "label": "Карбамид Марка Б",
+                "score": 0.04865
+              },
+              {
+                "id": "Мочевина (карбамид) Марка Б",
+                "label": "Мочевина (карбамид) Марка Б",
+                "score": 0.04762
+              },
+              {
+                "id": "Селитра аммиачная Марка Б",
+                "label": "Селитра аммиачная Марка Б",
+                "score": 0.04663
+              },
+              {
+                "id": "Аммиачная селитра Марка Б",
+                "label": "Аммиачная селитра Марка Б",
+                "score": 0.04639
+              },
+              {
+                "id": "Битум Марка БНД 90/130 Тип дорожный",
+                "label": "Битум Марка БНД 90/130 Тип дорожный",
+                "score": 0.04346
+              },
+              {
+                "id": "Битум Марка БНД 60/90 Тип дорожный",
+                "label": "Битум Марка БНД 60/90 Тип дорожный",
+                "score": 0.04336
+              },
+              {
+                "id": "Комбикорм Марка КС-70",
+                "label": "Комбикорм Марка КС-70",
+                "score": 0.04309
+              },
+              {
+                "id": "Поливинилхлорид Марка SG-5 Тип суспензионный",
+                "label": "Поливинилхлорид Марка SG-5 Тип суспензионный",
+                "score": 0.04307
+              },
+              {
+                "id": "Комбикорм Марка КС-65",
+                "label": "Комбикорм Марка КС-65",
+                "score": 0.04255
+              },
+              {
+                "id": "Битум Марка БНД 70/100 Тип дорожный",
+                "label": "Битум Марка БНД 70/100 Тип дорожный",
+                "score": 0.04036
+              },
+              {
+                "id": "Кормосмесь Марка КС-65",
+                "label": "Кормосмесь Марка КС-65",
+                "score": 0.03847
+              },
+              {
+                "id": "Поливинилхлорид Марка SG-7 Тип суспензионный",
+                "label": "Поливинилхлорид Марка SG-7 Тип суспензионный",
+                "score": 0.02941
+              },
+              {
+                "id": "Кормосмесь Марка КС-70",
+                "label": "Кормосмесь Марка КС-70",
+                "score": 0.02857
+              },
+              {
+                "id": "Битум нефтяной Марка БНД 60/90 Тип дорожный",
+                "label": "Битум нефтяной Марка БНД 60/90 Тип дорожный",
+                "score": 0.02778
+              }
+            ]
+          }
+        ],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 15476,
+        "trace_id": "1f01d8f50f3230c73ef50204425795fd",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "price": "3460946.361111111111"
+        }
+      ]
+    },
+    {
+      "id": "top_seller",
+      "question": "2022-yil 3-yanvarda barcha holatlardagi bitimlar soni bo‘yicha eng ko‘p sotgan sotuvchi kim?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "91943a80-ddfd-48fc-bd16-2d230581842e",
+        "session_id": "eval:top_seller",
+        "question": "2022-yil 3-yanvarda barcha holatlardagi bitimlar soni bo‘yicha eng ko‘p sotgan sotuvchi kim?",
+        "language": "uz",
+        "kind": "answer",
+        "text": "2022-yil 3-yanvarda barcha holatlardagi bitimlar soni bo‘yicha eng ko‘p sotgan sotuvchi — «ҲЎҲИЗ ЕНЕРГО» МЧЖ: 18 ta bitim.",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "Barcha holatlardagi bitimlar soni bo‘yicha eng faol sotuvchini aniqlash",
+            "sql": "SELECT seller_name, count(*) AS deals FROM v_deals WHERE deal_date >= DATE '2022-01-03' AND deal_date < DATE '2022-01-04' GROUP BY seller_inn, seller_name ORDER BY deals DESC, seller_name LIMIT 1",
+            "columns": [
+              "seller_name",
+              "deals"
+            ],
+            "rows": [
+              [
+                "\"ҲЎҲИЗ ЕНЕРГО\" МЧЖ",
+                18
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 2
+          }
+        ],
+        "entities": [],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 8106,
+        "trace_id": "fcea10e1f79fd5c796affa424e207484",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "seller_name": "\"ҲЎҲИЗ ЕНЕРГО\" МЧЖ",
+          "total": 18
+        }
+      ]
+    },
+    {
+      "id": "top_buyer",
+      "question": "2022 йил 3 январда барча ҳолатлардаги битимлар сони бўйича энг кўп харид қилган харидор ким?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "9cf9e9a2-3a69-4774-9759-f66899f46296",
+        "session_id": "eval:top_buyer",
+        "question": "2022 йил 3 январда барча ҳолатлардаги битимлар сони бўйича энг кўп харид қилган харидор ким?",
+        "language": "uz",
+        "kind": "answer",
+        "text": "Энг кўп битим тузган харидор — «Ro‘zo‘z Biznes» QK: барча ҳолатлар бўйича 3 та битим, аннулирланганлар чиқариб ташланганда 2 та битим.",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "Указанную дату найти покупателей с наибольшим числом сделок и подсчитать сделки без аннулированных",
+            "sql": "SELECT buyer_name, count(*) AS total, count(*) FILTER (WHERE status <> 'Аннулирован(Не оплачен)') AS not_cancelled FROM v_deals WHERE deal_date >= DATE '2022-01-03' AND deal_date < DATE '2022-01-04' GROUP BY buyer_inn, buyer_name ORDER BY total DESC FETCH FIRST 10 ROWS WITH TIES",
+            "columns": [
+              "buyer_name",
+              "total",
+              "not_cancelled"
+            ],
+            "rows": [
+              [
+                "\"Ro‘zo‘z Biznes\" QK",
+                3,
+                2
+              ],
+              [
+                "\"Kifo Impeks\" MChJ",
+                2,
+                2
+              ],
+              [
+                "\"Qo‘jun Logistik\" MChJ",
+                2,
+                2
+              ],
+              [
+                "\"Zoket Invest\" OK",
+                2,
+                2
+              ],
+              [
+                "\"Dago‘dor Plus\" MChJ",
+                2,
+                2
+              ],
+              [
+                "\"ПАФИВЎР ПЛУС\" МЧЖ",
+                2,
+                1
+              ],
+              [
+                "\"Qitoge Savdo\" MChJ",
+                2,
+                2
+              ],
+              [
+                "HOCHIT IMPEKS MAS’ULIYATI CHEKLANGAN JAMIYATI",
+                1,
+                1
+              ],
+              [
+                "\"Supezum Servis\" MChJ",
+                1,
+                1
+              ],
+              [
+                "TATA QURILISH MCHJ",
+                1,
+                1
+              ],
+              [
+                "\"Qizet Trade\" MChJ",
+                1,
+                1
+              ],
+              [
+                "\"Moto Group\" MChJ",
+                1,
+                1
+              ],
+              [
+                "ZO‘MEZE PLUS MCHJ",
+                1,
+                1
+              ],
+              [
+                "PUHA IMPEKS MCHJ",
+                1,
+                1
+              ],
+              [
+                "\"Popar Qurilish\" MChJ",
+                1,
+                1
+              ],
+              [
+                "SHIZO‘VIK QURILISH MCHJ",
+                1,
+                1
+              ],
+              [
+                "HO‘CHAL GROUP MCHJ",
+                1,
+                1
+              ],
+              [
+                "ZOMU INVEST MCHJ",
+                1,
+                1
+              ],
+              [
+                "LUCHU TRADE MCHJ",
+                1,
+                1
+              ],
+              [
+                "\"Hedofu Qurilish\" MChJ",
+                1,
+                0
+              ],
+              [
+                "CHIQIKIM SERVIS OK",
+                1,
+                0
+              ],
+              [
+                "\"Jemi Savdo\" QK",
+                1,
+                1
+              ],
+              [
+                "\"Yapaqo‘n Group\" MChJ",
+                1,
+                0
+              ],
+              [
+                "\"Jo‘kut Impeks\" MChJ",
+                1,
+                1
+              ],
+              [
+                "MOLO‘JIZ INVEST MCHJ",
+                1,
+                1
+              ],
+              [
+                "\"Voyor Qurilish\" MChJ",
+                1,
+                0
+              ],
+              [
+                "FIFU SERVIS MCHJ",
+                1,
+                1
+              ],
+              [
+                "ROBUHI SAVDO MCHJ",
+                1,
+                1
+              ],
+              [
+                "VO‘PUR IMPEKS MAS’ULIYATI CHEKLANGAN JAMIYATI",
+                1,
+                1
+              ],
+              [
+                "\"So‘yo‘pul Savdo\" MChJ",
+                1,
+                1
+              ],
+              [
+                "\"Tikoqi Qurilish\" MChJ",
+                1,
+                1
+              ],
+              [
+                "\"ДЕЛО ИНВЕСТ\" МЧЖ",
+                1,
+                1
+              ],
+              [
+                "\"Bushak Trade\" MChJ",
+                1,
+                1
+              ],
+              [
+                "VOFECHIM QURILISH MAS’ULIYATI CHEKLANGAN JAMIYATI",
+                1,
+                1
+              ],
+              [
+                "TIPI LOGISTIK MCHJ",
+                1,
+                1
+              ],
+              [
+                "\"Natez Logistik\" MChJ",
+                1,
+                0
+              ],
+              [
+                "\"ШИЧОФУМ ИМПЕКС\" АЖ",
+                1,
+                1
+              ],
+              [
+                "ZOZET IMPEKS QK",
+                1,
+                1
+              ],
+              [
+                "\"Ko‘shexo‘ Trade\" MChJ",
+                1,
+                1
+              ],
+              [
+                "VEJAL INVEST MCHJ",
+                1,
+                1
+              ],
+              [
+                "\"МОДАТА ПЛУС\" МЧЖ",
+                1,
+                1
+              ],
+              [
+                "\"ЙЕТОЗ ЛОГИСТИК\" ОК",
+                1,
+                1
+              ],
+              [
+                "\"Guchechon Plus\" MChJ",
+                1,
+                1
+              ],
+              [
+                "SHUSHOZ SAVDO MCHJ",
+                1,
+                1
+              ],
+              [
+                "CHISHI LOGISTIK MCHJ",
+                1,
+                1
+              ],
+              [
+                "LISOKI LOGISTIK MAS’ULIYATI CHEKLANGAN JAMIYATI",
+                1,
+                1
+              ],
+              [
+                "BOKAM SERVIS MCHJ",
+                1,
+                1
+              ],
+              [
+                "\"Jetu Logistik\" MChJ",
+                1,
+                1
+              ],
+              [
+                "\"Go‘shon Servis\" QK",
+                1,
+                1
+              ],
+              [
+                "\"Vizulir Plus\" MChJ",
+                1,
+                1
+              ],
+              [
+                "\"Vene Biznes\" MChJ",
+                1,
+                1
+              ],
+              [
+                "\"СОТУ ИНВЕСТ\" АЖ",
+                1,
+                1
+              ],
+              [
+                "\"Do‘chik Servis\" MChJ",
+                1,
+                1
+              ],
+              [
+                "\"Zetache Logistik\" MChJ",
+                1,
+                1
+              ],
+              [
+                "JO‘HIVE TRADE AJ",
+                1,
+                1
+              ],
+              [
+                "\"Polim Servis\" MChJ",
+                1,
+                1
+              ],
+              [
+                "GANU BIZNES QK",
+                1,
+                1
+              ],
+              [
+                "YIBEM TRADE MCHJ",
+                1,
+                1
+              ],
+              [
+                "\"Lihi Qurilish\" MChJ",
+                1,
+                1
+              ],
+              [
+                "\"Podez Qurilish\" AJ",
+                1,
+                1
+              ],
+              [
+                "JISHO PLUS MCHJ",
+                1,
+                1
+              ],
+              [
+                "\"Shane Plus\" MChJ",
+                1,
+                1
+              ],
+              [
+                "DEBUZ IMPEKS MCHJ",
+                1,
+                1
+              ],
+              [
+                "QIBER SERVIS MCHJ",
+                1,
+                1
+              ],
+              [
+                "\"Ximuchar Invest\" XK",
+                1,
+                1
+              ],
+              [
+                "\"Bibinoz Invest\" XK",
+                1,
+                0
+              ],
+              [
+                "QEPIRO‘M QURILISH MCHJ",
+                1,
+                1
+              ],
+              [
+                "CHUXA QURILISH MCHJ",
+                1,
+                1
+              ],
+              [
+                "\"Hayo‘kat Plus\" OK",
+                1,
+                1
+              ],
+              [
+                "\"Fehaz Qurilish\" MChJ",
+                1,
+                0
+              ],
+              [
+                "\"Kicho‘la Invest\" AJ",
+                1,
+                1
+              ],
+              [
+                "XIBOR QURILISH MCHJ",
+                1,
+                1
+              ],
+              [
+                "\"Xo‘xok Plus\" MChJ",
+                1,
+                1
+              ],
+              [
+                "SHEFAM LOGISTIK MCHJ",
+                1,
+                1
+              ],
+              [
+                "QOXUM INVEST MAS’ULIYATI CHEKLANGAN JAMIYATI",
+                1,
+                1
+              ],
+              [
+                "BO‘MO‘K SAVDO MCHJ",
+                1,
+                1
+              ],
+              [
+                "\"ПЕЙИТ ТРАДЕ\" ҚК",
+                1,
+                1
+              ],
+              [
+                "\"РОФУЗ БИЗНЕС\" МЧЖ",
+                1,
+                1
+              ],
+              [
+                "RIDUR TRADE OK",
+                1,
+                1
+              ],
+              [
+                "\"Bohosho‘ Savdo\" MChJ",
+                1,
+                1
+              ],
+              [
+                "\"Cho‘qet Servis\" MChJ",
+                1,
+                1
+              ],
+              [
+                "\"ЙЎПО ИНВЕСТ\" МЧЖ",
+                1,
+                1
+              ],
+              [
+                "\"ШАЗУ СЕРВИС\" МЧЖ",
+                1,
+                1
+              ],
+              [
+                "\"Pozok Trade\" MChJ",
+                1,
+                1
+              ],
+              [
+                "\"ФОДИХЕТ ҚУРИЛИШ\" МЧЖ",
+                1,
+                1
+              ],
+              [
+                "\"Fo‘po‘rut Servis\" AJ",
+                1,
+                1
+              ],
+              [
+                "\"Go‘reha Trade\" MChJ",
+                1,
+                1
+              ],
+              [
+                "ZEZA INVEST MCHJ",
+                1,
+                1
+              ],
+              [
+                "DAHEQA GROUP MCHJ",
+                1,
+                1
+              ],
+              [
+                "\"Jo‘gun Logistik\" QK",
+                1,
+                1
+              ],
+              [
+                "JO‘XO‘GEZ PLUS MCHJ",
+                1,
+                1
+              ],
+              [
+                "\"Muno‘k Savdo\" MChJ",
+                1,
+                1
+              ],
+              [
+                "\"Maqun Invest\" MChJ",
+                1,
+                1
+              ],
+              [
+                "CHO‘VUNOL BIZNES MAS’ULIYATI CHEKLANGAN JAMIYATI",
+                1,
+                1
+              ],
+              [
+                "\"Zonihe Biznes\" MChJ",
+                1,
+                1
+              ],
+              [
+                "\"Zogo‘m Group\" MChJ",
+                1,
+                1
+              ],
+              [
+                "\"Quko‘lar Invest\" MChJ",
+                1,
+                1
+              ],
+              [
+                "\"Honelut Plus\" MChJ",
+                1,
+                1
+              ],
+              [
+                "DEHEDOL SAVDO MCHJ",
+                1,
+                1
+              ],
+              [
+                "QO‘QE TRADE OK",
+                1,
+                1
+              ],
+              [
+                "NO‘YIK IMPEKS MCHJ",
+                1,
+                1
+              ],
+              [
+                "\"Niraxi Trade\" OK",
+                1,
+                1
+              ],
+              [
+                "\"Reshoyi Savdo\" MChJ",
+                1,
+                1
+              ],
+              [
+                "\"Neyut Qurilish\" MChJ",
+                1,
+                1
+              ],
+              [
+                "MEGOT GROUP MAS’ULIYATI CHEKLANGAN JAMIYATI",
+                1,
+                1
+              ],
+              [
+                "\"НОПУЛО ИНВЕСТ\" ОК",
+                1,
+                1
+              ],
+              [
+                "\"Cheyal Savdo\" XK",
+                1,
+                1
+              ],
+              [
+                "\"ШОПА БИЗНЕС\" МЧЖ",
+                1,
+                1
+              ],
+              [
+                "\"Zobum Logistik\" XK",
+                1,
+                1
+              ],
+              [
+                "MUVUR GROUP MCHJ",
+                1,
+                1
+              ],
+              [
+                "\"Ko‘qi Invest\" MChJ",
+                1,
+                0
+              ],
+              [
+                "RUVIXO‘ SAVDO MAS’ULIYATI CHEKLANGAN JAMIYATI",
+                1,
+                0
+              ],
+              [
+                "PO‘XOYIR INVEST MAS’ULIYATI CHEKLANGAN JAMIYATI",
+                1,
+                1
+              ],
+              [
+                "\"Zapu Trade\" MChJ",
+                1,
+                1
+              ],
+              [
+                "\"Fo‘sor Qurilish\" MChJ",
+                1,
+                1
+              ],
+              [
+                "NUZUSU QURILISH MCHJ",
+                1,
+                1
+              ],
+              [
+                "MAHEK LOGISTIK MAS’ULIYATI CHEKLANGAN JAMIYATI",
+                1,
+                1
+              ],
+              [
+                "\"НОЖОК БИЗНЕС\" МЧЖ",
+                1,
+                1
+              ],
+              [
+                "\"Yora Servis\" MChJ",
+                1,
+                1
+              ],
+              [
+                "XIRA BIZNES MAS’ULIYATI CHEKLANGAN JAMIYATI",
+                1,
+                1
+              ],
+              [
+                "CHOVE SAVDO MCHJ",
+                1,
+                1
+              ],
+              [
+                "\"Bo‘juk Servis\" MChJ",
+                1,
+                1
+              ],
+              [
+                "ZOPUT INVEST MCHJ",
+                1,
+                1
+              ],
+              [
+                "\"Zopo‘ Group\" MChJ",
+                1,
+                1
+              ],
+              [
+                "\"Yesomo‘ Savdo\" MChJ",
+                1,
+                1
+              ],
+              [
+                "\"No‘qak Group\" MChJ",
+                1,
+                1
+              ],
+              [
+                "FUJO‘GEZ PLUS MCHJ",
+                1,
+                1
+              ],
+              [
+                "\"Hesheqo‘ Logistik\" MChJ",
+                1,
+                1
+              ],
+              [
+                "\"Pobet Qurilish\" MChJ",
+                1,
+                1
+              ],
+              [
+                "GOPA LOGISTIK MAS’ULIYATI CHEKLANGAN JAMIYATI",
+                1,
+                1
+              ],
+              [
+                "\"Besheni Plus\" MChJ",
+                1,
+                1
+              ],
+              [
+                "NAHUN TRADE MAS’ULIYATI CHEKLANGAN JAMIYATI",
+                1,
+                0
+              ],
+              [
+                "\"Sho‘len Trade\" MChJ",
+                1,
+                1
+              ],
+              [
+                "MIYEN BIZNES MAS’ULIYATI CHEKLANGAN JAMIYATI",
+                1,
+                1
+              ],
+              [
+                "MESHIK IMPEKS MCHJ",
+                1,
+                1
+              ],
+              [
+                "\"ХАҲУЛ СЕРВИС\" МЧЖ",
+                1,
+                0
+              ],
+              [
+                "\"Xebo‘zo Logistik\" MChJ",
+                1,
+                1
+              ],
+              [
+                "\"Yeto‘chu Servis\" XK",
+                1,
+                1
+              ],
+              [
+                "\"Gulit Savdo\" MChJ",
+                1,
+                1
+              ],
+              [
+                "\"Dayo‘m Plus\" MChJ",
+                1,
+                1
+              ],
+              [
+                "\"Gexar Logistik\" MChJ",
+                1,
+                1
+              ],
+              [
+                "PEZO PLUS MCHJ",
+                1,
+                1
+              ],
+              [
+                "\"Masigo‘ Impeks\" MChJ",
+                1,
+                1
+              ],
+              [
+                "JIZAM INVEST OK",
+                1,
+                1
+              ],
+              [
+                "\"ЗАЛЕВОК САВДО\" МЧЖ",
+                1,
+                1
+              ],
+              [
+                "\"Lo‘no‘zat Qurilish\" MChJ",
+                1,
+                1
+              ],
+              [
+                "\"ЖОСЕФУ ПЛУС\" МЧЖ",
+                1,
+                1
+              ],
+              [
+                "YO‘RO‘L BIZNES MAS’ULIYATI CHEKLANGAN JAMIYATI",
+                1,
+                1
+              ],
+              [
+                "CHIVA BIZNES MCHJ",
+                1,
+                1
+              ],
+              [
+                "\"Kexon Group\" MChJ",
+                1,
+                1
+              ],
+              [
+                "SHIFEXO‘T TRADE MCHJ",
+                1,
+                1
+              ],
+              [
+                "\"Qedopim Qurilish\" QK",
+                1,
+                1
+              ],
+              [
+                "MIXOJE PLUS MCHJ",
+                1,
+                1
+              ],
+              [
+                "\"Yo‘bijuk Qurilish\" MChJ",
+                1,
+                0
+              ],
+              [
+                "\"Shomet Plus\" AJ",
+                1,
+                1
+              ],
+              [
+                "\"Feka Invest\" XK",
+                1,
+                1
+              ],
+              [
+                "PUJOM GROUP MCHJ",
+                1,
+                1
+              ],
+              [
+                "\"Gudo‘ Plus\" MChJ",
+                1,
+                1
+              ],
+              [
+                "DAGOVOK LOGISTIK MCHJ",
+                1,
+                1
+              ],
+              [
+                "\"Peshabor Trade\" MChJ",
+                1,
+                1
+              ],
+              [
+                "\"Sifu Impeks\" MChJ",
+                1,
+                1
+              ],
+              [
+                "LIQU BIZNES OK",
+                1,
+                1
+              ],
+              [
+                "\"Nuko‘ba Logistik\" MChJ",
+                1,
+                1
+              ],
+              [
+                "\"Peket Qurilish\" OK",
+                1,
+                1
+              ]
+            ],
+            "row_count": 164,
+            "truncated": false,
+            "duration_ms": 2
+          }
+        ],
+        "entities": [],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 7532,
+        "trace_id": "7d0ba7bd37641c5b1178d9d8610d6fee",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "buyer_name": "\"Ro‘zo‘z Biznes\" QK",
+          "total": 3
+        }
+      ]
+    },
+    {
+      "id": "top_seller_sum",
+      "question": "2022-yil 3-yanvarda barcha bitimlarining so‘mdagi umumiy summasi eng katta sotuvchi kim va summa qancha?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "cbe6037a-6ced-408b-a9a4-19e4e34d55bd",
+        "session_id": "eval:top_seller_sum",
+        "question": "2022-yil 3-yanvarda barcha bitimlarining so‘mdagi umumiy summasi eng katta sotuvchi kim va summa qancha?",
+        "language": "uz",
+        "kind": "answer",
+        "text": "2022-yil 3-yanvarda eng katta umumiy summaga ega sotuvchi — «Go‘ve Tekstil» MChJ: barcha bitimlar bo‘yicha 9 116 342 726 so‘m, bekor qilingan bitimlar chiqarilganda 8 317 639 520 so‘m. Chet el valyutasidagi bitimlar bitim sanasidagi kurs bo‘yicha so‘mga o‘girilgan.",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "Find highest seller totals in UZS for the date, both all records and excluding cancellations",
+            "sql": "WITH s AS (SELECT seller_inn, seller_name, round(sum(amount_uzs),2) AS total, round(coalesce(sum(amount_uzs) FILTER (WHERE status <> 'Аннулирован(Не оплачен)'),0),2) AS noncancelled FROM v_deals WHERE deal_date >= DATE '2022-01-03' AND deal_date < DATE '2022-01-04' GROUP BY seller_inn,seller_name), ranked AS (SELECT *, row_number() OVER (ORDER BY total DESC, seller_inn) AS r_all, row_number() OVER (ORDER BY noncancelled DESC, seller_inn) AS r_non FROM s) SELECT seller_name,total,noncancelled,r_all,r_non FROM ranked WHERE r_all=1 OR r_non=1 LIMIT 2",
+            "columns": [
+              "seller_name",
+              "total",
+              "noncancelled",
+              "r_all",
+              "r_non"
+            ],
+            "rows": [
+              [
+                "\"Go‘ve Tekstil\" MChJ",
+                9116342726,
+                8317639520,
+                1,
+                1
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 5
+          }
+        ],
+        "entities": [],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 12125,
+        "trace_id": "e9d206c29121b420cd1b3d6146c9551c",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "seller_name": "\"Go‘ve Tekstil\" MChJ",
+          "total": "9116342726"
+        }
+      ]
+    },
+    {
+      "id": "company_rukusho_ru",
+      "question": "Сколько сделок как продавец заключила компания Рукушо Фермер МЧЖ за 2022 год, включая все статусы?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "1999cd01-5360-44bd-9ce8-2bbb8ca4d26f",
+        "session_id": "eval:company_rukusho_ru",
+        "question": "Сколько сделок как продавец заключила компания Рукушо Фермер МЧЖ за 2022 год, включая все статусы?",
+        "language": "ru",
+        "kind": "answer",
+        "text": "Компания RUKUSHO‘ FERMER MCHJ заключила как продавец 912 сделок за 2022 год, включая все статусы.",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "Количество сделок продавца за 2022 год с учётом всех статусов",
+            "sql": "SELECT count(*) AS total FROM v_deals WHERE seller_inn = '921912462' AND deal_date >= DATE '2022-01-01' AND deal_date < DATE '2023-01-01'",
+            "columns": [
+              "total"
+            ],
+            "rows": [
+              [
+                912
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 4
+          }
+        ],
+        "entities": [
+          {
+            "kind": "company",
+            "query": "Рукушо Фермер МЧЖ",
+            "matches": [
+              {
+                "id": "921912462",
+                "label": "RUKUSHO‘ FERMER MCHJ",
+                "score": 1.0
+              },
+              {
+                "id": "962251677",
+                "label": "\"Husho‘ Fermer\" MChJ",
+                "score": 0.667
+              },
+              {
+                "id": "999222902",
+                "label": "\"Nutunim Fermer\" MChJ",
+                "score": 0.467
+              },
+              {
+                "id": "972385099",
+                "label": "XO‘VO‘ FERMER MCHJ",
+                "score": 0.467
+              },
+              {
+                "id": "976288912",
+                "label": "KO‘VIZ FERMER MCHJ",
+                "score": 0.467
+              },
+              {
+                "id": "959121394",
+                "label": "\"ВУРА ФЕРМЕР\" МЧЖ",
+                "score": 0.467
+              },
+              {
+                "id": "923113140",
+                "label": "\"Tusoya Fermer\" MChJ",
+                "score": 0.467
+              },
+              {
+                "id": "965718674",
+                "label": "\"Mopa Fermer\" MChJ",
+                "score": 0.467
+              }
+            ]
+          }
+        ],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 11160,
+        "trace_id": "c6cb6e2889b112f88ec38255e83d4ca0",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "total": 912
+        }
+      ]
+    },
+    {
+      "id": "company_rukusho_uz",
+      "question": "Рукушо Фермер МЧЖ 2022 йилда сотувчи сифатида барча ҳолатларда нечта битим тузган?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "8a13aecb-b67f-41dd-9a00-9459022065b7",
+        "session_id": "eval:company_rukusho_uz",
+        "question": "Рукушо Фермер МЧЖ 2022 йилда сотувчи сифатида барча ҳолатларда нечта битим тузган?",
+        "language": "uz",
+        "kind": "answer",
+        "text": "RUKUSHO‘ FERMER MCHJ 2022 йилда сотувчи сифатида барча ҳолатлар бўйича 912 та битим тузган. Бекор қилинган битимлар чиқариб ташланса, 852 та битим қолади.",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "Компаниянинг йил давомида сотувчи сифатидаги битимлари сони",
+            "sql": "SELECT count(*) AS total, count(*) FILTER (WHERE status <> 'Аннулирован(Не оплачен)') AS not_cancelled FROM v_deals WHERE seller_inn = '921912462' AND deal_date >= DATE '2022-01-01' AND deal_date < DATE '2023-01-01'",
+            "columns": [
+              "total",
+              "not_cancelled"
+            ],
+            "rows": [
+              [
+                912,
+                852
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 5
+          }
+        ],
+        "entities": [
+          {
+            "kind": "company",
+            "query": "Рукушо Фермер МЧЖ",
+            "matches": [
+              {
+                "id": "921912462",
+                "label": "RUKUSHO‘ FERMER MCHJ",
+                "score": 1.0
+              },
+              {
+                "id": "962251677",
+                "label": "\"Husho‘ Fermer\" MChJ",
+                "score": 0.667
+              },
+              {
+                "id": "999222902",
+                "label": "\"Nutunim Fermer\" MChJ",
+                "score": 0.467
+              },
+              {
+                "id": "972385099",
+                "label": "XO‘VO‘ FERMER MCHJ",
+                "score": 0.467
+              },
+              {
+                "id": "976288912",
+                "label": "KO‘VIZ FERMER MCHJ",
+                "score": 0.467
+              },
+              {
+                "id": "959121394",
+                "label": "\"ВУРА ФЕРМЕР\" МЧЖ",
+                "score": 0.467
+              },
+              {
+                "id": "923113140",
+                "label": "\"Tusoya Fermer\" MChJ",
+                "score": 0.467
+              },
+              {
+                "id": "965718674",
+                "label": "\"Mopa Fermer\" MChJ",
+                "score": 0.467
+              }
+            ]
+          }
+        ],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 9554,
+        "trace_id": "e26f16431f600b54c15c21a621e38a2d",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "total": 912
+        }
+      ]
+    },
+    {
+      "id": "company_ruxok_latin",
+      "question": "Ruxok Oziq-ovqat MChJ 2022-yilda sotuvchi sifatida barcha holatlarda nechta bitim tuzgan?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "e430eeb6-a284-4886-a201-099431121812",
+        "session_id": "eval:company_ruxok_latin",
+        "question": "Ruxok Oziq-ovqat MChJ 2022-yilda sotuvchi sifatida barcha holatlarda nechta bitim tuzgan?",
+        "language": "uz",
+        "kind": "answer",
+        "text": "“РЎХОК ОЗИҚ-ОВҚАТ” МЧЖ 2022-yilda sotuvchi sifatida barcha holatlar bo‘yicha 2 137 ta bitim tuzgan. To‘lanmagani uchun bekor qilingan bitimlar chiqarib tashlanganda, 1 985 ta bitim qoladi.",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "Kompaniyaning sotuvchi sifatida yillik bitimlari soni",
+            "sql": "SELECT count(*) AS all_deals, count(*) FILTER (WHERE status <> 'Аннулирован(Не оплачен)') AS not_cancelled FROM v_deals WHERE seller_inn = '993681515' AND deal_date >= DATE '2022-01-01' AND deal_date < DATE '2023-01-01'",
+            "columns": [
+              "all_deals",
+              "not_cancelled"
+            ],
+            "rows": [
+              [
+                2137,
+                1985
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 5
+          }
+        ],
+        "entities": [
+          {
+            "kind": "company",
+            "query": "Ruxok Oziq-ovqat MChJ",
+            "matches": [
+              {
+                "id": "993681515",
+                "label": "\"РЎХОК ОЗИҚ-ОВҚАТ\" МЧЖ",
+                "score": 0.75
+              },
+              {
+                "id": "995651229",
+                "label": "\"Favada Oziq-ovqat\" MChJ",
+                "score": 0.625
+              },
+              {
+                "id": "926628932",
+                "label": "\"Gayo‘zo‘ Oziq-ovqat\" MChJ",
+                "score": 0.625
+              },
+              {
+                "id": "937555032",
+                "label": "\"МИХИН ОЗИҚ-ОВҚАТ\" МЧЖ",
+                "score": 0.625
+              },
+              {
+                "id": "924421349",
+                "label": "YEPO‘CHER OZIQ-OVQAT MCHJ",
+                "score": 0.625
+              },
+              {
+                "id": "956766862",
+                "label": "\"Piko‘l Oziq-ovqat\" OK",
+                "score": 0.625
+              },
+              {
+                "id": "992221949",
+                "label": "\"Fo‘cheral Oziq-ovqat\" XK",
+                "score": 0.625
+              },
+              {
+                "id": "924429794",
+                "label": "\"Fo‘to‘ye Oziq-ovqat\" MChJ",
+                "score": 0.625
+              }
+            ]
+          }
+        ],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 10287,
+        "trace_id": "9beef43a275fcc09f6903cb8beb55c09",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "total": 2137
+        }
+      ]
+    },
+    {
+      "id": "company_ruxok_latin_region",
+      "question": "Ruxok Oziq-ovqat MChJning ishtirokchilar reyestridagi STIR raqami qanday?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": false,
+        "WithinTimeLimit": true
+      },
+      "correct": false,
+      "result": {
+        "id": "ccde8eca-e7b2-4dc5-ab7a-dc2fc19f5480",
+        "session_id": "eval:company_ruxok_latin_region",
+        "question": "Ruxok Oziq-ovqat MChJning ishtirokchilar reyestridagi STIR raqami qanday?",
+        "language": "uz",
+        "kind": "answer",
+        "text": "“РЎХОК ОЗИҚ-ОВҚАТ” МЧЖning STIR raqami: **993681515**.",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "Ishtirokchilar reyestridan kompaniya STIRini aniqlash",
+            "sql": "SELECT name, inn FROM participants WHERE inn = '993681515' LIMIT 1",
+            "columns": [
+              "name",
+              "inn"
+            ],
+            "rows": [
+              [
+                "\"РЎХОК ОЗИҚ-ОВҚАТ\" МЧЖ",
+                "993681515"
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 0
+          }
+        ],
+        "entities": [
+          {
+            "kind": "company",
+            "query": "Ruxok Oziq-ovqat MChJ",
+            "matches": [
+              {
+                "id": "993681515",
+                "label": "\"РЎХОК ОЗИҚ-ОВҚАТ\" МЧЖ",
+                "score": 0.75
+              },
+              {
+                "id": "995651229",
+                "label": "\"Favada Oziq-ovqat\" MChJ",
+                "score": 0.625
+              },
+              {
+                "id": "926628932",
+                "label": "\"Gayo‘zo‘ Oziq-ovqat\" MChJ",
+                "score": 0.625
+              },
+              {
+                "id": "937555032",
+                "label": "\"МИХИН ОЗИҚ-ОВҚАТ\" МЧЖ",
+                "score": 0.625
+              },
+              {
+                "id": "924421349",
+                "label": "YEPO‘CHER OZIQ-OVQAT MCHJ",
+                "score": 0.625
+              },
+              {
+                "id": "956766862",
+                "label": "\"Piko‘l Oziq-ovqat\" OK",
+                "score": 0.625
+              },
+              {
+                "id": "992221949",
+                "label": "\"Fo‘cheral Oziq-ovqat\" XK",
+                "score": 0.625
+              },
+              {
+                "id": "924429794",
+                "label": "\"Fo‘to‘ye Oziq-ovqat\" MChJ",
+                "score": 0.625
+              }
+            ]
+          }
+        ],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 10097,
+        "trace_id": "a0a56106c88bc3d76f74c83fb1830ea2",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "inn": "993681515"
+        }
+      ]
+    },
+    {
+      "id": "broker_seller",
+      "question": "100001 raqamli bitimda sotuvchining brokeri kim?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "e969ccd0-6ab8-4cf5-869b-2737df4401e3",
+        "session_id": "eval:broker_seller",
+        "question": "100001 raqamli bitimda sotuvchining brokeri kim?",
+        "language": "uz",
+        "kind": "answer",
+        "text": "100001 raqamli bitimda sotuvchining brokeri — TAZIDO‘Z BROKER MCHJ (BK060).",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "Bitim sotuvchisining brokerini aniqlash",
+            "sql": "SELECT deal_no, seller_broker, seller_broker_name FROM v_deals WHERE deal_no = 100001 LIMIT 1",
+            "columns": [
+              "deal_no",
+              "seller_broker",
+              "seller_broker_name"
+            ],
+            "rows": [
+              [
+                100001,
+                "BK060",
+                "TAZIDO‘Z BROKER MCHJ"
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 1
+          }
+        ],
+        "entities": [],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 5817,
+        "trace_id": "84bf11710f0cf43cb13882ffcab051fe",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "seller_broker_name": "TAZIDO‘Z BROKER MCHJ"
+        }
+      ]
+    },
+    {
+      "id": "broker_buyer",
+      "question": "100002 рақамли битимда харидорнинг брокери ким?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "995cb4be-0717-4d02-97f4-d84dba7cf23f",
+        "session_id": "eval:broker_buyer",
+        "question": "100002 рақамли битимда харидорнинг брокери ким?",
+        "language": "uz",
+        "kind": "answer",
+        "text": "100002 рақамли битимда харидорнинг брокери — XUYILEZ BROKER MCHJ (BK077).",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "Битим харидорининг брокерини аниқлаш",
+            "sql": "SELECT deal_no, buyer_broker, buyer_broker_name FROM v_deals WHERE deal_no = 100002 LIMIT 1",
+            "columns": [
+              "deal_no",
+              "buyer_broker",
+              "buyer_broker_name"
+            ],
+            "rows": [
+              [
+                100002,
+                "BK077",
+                "XUYILEZ BROKER MCHJ"
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 1
+          }
+        ],
+        "entities": [],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 7689,
+        "trace_id": "e5fba19886e3b0fc0b08d635718b5ce7",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "buyer_broker_name": "XUYILEZ BROKER MCHJ"
+        }
+      ]
+    },
+    {
+      "id": "contract_100001",
+      "question": "100001-shartnoma kartochkasida mahsulot nomi va bazis narxi qanday?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "ebe76bc1-a167-4d19-acd7-70824c5457c1",
+        "session_id": "eval:contract_100001",
+        "question": "100001-shartnoma kartochkasida mahsulot nomi va bazis narxi qanday?",
+        "language": "uz",
+        "kind": "answer",
+        "text": "100001-shartnomadagi mahsulot: **Профиль алюминиевый**. Bazis narxi: **54 078,50 so‘m/kilogramm**.",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "Shartnoma kartochkasidagi mahsulot nomi va bazis narxini aniqlash",
+            "sql": "SELECT contract_no, product_name, currency, unit, round(base_price, 2) AS base_price FROM contracts WHERE contract_no = '100001' LIMIT 1",
+            "columns": [
+              "contract_no",
+              "product_name",
+              "currency",
+              "unit",
+              "base_price"
+            ],
+            "rows": [
+              [
+                "100001",
+                "Профиль алюминиевый",
+                "Узбекский сум",
+                "килограмм",
+                54078.5
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 0
+          }
+        ],
+        "entities": [],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 6398,
+        "trace_id": "fc984f854545ebaa4b9a2e05db53ec7c",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "product_name": "Профиль алюминиевый",
+          "base_price": "54078.5"
+        }
+      ]
+    },
+    {
+      "id": "contract_100002",
+      "question": "Какой товар и базисная цена указаны в карточке контракта 100002?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "8f4eafaa-06c4-49dd-a2f8-8259ca798261",
+        "session_id": "eval:contract_100002",
+        "question": "Какой товар и базисная цена указаны в карточке контракта 100002?",
+        "language": "ru",
+        "kind": "answer",
+        "text": "В карточке контракта 100002 указан товар «Аммиачная селитра», марка Б. Базисная цена — 2 720 643 узбекских сума за тонну.",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "Получить товар и базисную цену из карточки контракта",
+            "sql": "SELECT contract_no, product_name, brand, grade, unit, currency, base_price FROM contracts WHERE contract_no = '100002' LIMIT 1",
+            "columns": [
+              "contract_no",
+              "product_name",
+              "brand",
+              "grade",
+              "unit",
+              "currency",
+              "base_price"
+            ],
+            "rows": [
+              [
+                "100002",
+                "Аммиачная селитра",
+                "Б",
+                null,
+                "тонна",
+                "Узбекский сум",
+                2720643
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 0
+          }
+        ],
+        "entities": [],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 5859,
+        "trace_id": "7779d875e745f1814dae7844dde5a3a3",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "product_name": "Аммиачная селитра",
+          "base_price": "2720643"
+        }
+      ]
+    },
+    {
+      "id": "deal_100001",
+      "question": "100001-sonli bitimning hajmi kilogrammda va summasi so‘mda qancha?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "b62970d3-6053-4cd8-8b65-b9c4ed9399f2",
+        "session_id": "eval:deal_100001",
+        "question": "100001-sonli bitimning hajmi kilogrammda va summasi so‘mda qancha?",
+        "language": "uz",
+        "kind": "answer",
+        "text": "100001-sonli bitim hajmi **79 720 kilogramm**, summasi **304 547 938,40 so‘m**. Bitim holati: bajarilgan.",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "Bitim hajmini kilogrammga va summasini so‘mga aniqlash",
+            "sql": "SELECT deal_no, product_name, unit, volume, CASE WHEN unit = 'тонна' THEN volume * 1000 WHEN unit = 'килограмм' THEN volume END AS volume_kg, round(amount_uzs, 2) AS amount_uzs, currency, status FROM v_deals WHERE deal_no = 100001 LIMIT 1",
+            "columns": [
+              "deal_no",
+              "product_name",
+              "unit",
+              "volume",
+              "volume_kg",
+              "amount_uzs",
+              "currency",
+              "status"
+            ],
+            "rows": [
+              [
+                100001,
+                "Шрот хлопковых семян",
+                "килограмм",
+                79720,
+                79720,
+                304547938.4,
+                "Узбекский сум",
+                "Исполнен"
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 1
+          }
+        ],
+        "entities": [],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 7673,
+        "trace_id": "fdbcb31109a9ec9fd8f721379a4aed8e",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "volume": "79720",
+          "amount_uzs": "304547938.4"
+        }
+      ]
+    },
+    {
+      "id": "deal_100007",
+      "question": "100007-сонли битимда қанча дона товар сотилган ва сумма сўмда қанча?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "8df70def-bf04-426b-b0a0-a1f2065ff8c0",
+        "session_id": "eval:deal_100007",
+        "question": "100007-сонли битимда қанча дона товар сотилган ва сумма сўмда қанча?",
+        "language": "uz",
+        "kind": "answer",
+        "text": "100007-сонли битимда 48 000 дона «Кирпич керамический М-100» 35 520 000 сўмга сотилган. Битим ҳолати — «Исполнен».",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "Битимнинг товар миқдори, ҳолати ва сўмдаги суммасини аниқлаш",
+            "sql": "SELECT deal_no, product, unit, volume, round(amount_uzs,2) AS amount_uzs, currency, status FROM v_deals WHERE deal_no = 100007 LIMIT 1",
+            "columns": [
+              "deal_no",
+              "product",
+              "unit",
+              "volume",
+              "amount_uzs",
+              "currency",
+              "status"
+            ],
+            "rows": [
+              [
+                100007,
+                "Кирпич керамический М-100",
+                "штука",
+                48000,
+                35520000,
+                "Узбекский сум",
+                "Исполнен"
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 1
+          }
+        ],
+        "entities": [],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 7822,
+        "trace_id": "f7d2135d962a251538066f539625480d",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "volume": "48000",
+          "amount_uzs": "35520000"
+        }
+      ]
+    },
+    {
+      "id": "status_paid",
+      "question": "2026-yil 29-oktabrda «Оплачен» holatidagi nechta bitim tuzilgan?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "7d1438f7-38d6-43a9-8230-07022858b489",
+        "session_id": "eval:status_paid",
+        "question": "2026-yil 29-oktabrda «Оплачен» holatidagi nechta bitim tuzilgan?",
+        "language": "uz",
+        "kind": "answer",
+        "text": "2026-yil 29-oktabrda tuzilgan bitimlardan 178 tasi «Оплачен» holatida.",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "Count paid-status deals concluded on the requested date",
+            "sql": "SELECT count(*) AS deal_count, DATE '2026-10-29' AS requested_date FROM v_deals WHERE deal_date >= DATE '2026-10-29' AND deal_date < DATE '2026-10-30' AND status = 'Оплачен'",
+            "columns": [
+              "deal_count",
+              "requested_date"
+            ],
+            "rows": [
+              [
+                178,
+                "2026-10-29"
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 1
+          }
+        ],
+        "entities": [],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 9493,
+        "trace_id": "8289c47c4a998882b738b7048e48d7b3",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "total": 178
+        }
+      ]
+    },
+    {
+      "id": "status_cancelled",
+      "question": "Сколько сделок от 3 января 2022 года имеют статус «Аннулирован(Не оплачен)»?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "627081f1-67ca-4a5e-b953-91105716231f",
+        "session_id": "eval:status_cancelled",
+        "question": "Сколько сделок от 3 января 2022 года имеют статус «Аннулирован(Не оплачен)»?",
+        "language": "ru",
+        "kind": "answer",
+        "text": "На 3 января 2022 года приходится 14 сделок со статусом «Аннулирован(Не оплачен)».",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "Количество аннулированных неоплаченных сделок за указанную дату",
+            "sql": "SELECT count(*) AS deal_count, DATE '2022-01-03' AS deal_date FROM v_deals WHERE deal_date >= DATE '2022-01-03' AND deal_date < DATE '2022-01-04' AND status = 'Аннулирован(Не оплачен)'",
+            "columns": [
+              "deal_count",
+              "deal_date"
+            ],
+            "rows": [
+              [
+                14,
+                "2022-01-03"
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 1
+          }
+        ],
+        "entities": [],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 6217,
+        "trace_id": "c054b5fca44606e27241a02d83d28621",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "total": 14
+        }
+      ]
+    },
+    {
+      "id": "export_100024",
+      "question": "100024-raqamli eksport bitimi summasini bitim kunidagi kurs bo‘yicha so‘mga aylantiring. Kurs va natija qancha?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "674ca891-0e92-4be1-b1ea-bc52fa6b3d1e",
+        "session_id": "eval:export_100024",
+        "question": "100024-raqamli eksport bitimi summasini bitim kunidagi kurs bo‘yicha so‘mga aylantiring. Kurs va natija qancha?",
+        "language": "uz",
+        "kind": "answer",
+        "text": "100024-raqamli eksport bitimi summasi 43 176,64 AQSh dollarini tashkil etgan. Bitim kunidagi kurs — 1 AQSh dollari uchun 10 839,03 so‘m; so‘mga aylantirilgan summa — 467 992 896,26 so‘m.",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "Bitim summasi va bitim kunidagi kurs bo‘yicha so‘m qiymatini aniqlash",
+            "sql": "SELECT deal_no, deal_date, contract_type, currency, amount, usd_rate, round(amount_uzs::numeric, 2) AS amount_uzs, status FROM v_deals WHERE deal_no = 100024 AND contract_type = 'Экспортный' LIMIT 1",
+            "columns": [
+              "deal_no",
+              "deal_date",
+              "contract_type",
+              "currency",
+              "amount",
+              "usd_rate",
+              "amount_uzs",
+              "status"
+            ],
+            "rows": [
+              [
+                100024,
+                "2022-01-03",
+                "Экспортный",
+                "Доллар США",
+                43176.64,
+                10839.03,
+                467992896.26,
+                "Исполнен"
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 1
+          }
+        ],
+        "entities": [],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 6736,
+        "trace_id": "9bf7ddfe768cd520be73c96c480c9fc7",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "usd_rate": "10839.03",
+          "amount_uzs": "467992896.2592"
+        }
+      ]
+    },
+    {
+      "id": "export_100025",
+      "question": "100025-рақамли экспорт битими суммасини битим кунидаги курс бўйича сўмга айлантиринг. Курс ва натижа қанча?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "cca581f6-addc-44e5-bf36-646416815116",
+        "session_id": "eval:export_100025",
+        "question": "100025-рақамли экспорт битими суммасини битим кунидаги курс бўйича сўмга айлантиринг. Курс ва натижа қанча?",
+        "language": "uz",
+        "kind": "answer",
+        "text": "100025-рақамли экспорт битими суммаси — 273 558,87 АҚШ доллари. Битим кунидаги курс 10 839,03 сўм бўйича сумма 2 965 112 798,70 сўмни ташкил этади.",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "Найти экспортную сделку и её сумму в сумах по курсу на дату сделки",
+            "sql": "SELECT deal_no, deal_date, contract_type, amount, currency, usd_rate, round(amount_uzs, 2) AS amount_uzs, status FROM v_deals WHERE deal_no = 100025 AND contract_type = 'Экспортный' LIMIT 1",
+            "columns": [
+              "deal_no",
+              "deal_date",
+              "contract_type",
+              "amount",
+              "currency",
+              "usd_rate",
+              "amount_uzs",
+              "status"
+            ],
+            "rows": [
+              [
+                100025,
+                "2022-01-03",
+                "Экспортный",
+                273558.87,
+                "Доллар США",
+                10839.03,
+                2965112798.7,
+                "Исполнен"
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 1
+          }
+        ],
+        "entities": [],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 7086,
+        "trace_id": "f9a9dfe9e74d80d6c618f04986192b8b",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "usd_rate": "10839.03",
+          "amount_uzs": "2965112798.6961"
+        }
+      ]
+    },
+    {
+      "id": "region_100001",
+      "question": "100001-raqamli bitim bo‘yicha sotuvchi ombori qaysi hududda?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "03d97e51-8cc7-4c89-b373-81ff53ed4201",
+        "session_id": "eval:region_100001",
+        "question": "100001-raqamli bitim bo‘yicha sotuvchi ombori qaysi hududda?",
+        "language": "uz",
+        "kind": "answer",
+        "text": "100001-raqamli bitim bo‘yicha sotuvchi ombori Namangan viloyatida joylashgan.",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "Bitim bo‘yicha sotuvchi ombori hududini aniqlash",
+            "sql": "SELECT deal_no, region_uz FROM v_deals WHERE deal_no = 100001 LIMIT 1",
+            "columns": [
+              "deal_no",
+              "region_uz"
+            ],
+            "rows": [
+              [
+                100001,
+                "Namangan viloyati"
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 1
+          }
+        ],
+        "entities": [],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 5786,
+        "trace_id": "b76ddf76b4a03a0a66888ae0c45e4e1c",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "region_uz": "Namangan viloyati"
+        }
+      ]
+    },
+    {
+      "id": "region_100003",
+      "question": "В каком регионе находится склад продавца по сделке 100003?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": false,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": false,
+      "result": {
+        "id": "3bdc3db0-ed4d-4855-9002-2c5ebad42478",
+        "session_id": "eval:region_100003",
+        "question": "В каком регионе находится склад продавца по сделке 100003?",
+        "language": "ru",
+        "kind": "answer",
+        "text": "Склад продавца по сделке 100003 находится в Ферганской области.",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "Определить регион склада продавца по номеру сделки",
+            "sql": "SELECT deal_no, region_ru FROM v_deals WHERE deal_no = 100003 LIMIT 1",
+            "columns": [
+              "deal_no",
+              "region_ru"
+            ],
+            "rows": [
+              [
+                100003,
+                "Ферганская область"
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 1
+          }
+        ],
+        "entities": [],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 12373,
+        "trace_id": "f9e589827a95ad63e5b9ba8c8a289871",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "region_ru": "Ферганская область"
+        }
+      ]
+    },
+    {
+      "id": "relative_previous_month",
+      "question": "Bugun 2026-yil 5-noyabr deb hisoblang. O‘tgan kalendar oyda, barcha holatlarni qo‘shib, nechta bitim tuzilgan?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "9d701cea-45b0-4043-9d3f-740ccb9cf046",
+        "session_id": "eval:relative_previous_month",
+        "question": "Bugun 2026-yil 5-noyabr deb hisoblang. O‘tgan kalendar oyda, barcha holatlarni qo‘shib, nechta bitim tuzilgan?",
+        "language": "uz",
+        "kind": "answer",
+        "text": "O‘tgan kalendar oy — oktabr uchun mavjud ma’lumotlarga ko‘ra, barcha holatlarni qo‘shganda 18 333 ta bitim tuzilgan. Ma’lumotlar 2026-10-30 sanasigacha mavjud; oyning oxirgi kuni qamrab olinmagan.",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "O‘tgan kalendar oyning mavjud qismidagi barcha holatlardagi bitimlarni sanash",
+            "sql": "SELECT count(*) AS deals_total, DATE '2026-10-01' AS period_start, DATE '2026-10-30' AS data_end FROM v_deals WHERE deal_date >= DATE '2026-10-01' AND deal_date < DATE '2026-10-31'",
+            "columns": [
+              "deals_total",
+              "period_start",
+              "data_end"
+            ],
+            "rows": [
+              [
+                18333,
+                "2026-10-01",
+                "2026-10-30"
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 7
+          }
+        ],
+        "entities": [],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 10741,
+        "trace_id": "83f6d7d5099a5b342b49aa899c6019c9",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "total": 18333
+        }
+      ]
+    },
+    {
+      "id": "relative_previous_year",
+      "question": "Bugun 2026-yil 5-noyabr deb hisoblang. O‘tgan kalendar yilda barcha holatlardagi bitimlar soni qancha?",
+      "expected_kind": "answer",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "cea97b7c-a9bf-4846-9030-9c820fcb13d1",
+        "session_id": "eval:relative_previous_year",
+        "question": "Bugun 2026-yil 5-noyabr deb hisoblang. O‘tgan kalendar yilda barcha holatlardagi bitimlar soni qancha?",
+        "language": "uz",
+        "kind": "answer",
+        "text": "2025-yilda barcha holatlardagi bitimlar soni **115 763 ta** bo‘lgan. Bekor qilingan bitimlarni hisobga olmaganda, **107 678 ta**.",
+        "evidence": [
+          {
+            "sql_id": "q1",
+            "purpose": "O‘tgan kalendar yildagi barcha va bekor qilinmagan bitimlar soni",
+            "sql": "SELECT count(*) AS jami, count(*) FILTER (WHERE status <> 'Аннулирован(Не оплачен)') AS bekor_qilinganlarsiz, 2025 AS yil FROM v_deals WHERE deal_date >= DATE '2025-01-01' AND deal_date < DATE '2026-01-01'",
+            "columns": [
+              "jami",
+              "bekor_qilinganlarsiz",
+              "yil"
+            ],
+            "rows": [
+              [
+                115763,
+                107678,
+                2025
+              ]
+            ],
+            "row_count": 1,
+            "truncated": false,
+            "duration_ms": 32
+          }
+        ],
+        "entities": [],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 8724,
+        "trace_id": "78cb41611149843a20ca65ed20df843c",
+        "error_code": null
+      },
+      "reference_rows": [
+        {
+          "total": 115763
+        }
+      ]
+    },
+    {
+      "id": "clarify_price",
+      "question": "Сколько сделок у компании RUKU?",
+      "expected_kind": "clarify",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": false,
+        "WithinTimeLimit": true
+      },
+      "correct": false,
+      "result": {
+        "id": "1e3d5521-b743-4980-b23c-141c8d285662",
+        "session_id": "eval:clarify_price",
+        "question": "Сколько сделок у компании RUKU?",
+        "language": "ru",
+        "kind": "clarify",
+        "text": "Уточните, какую компанию вы имеете в виду:\n- RUKUSHO‘ FERMER MCHJ — Namangan viloyati\n- RUKUJO QURILISH XK — Qashqadaryo viloyati\n- \"Rukom Invest\" QK — Buxoro viloyati\n- RUKOK GROUP MCHJ — Namangan viloyati\n- \"СУРУКУ ТРАДЕ\" МЧЖ — Xorazm viloyati",
+        "evidence": [],
+        "entities": [
+          {
+            "kind": "company",
+            "query": "RUKU",
+            "matches": [
+              {
+                "id": "921912462",
+                "label": "RUKUSHO‘ FERMER MCHJ",
+                "score": 0.8
+              },
+              {
+                "id": "963127456",
+                "label": "RUKUJO QURILISH XK",
+                "score": 0.8
+              },
+              {
+                "id": "931292670",
+                "label": "\"Rukom Invest\" QK",
+                "score": 0.6
+              },
+              {
+                "id": "989153336",
+                "label": "RUKOK GROUP MCHJ",
+                "score": 0.6
+              },
+              {
+                "id": "990319236",
+                "label": "\"СУРУКУ ТРАДЕ\" МЧЖ",
+                "score": 0.6
+              },
+              {
+                "id": "934598174",
+                "label": "\"Yoruku Logistik\" MChJ",
+                "score": 0.6
+              },
+              {
+                "id": "997531394",
+                "label": "RUKECHO‘ BIZNES MCHJ",
+                "score": 0.6
+              },
+              {
+                "id": "935248863",
+                "label": "\"Ruko‘mo Qurilish\" MChJ",
+                "score": 0.6
+              }
+            ]
+          }
+        ],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 6617,
+        "trace_id": "b48c897c2b088a1230b122eceaab7e9e",
+        "error_code": null
+      },
+      "reference_rows": []
+    },
+    {
+      "id": "clarify_company",
+      "question": "SHIQO kompaniyasining bitimlari nechta?",
+      "expected_kind": "clarify",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "15f74f1e-0d33-40d4-82ac-67f189e33672",
+        "session_id": "eval:clarify_company",
+        "question": "SHIQO kompaniyasining bitimlari nechta?",
+        "language": "uz",
+        "kind": "clarify",
+        "text": "Qaysi kompaniyani nazarda tutdingiz?\n- SHIQO SAVDO MCHJ — Toshkent viloyati\n- \"ШИҚЎ БИЗНЕС\" МЧЖ — Namangan viloyati\n- \"Shiqo‘m Qurilish\" MChJ — Toshkent viloyati",
+        "evidence": [],
+        "entities": [
+          {
+            "kind": "company",
+            "query": "SHIQO",
+            "matches": [
+              {
+                "id": "956952775",
+                "label": "SHIQO SAVDO MCHJ",
+                "score": 1.0
+              },
+              {
+                "id": "943424389",
+                "label": "\"ШИҚЎ БИЗНЕС\" МЧЖ",
+                "score": 1.0
+              },
+              {
+                "id": "984967317",
+                "label": "\"Shiqo‘m Qurilish\" MChJ",
+                "score": 0.833
+              },
+              {
+                "id": "935262280",
+                "label": "\"Shiqiz Biznes\" MChJ",
+                "score": 0.667
+              },
+              {
+                "id": "954848952",
+                "label": "\"Shiqik Group\" MChJ",
+                "score": 0.667
+              }
+            ]
+          }
+        ],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 5327,
+        "trace_id": "d1b519f13fe007021181fcfa7ed1f1da",
+        "error_code": null
+      },
+      "reference_rows": []
+    },
+    {
+      "id": "no_2021",
+      "question": "2021-yildagi bitimlar ro‘yxatini ko‘rsating.",
+      "expected_kind": "no_data",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "b2c33acf-27a1-4a50-b4e4-fcb2b62e372c",
+        "session_id": "eval:no_2021",
+        "question": "2021-yildagi bitimlar ro‘yxatini ko‘rsating.",
+        "language": "uz",
+        "kind": "no_data",
+        "text": "So‘ralgan yil ma’lumotlar bazasi qamrab olgan davrdan tashqarida, shuning uchun bitimlar ro‘yxati mavjud emas.",
+        "evidence": [],
+        "entities": [],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 3994,
+        "trace_id": "4619104ca4a5243a5ebdfa6736c6b729",
+        "error_code": null
+      },
+      "reference_rows": []
+    },
+    {
+      "id": "no_2027",
+      "question": "2027 йилдаги битимлар рўйхатини кўрсатинг.",
+      "expected_kind": "no_data",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "a430299c-daf1-4049-838f-7956aaa5698c",
+        "session_id": "eval:no_2027",
+        "question": "2027 йилдаги битимлар рўйхатини кўрсатинг.",
+        "language": "uz",
+        "kind": "no_data",
+        "text": "Сўралган даврдаги битимлар базада мавжуд эмас; базада фақат қамраб олинган даврдаги битимлар сақланади.",
+        "evidence": [],
+        "entities": [],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 3042,
+        "trace_id": "1c6c9e141261db458518de6c62825384",
+        "error_code": null
+      },
+      "reference_rows": []
+    },
+    {
+      "id": "no_company",
+      "question": "STIR 000000000 bo‘lgan kompaniya haqida reyestrda qanday ma’lumot bor?",
+      "expected_kind": "no_data",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "4321a71f-b652-435e-9654-c052a95137c8",
+        "session_id": "eval:no_company",
+        "question": "STIR 000000000 bo‘lgan kompaniya haqida reyestrda qanday ma’lumot bor?",
+        "language": "uz",
+        "kind": "no_data",
+        "text": "Ko‘rsatilgan STIR bo‘yicha kompaniya reyestrda topilmadi.",
+        "evidence": [],
+        "entities": [
+          {
+            "kind": "company",
+            "query": "000000000",
+            "matches": []
+          }
+        ],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 5881,
+        "trace_id": "aa5e9a6eb33d7903334d0fabe2abda58",
+        "error_code": null
+      },
+      "reference_rows": []
+    },
+    {
+      "id": "no_director",
+      "question": "Как зовут директора компании с ИНН 921912462 и каков его телефон?",
+      "expected_kind": "no_data",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "813c5b81-9c96-40a5-9104-349f99b36f65",
+        "session_id": "eval:no_director",
+        "question": "Как зовут директора компании с ИНН 921912462 и каков его телефон?",
+        "language": "ru",
+        "kind": "no_data",
+        "text": "База содержит сведения об участниках и биржевых сделках, но не содержит имён директоров и номеров телефонов.",
+        "evidence": [],
+        "entities": [],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 3323,
+        "trace_id": "540f563aa28d1e4fdfff24f571445751",
+        "error_code": null
+      },
+      "reference_rows": []
+    },
+    {
+      "id": "no_gold",
+      "question": "Oltin bo‘yicha bitimlar bormi? Oltin rangli boshqa tovarlarni hisoblamang.",
+      "expected_kind": "no_data",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "5bed623e-63d9-49cb-87c9-1ff3e8ce2bbf",
+        "session_id": "eval:no_gold",
+        "question": "Oltin bo‘yicha bitimlar bormi? Oltin rangli boshqa tovarlarni hisoblamang.",
+        "language": "uz",
+        "kind": "no_data",
+        "text": "Ma’lumotlar bazasida oltin metalli bo‘yicha tovar topilmadi.",
+        "evidence": [],
+        "entities": [
+          {
+            "kind": "product",
+            "query": "Oltin",
+            "matches": [
+              {
+                "id": "Хлопковое масло Сорт высшего сорта Тип рафинированное дезодорированное",
+                "label": "Хлопковое масло Сорт высшего сорта Тип рафинированное дезодорированное",
+                "score": 0.01639
+              },
+              {
+                "id": "БЕНЗИН МАРКА АИ-80",
+                "label": "БЕНЗИН МАРКА АИ-80",
+                "score": 0.01613
+              },
+              {
+                "id": "Азот",
+                "label": "Азот",
+                "score": 0.01587
+              },
+              {
+                "id": "Бензин Марка АИ-95",
+                "label": "Бензин Марка АИ-95",
+                "score": 0.01562
+              },
+              {
+                "id": "Хлопковое масло Сорт Высший сорт Тип рафинированное дезодорированное",
+                "label": "Хлопковое масло Сорт Высший сорт Тип рафинированное дезодорированное",
+                "score": 0.01538
+              },
+              {
+                "id": "Хлопковое масло Сорт 1 сорт Тип рафинированное дезодорированное",
+                "label": "Хлопковое масло Сорт 1 сорт Тип рафинированное дезодорированное",
+                "score": 0.01515
+              },
+              {
+                "id": "Хлопковое масло Сорт 1-сорта Тип рафинированное дезодорированное",
+                "label": "Хлопковое масло Сорт 1-сорта Тип рафинированное дезодорированное",
+                "score": 0.01493
+              },
+              {
+                "id": "Масло хлопковое Сорт высшего сорта Тип рафинированное дезодорированное",
+                "label": "Масло хлопковое Сорт высшего сорта Тип рафинированное дезодорированное",
+                "score": 0.01471
+              },
+              {
+                "id": "Хлопковое масло Сорт высший сорт Тип рафинированное дезодорированное",
+                "label": "Хлопковое масло Сорт высший сорт Тип рафинированное дезодорированное",
+                "score": 0.01449
+              },
+              {
+                "id": "Хлопковое масло Сорт 1-сорт Тип рафинированное дезодорированное",
+                "label": "Хлопковое масло Сорт 1-сорт Тип рафинированное дезодорированное",
+                "score": 0.01429
+              },
+              {
+                "id": "БЕНЗИН МАРКА АИ-95",
+                "label": "БЕНЗИН МАРКА АИ-95",
+                "score": 0.01408
+              },
+              {
+                "id": "Рис Сорт высший сорт",
+                "label": "Рис Сорт высший сорт",
+                "score": 0.01389
+              },
+              {
+                "id": "Бензин Марка АИ-80",
+                "label": "Бензин Марка АИ-80",
+                "score": 0.0137
+              },
+              {
+                "id": "Хлопковое масло Сорт I сорт Тип рафинированное дезодорированное",
+                "label": "Хлопковое масло Сорт I сорт Тип рафинированное дезодорированное",
+                "score": 0.01351
+              },
+              {
+                "id": "Масло хлопковое Сорт Высший сорт Тип рафинированное дезодорированное",
+                "label": "Масло хлопковое Сорт Высший сорт Тип рафинированное дезодорированное",
+                "score": 0.01333
+              }
+            ]
+          }
+        ],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 5188,
+        "trace_id": "e741ffaead932d56d8560f61120fcfd2",
+        "error_code": null
+      },
+      "reference_rows": []
+    },
+    {
+      "id": "no_eur_rate",
+      "question": "2022-yil 3-yanvarda yevroning so‘mga nisbatan kursi qancha edi?",
+      "expected_kind": "no_data",
+      "scores": {
+        "KindMatches": true,
+        "ExpectedValuesPresent": true,
+        "NoFabricatedNumbers": true,
+        "LanguageMatches": true,
+        "WithinTimeLimit": true
+      },
+      "correct": true,
+      "result": {
+        "id": "d8392936-c2e4-4c3d-9d9d-ac3696238b69",
+        "session_id": "eval:no_eur_rate",
+        "question": "2022-yil 3-yanvarda yevroning so‘mga nisbatan kursi qancha edi?",
+        "language": "uz",
+        "kind": "no_data",
+        "text": "Ma’lumotlar bazasida yevro kursi emas, AQSh dollarining so‘mga nisbatan kursi mavjud.",
+        "evidence": [],
+        "entities": [],
+        "model": "cpa-coolthings/gpt-6.1-terra",
+        "duration_ms": 3056,
+        "trace_id": "a1704cee492c93cdf2c696b70ad802bc",
+        "error_code": null
+      },
+      "reference_rows": []
+    }
+  ]
+}
