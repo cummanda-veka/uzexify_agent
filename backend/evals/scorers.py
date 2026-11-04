@@ -6,7 +6,9 @@ from decimal import Decimal, InvalidOperation
 
 from pydantic_evals.evaluators import Evaluator, EvaluatorContext
 
+from uzexify.charts import ChartRejected, ChartSpec, validate_chart
 from uzexify.numbers import extract_numbers, is_grounded
+from uzexify.sqlguard import SqlResult
 from uzexify.text import name_key
 
 
@@ -69,12 +71,50 @@ def _time(case, result):
     return result["duration_ms"] <= 90_000
 
 
+def _charts(case, result):
+    """Every attached chart replays through the server validator on the answer's own SQL rows;
+    cases marked expect_chart must carry at least one."""
+    charts = result.get("charts") or []
+    if case.get("expect_chart") and not charts:
+        return False
+    evidence = {e["sql_id"]: e for e in result.get("evidence", [])}
+    for raw in charts:
+        spec = ChartSpec.model_validate(raw)
+        item = evidence.get(spec.sql_id)
+        if item is None:
+            return False
+        res = SqlResult(
+            item["sql_id"],
+            item["sql"],
+            item["columns"],
+            item["rows"],
+            item["row_count"],
+            item["truncated"],
+            0,
+        )
+        try:
+            validate_chart(
+                spec.id,
+                res,
+                spec.type,
+                spec.x,
+                [s.column for s in spec.series],
+                [s.unit for s in spec.series],
+                spec.title,
+                [s.label for s in spec.series],
+            )
+        except ChartRejected:
+            return False
+    return True
+
+
 SCORERS = {
     "KindMatches": _kind,
     "ExpectedValuesPresent": _values,
     "NoFabricatedNumbers": _no_fabricated,
     "LanguageMatches": _language,
     "WithinTimeLimit": _time,
+    "ChartFaithful": _charts,
 }
 
 
@@ -110,3 +150,9 @@ class LanguageMatches(Evaluator):
 class WithinTimeLimit(Evaluator):
     def evaluate(self, ctx: EvaluatorContext) -> bool:
         return _time(ctx.inputs, ctx.output)
+
+
+@dataclass
+class ChartFaithful(Evaluator):
+    def evaluate(self, ctx: EvaluatorContext) -> bool:
+        return _charts(ctx.inputs, ctx.output)

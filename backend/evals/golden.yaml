@@ -227,3 +227,31 @@ cases:
     expect_kind: no_data
     reference_sql: "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'eur_rates'"
     checks: []
+  - id: chart_monthly_2025
+    lang: ru
+    question: Как менялось число сделок по месяцам в 2025 году? Покажи на графике.
+    expect_kind: answer
+    expect_chart: true
+    reference_sql: "SELECT count(*) AS total FROM deals WHERE deal_date >= '2025-01-01' AND deal_date < '2026-01-01' GROUP BY date_trunc('month', deal_date) ORDER BY total DESC LIMIT 1"
+    checks: [{column: total, match: number}]
+  - id: chart_top_cement
+    lang: ru
+    question: Топ-5 покупателей цемента по объёму за всё время — покажи графиком.
+    expect_kind: answer
+    expect_chart: true
+    reference_sql: "SELECT buyer_name FROM v_deals WHERE product_name ILIKE '%цемент%' GROUP BY buyer_inn, buyer_name ORDER BY sum(volume) DESC LIMIT 1"
+    checks: [{column: buyer_name, match: text}]
+  - id: chart_export_years
+    lang: uz_latn
+    question: Eksport bitimlari summasi yillar bo‘yicha dollarda qanday o‘zgargan? Grafikda ko‘rsating.
+    expect_kind: answer
+    expect_chart: true
+    reference_sql: "SELECT extract(year FROM deal_date) AS year FROM v_deals WHERE contract_type = 'Экспортный' GROUP BY 1 LIMIT 1"
+    checks: []
+  - id: chart_usd_rate
+    lang: uz_cyrl
+    question: 2022–2026 йилларда доллар курси қандай ўзгарган? График билан кўрсатинг.
+    expect_kind: answer
+    expect_chart: true
+    reference_sql: "SELECT count(*) AS days FROM usd_rates"
+    checks: []

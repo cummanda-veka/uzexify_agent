@@ -19,6 +19,7 @@ from psycopg.rows import dict_row
 from pydantic_evals import Case, Dataset
 
 from evals.scorers import (
+    ChartFaithful,
     ExpectedValuesPresent,
     KindMatches,
     LanguageMatches,
@@ -154,6 +155,7 @@ async def run(args):
                 NoFabricatedNumbers(),
                 LanguageMatches(),
                 WithinTimeLimit(),
+                ChartFaithful(),
             ],
         )
         try:
