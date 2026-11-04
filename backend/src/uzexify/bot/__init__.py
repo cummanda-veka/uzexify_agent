@@ -1,6 +1,7 @@
 import asyncio
 import html
 import json
+import re
 import secrets
 from contextlib import suppress
 from typing import Any
@@ -35,6 +36,40 @@ def _escaped_prefix(text: str, limit: int) -> str:
     return "".join(result)
 
 
+def _table_to_pre(lines: list[str]) -> str:
+    """Render a GFM table as an aligned monospace block (Telegram has no table markup)."""
+    rows = [
+        [cell.strip().replace("**", "") for cell in line.strip().strip("|").split("|")]
+        for line in lines
+        if not re.fullmatch(r"\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)*\|?", line.strip())
+    ]
+    widths = [max(len(r[i]) if i < len(r) else 0 for r in rows) for i in range(max(map(len, rows)))]
+    text = "\n".join(
+        "  ".join((c.ljust(widths[i]) if i == 0 else c.rjust(widths[i])) for i, c in enumerate(r)).rstrip()
+        for r in rows
+    )
+    return f"<pre>{html.escape(text, quote=False)}</pre>"
+
+
+def markdown_to_html(text: str) -> str:
+    """Convert the agent's light Markdown (bold, '- ' bullets, tables) to Telegram HTML."""
+    out: list[str] = []
+    table: list[str] = []
+    for line in text.splitlines():
+        if line.lstrip().startswith("|"):
+            table.append(line)
+            continue
+        if table:
+            out.append(_table_to_pre(table))
+            table = []
+        escaped = html.escape(line, quote=False)
+        escaped = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", escaped)
+        out.append(re.sub(r"^(\s*)[-*] ", r"\1• ", escaped))
+    if table:
+        out.append(_table_to_pre(table))
+    return "\n".join(out)
+
+
 def format_answer(answer: dict[str, Any]) -> str:
     """Render a Telegram HTML response, dropping rows before truncating SQL."""
     language = answer.get("language", "ru")
@@ -61,7 +96,7 @@ def format_answer(answer: dict[str, Any]) -> str:
             block = f"\n\n<blockquote expandable>{title}\n<pre>{content}</pre></blockquote>"
         return f"{body}{block}\n\n{footer_html}"
 
-    body = html.escape(text, quote=False)
+    body = markdown_to_html(text)
     while rows and len(render(body, sql, rows)) > 4096:
         rows.pop()
     remaining = 4096 - len(render(body, "", []))

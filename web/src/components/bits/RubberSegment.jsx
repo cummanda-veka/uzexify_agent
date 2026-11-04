@@ -342,6 +342,13 @@ export default function RubberSegment({
           disabled={disabled}
           className="rubber-segment__item"
           onPointerDown={e => handlePointerDown(e, i)}
+          onClick={e => {
+            // Keyboard Enter/Space and assistive tech dispatch a click without pointer events (detail 0).
+            if (e.detail !== 0 || disabled || i === committed.current) return;
+            const from = committed.current;
+            commit(i);
+            travel(from, i);
+          }}
           onKeyDown={handleKeyDown}
         >
           {item.icon}

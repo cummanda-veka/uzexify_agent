@@ -19,6 +19,7 @@ export function MessageList({
   openId,
   setOpenId,
   retry,
+  pick,
 }: {
   messages: Message[];
   locale: Locale;
@@ -26,11 +27,13 @@ export function MessageList({
   openId: string | null;
   setOpenId: (id: string | null) => void;
   retry: (id: string) => void;
+  pick: (label: string) => void;
 }) {
   return (
     <div className="messages">
-      {messages.map((message) => {
+      {messages.map((message, index) => {
         const working = busyId === message.id;
+        const last = index === messages.length - 1;
         return (
           <section className="exchange" key={message.id}>
             <p className="question">{message.question}</p>
@@ -53,6 +56,7 @@ export function MessageList({
                 onToggle={() =>
                   setOpenId(openId === message.id ? null : message.id)
                 }
+                onPick={last && !busyId ? pick : undefined}
               />
             )}
             {(message.error || message.cancelled) && (

@@ -1,7 +1,9 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import {
+  DecryptedText,
   GradientASCII,
+  GradualBlur,
   HalftoneMark,
   PromptBar,
   RubberSegment,
@@ -166,7 +168,18 @@ export default function Home() {
           <div className="mark">
             <HalftoneMark label="UZEXify" />
           </div>
-          <h1>{t.title}</h1>
+          <h1>
+            <DecryptedText
+              key={locale}
+              text={t.title}
+              animateOn="view"
+              sequential
+              revealDirection="start"
+              speed={35}
+              characters="=+xX0S8#@"
+              encryptedClassName="encrypted"
+            />
+          </h1>
           <p>{t.intro}</p>
           {composer}
           <ExampleChips locale={locale} onSelect={(q) => void send(q)} />
@@ -184,9 +197,24 @@ export default function Home() {
                 const message = messages.find((m) => m.id === id);
                 if (message) void send(message.question, id);
               }}
+              pick={(label) => void send(label)}
             />
             <div ref={endRef} />
           </div>
+          <GradualBlur
+            target="page"
+            position="top"
+            height="5rem"
+            strength={1.5}
+            zIndex={3}
+          />
+          <GradualBlur
+            target="page"
+            position="bottom"
+            height="9rem"
+            strength={1.5}
+            zIndex={3}
+          />
           <div className="dock">{composer}</div>
         </>
       )}

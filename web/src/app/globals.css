@@ -233,6 +233,15 @@ button {
   color: var(--ink-2);
 }
 
+.steps .thought-line__mark {
+  display: none;
+}
+
+.steps .thought-line__steps {
+  padding-left: 1.5em;
+  gap: 6px;
+}
+
 .answer {
   display: flex;
   flex-direction: column;
@@ -257,8 +266,93 @@ button {
 .answer-text {
   font-size: 16px;
   line-height: 1.6;
-  white-space: pre-wrap;
   overflow-wrap: anywhere;
+}
+
+.markdown > :first-child {
+  margin-top: 0;
+}
+
+.markdown > :last-child {
+  margin-bottom: 0;
+}
+
+.markdown p {
+  margin: 0 0 10px;
+}
+
+.markdown strong {
+  color: #fff;
+  font-weight: 600;
+}
+
+.markdown ul,
+.markdown ol {
+  margin: 0 0 10px;
+  padding-left: 1.3em;
+  list-style: disc;
+}
+
+.markdown ol {
+  list-style: decimal;
+}
+
+.markdown li {
+  margin: 3px 0;
+}
+
+.markdown li::marker {
+  color: var(--accent);
+}
+
+.markdown code {
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.07);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.88em;
+}
+
+.markdown table {
+  width: auto;
+  min-width: 60%;
+  margin: 4px 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+.markdown th {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink-2);
+  font-family: inherit;
+  font-weight: 500;
+}
+
+.markdown th,
+.markdown td {
+  padding: 8px 12px;
+  white-space: normal;
+}
+
+.markdown tr:last-child td {
+  border-bottom: 0;
+}
+
+.markdown td:not(:first-child),
+.markdown th:not(:first-child) {
+  text-align: right;
+}
+
+.candidates {
+  margin-top: 2px;
+}
+
+.encrypted {
+  color: var(--accent);
 }
 
 .answer-meta {
