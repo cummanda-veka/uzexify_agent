@@ -28,8 +28,10 @@ _SCALES = {
     "трлн": 12,
     "trln": 12,
 }
+# A sign counts only when glued to the digits ("-12,5", "−12,5"); a Markdown bullet "- 5" has a space,
+# and a range "100-200" is excluded by the lookbehind, which also guards the sign.
 _NUMBER = re.compile(
-    r"(?<![\w\d])(?P<number>\d{1,3}(?:[ \u00a0\u202f]\d{3})+|\d+)"
+    r"(?<![\w\d])(?P<sign>[-\u2212]?)(?P<number>\d{1,3}(?:[ \u00a0\u202f]\d{3})+|\d+)"
     r"(?:[,.]\d+)?(?:[ \u00a0\u202f]*(?P<scale>тысяч|тыс|миллиард|миллион|млрд|млн|трлн|milliard|million|mlrd|mln|trln|ming)(?!\w))?",
     re.IGNORECASE,
 )
@@ -54,6 +56,8 @@ def extract_numbers(text: str, question: str | None = None) -> list[DisplayedNum
             digits += "." + fraction.group(1)
         scale = _SCALES.get((match.group("scale") or "").casefold(), 0)
         value = Decimal(digits) * (Decimal(10) ** scale)
+        if match.group("sign"):
+            value = -value
         if not fraction and not scale and Decimal(2000) <= value <= Decimal(2030):
             continue
         if value in question_values:
