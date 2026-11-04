@@ -1,6 +1,9 @@
 export type Step = {
   type: "tool_call" | "tool_result";
+  call_id: string;
   tool: string;
+  /** Present on tool_result: false when the tool raised and the agent retries. */
+  ok?: boolean;
   label_ru: string;
   label_uz: string;
 };

@@ -2,20 +2,24 @@ import { CallChip, ThoughtLine } from "@/components/bits";
 import type { Step } from "@/lib/api";
 import { copy, type Locale } from "@/lib/i18n";
 
-type Call = { tool: string; label: string; result?: Step };
+type Call = { id: string; tool: string; label: string; result?: Step };
 
-/** Pairs each tool_call with the tool_result that follows it. */
+/** Pairs each tool_call with its tool_result by call_id (parallel calls of one tool interleave). */
 function toCalls(steps: Step[], locale: Locale): Call[] {
-  const calls: Call[] = [];
+  const calls = new Map<string, Call>();
   for (const step of steps) {
-    const label = locale === "ru" ? step.label_ru : step.label_uz;
-    if (step.type === "tool_call") calls.push({ tool: step.tool, label });
+    if (step.type === "tool_call")
+      calls.set(step.call_id, {
+        id: step.call_id,
+        tool: step.tool,
+        label: locale === "ru" ? step.label_ru : step.label_uz,
+      });
     else {
-      const open = calls.findLast((c) => c.tool === step.tool && !c.result);
-      if (open) open.result = step;
+      const call = calls.get(step.call_id);
+      if (call) call.result = step;
     }
   }
-  return calls;
+  return [...calls.values()];
 }
 
 /** Live (working) or settled trace of agent tool calls. */
@@ -33,25 +37,23 @@ export function StepList({
   elapsed?: number;
 }) {
   const t = copy[locale];
-  const chips = toCalls(steps, locale).map((call, i) => {
+  const chips = toCalls(steps, locale).map((call) => {
     const [name, argument = ""] = call.label.split(/:\s*/, 2);
     const resultLabel = call.result
       ? locale === "ru"
         ? call.result.label_ru
         : call.result.label_uz
       : "";
-    // Results carry a row count; a result without digits is the agent's "error, retrying" step.
-    const failed = Boolean(call.result) && !/\d/.test(resultLabel);
     const status = call.result
-      ? failed
-        ? "error"
-        : "done"
+      ? call.result.ok
+        ? "done"
+        : "error"
       : working
         ? "running"
         : "error";
     return (
       <CallChip
-        key={`${call.tool}-${i}`}
+        key={call.id}
         icon={call.tool === "run_sql" ? "terminal" : "search"}
         name={name}
         argument={argument || resultLabel}

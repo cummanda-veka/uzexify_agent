@@ -104,27 +104,40 @@ TOOL_LABELS = {
 }
 
 
-def _call_event(name: str, args: dict | str | None) -> dict[str, Any]:
+def _call_event(call_id: str, name: str, args: dict | str | None) -> dict[str, Any]:
     q = args.get("query", "") if isinstance(args, dict) else ""
     ru, uz = TOOL_LABELS.get(name, (name, name))
-    return {"type": "tool_call", "tool": name, "label_ru": ru.format(q=q), "label_uz": uz.format(q=q)}
+    return {
+        "type": "tool_call",
+        "call_id": call_id,
+        "tool": name,
+        "label_ru": ru.format(q=q),
+        "label_uz": uz.format(q=q),
+    }
 
 
-def _result_event(name: str, content: Any) -> dict[str, Any]:
-    if isinstance(content, dict) and "row_count" in content:
-        n = content["row_count"]
-    elif isinstance(content, list):
-        n = len(content)
-    else:
+def _result_event(call_id: str, name: str, content: Any, outcome: str) -> dict[str, Any]:
+    """SSE step for a finished tool call; `outcome` is Pydantic AI's ToolReturnPart.outcome."""
+    n: int | None = None
+    if outcome == "success":
+        if isinstance(content, dict) and "row_count" in content:
+            n = content["row_count"]
+        elif isinstance(content, list):
+            n = len(content)
+    if n is None:
         return {
             "type": "tool_result",
+            "call_id": call_id,
             "tool": name,
+            "ok": False,
             "label_ru": "Ошибка, повторяю",
             "label_uz": "Xato, qayta urinish",
         }
     return {
         "type": "tool_result",
+        "call_id": call_id,
         "tool": name,
+        "ok": True,
         "label_ru": f"Получено строк: {n}",
         "label_uz": f"Qatorlar soni: {n}",
     }
@@ -183,11 +196,19 @@ async def answer_question(
                     if isinstance(event, FunctionToolCallEvent):
                         calls[event.part.tool_call_id] = event.part.tool_name
                         if on_event:
-                            await on_event(_call_event(event.part.tool_name, event.part.args_as_dict()))
+                            await on_event(
+                                _call_event(
+                                    event.part.tool_call_id, event.part.tool_name, event.part.args_as_dict()
+                                )
+                            )
                     elif isinstance(event, FunctionToolResultEvent):
                         name = calls.get(event.part.tool_call_id, event.part.tool_name)
                         if on_event:
-                            await on_event(_result_event(name, event.part.content))
+                            await on_event(
+                                _result_event(
+                                    event.part.tool_call_id, name, event.part.content, event.part.outcome
+                                )
+                            )
                     elif isinstance(event, AgentRunResultEvent):
                         out = event.result.output
                         kind, text, answer_lang = out.kind, out.text, out.language
