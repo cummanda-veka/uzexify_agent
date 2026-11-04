@@ -45,8 +45,9 @@ def test_days_written_with_month_names_are_dates():
     assert extract_numbers(text) == []
 
 
-def test_scaled_number_matches_value_sql_returned_in_those_units():
+def test_scaled_number_needs_the_base_unit_value():
     shown = extract_numbers("25,70 трлн сумов")[0]
-    assert is_grounded(shown, [Decimal("25.70")])
     assert is_grounded(shown, [Decimal("25700580756298.50")])
-    assert not is_grounded(shown, [Decimal("25.80")])
+    # A bare 25.70 or a count of 1 is not evidence for trillions.
+    assert not is_grounded(shown, [Decimal("25.70")])
+    assert not is_grounded(extract_numbers("1 трлн сумов")[0], [Decimal(1)])

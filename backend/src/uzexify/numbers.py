@@ -11,7 +11,6 @@ class DisplayedNumber:
     value: Decimal
     tolerance: Decimal
     raw: str
-    scale: int = 0  # decimal exponent of a scale word ("трлн" -> 12), 0 if none
 
 
 _SCALES = {
@@ -72,15 +71,11 @@ def extract_numbers(text: str, question: str | None = None) -> list[DisplayedNum
             continue
         precision = len(fraction.group(1)) if fraction else 0
         tolerance = Decimal("0.5") * (Decimal(10) ** (scale - precision))
-        result.append(DisplayedNumber(value=value, tolerance=tolerance, raw=raw, scale=scale))
+        result.append(DisplayedNumber(value=value, tolerance=tolerance, raw=raw))
     return result
 
 
 def is_grounded(n: DisplayedNumber, evidence: Iterable[Decimal]) -> bool:
-    """True if some evidence value matches at the shown precision. A scaled number ("25,70 трлн") also
-    matches a value SQL already returned in those units (25.70 from ROUND(sum / 1e12, 2))."""
-    unit = Decimal(10) ** n.scale
-    return any(
-        abs(n.value - value) <= n.tolerance or (n.scale and abs(n.value / unit - value) <= n.tolerance / unit)
-        for value in evidence
-    )
+    """True if some evidence value matches at the shown precision. Evidence is compared in base units
+    only: "25,70 трлн" needs ~25.70e12 in the results, never a bare 25.70 (which could be any count)."""
+    return any(abs(n.value - value) <= n.tolerance for value in evidence)
