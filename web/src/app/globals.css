@@ -462,6 +462,27 @@ th {
   background: linear-gradient(transparent, var(--bg) 45%);
 }
 
+.stopped-message {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--ink-2);
+  font-size: 14px;
+}
+
+.stopped-message button {
+  flex: none;
+  padding: 5px 10px;
+  border: 1px solid var(--line-2);
+  border-radius: 8px;
+  background: none;
+  color: var(--ink);
+}
+
 @media (max-width: 600px) {
   .topbar {
     padding: 0 12px;

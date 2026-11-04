@@ -92,8 +92,9 @@ export default function Home() {
         controller.current.signal,
       );
     } catch (error) {
-      if (!(error instanceof DOMException && error.name === "AbortError"))
-        patch(id, { error: t.network });
+      if (error instanceof DOMException && error.name === "AbortError")
+        patch(id, { cancelled: true });
+      else patch(id, { error: t.network });
     } finally {
       setBusyId(null);
     }

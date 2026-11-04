@@ -7,11 +7,13 @@ export function StepList({
   steps,
   locale,
   working,
+  cancelled,
   elapsed,
 }: {
   steps: Step[];
   locale: Locale;
   working: boolean;
+  cancelled?: boolean;
   elapsed?: number;
 }) {
   const t = copy[locale];
@@ -21,7 +23,7 @@ export function StepList({
       working={working}
       elapsed={working ? undefined : elapsed}
       label={t.working}
-      doneLabel={t.done}
+      doneLabel={cancelled ? t.stopped : t.done}
       steps={steps.map((s) => (locale === "ru" ? s.label_ru : s.label_uz))}
       glyph="sparkle"
       color="#b9c0d0"

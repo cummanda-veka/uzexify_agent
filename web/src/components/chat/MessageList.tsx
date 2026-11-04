@@ -8,6 +8,7 @@ export type Message = {
   question: string;
   steps: Step[];
   answer?: AskResponse;
+  cancelled?: boolean;
   error?: string;
 };
 
@@ -38,6 +39,7 @@ export function MessageList({
                 steps={message.steps}
                 locale={locale}
                 working={working}
+                cancelled={message.cancelled}
                 elapsed={
                   message.answer ? message.answer.duration_ms / 1000 : undefined
                 }
@@ -53,9 +55,12 @@ export function MessageList({
                 }
               />
             )}
-            {message.error && (
-              <div className="error-message" role="alert">
-                <span>{message.error}</span>
+            {(message.error || message.cancelled) && (
+              <div
+                className={message.error ? "error-message" : "stopped-message"}
+                role={message.error ? "alert" : "status"}
+              >
+                <span>{message.error ?? copy[locale].stopped}</span>
                 <button type="button" onClick={() => retry(message.id)}>
                   {copy[locale].retry}
                 </button>
