@@ -150,7 +150,8 @@ button {
 }
 
 .welcome p {
-  max-width: 520px;
+  max-width: 640px;
+  white-space: pre-line;
   margin: 12px 0 28px;
   color: var(--ink-2);
   text-wrap: pretty;

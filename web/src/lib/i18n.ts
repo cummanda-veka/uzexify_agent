@@ -3,7 +3,7 @@ export const copy = {
   ru: {
     title: "Спросите о сделках UZEX",
     intro:
-      "Отвечаю по реестру 500 000 биржевых сделок за 2022–2026 годы. К каждому ответу прикладываю SQL-запрос и строки, из которых он получен.",
+      "Отвечаю по реестру 500 000 биржевых сделок за 2022–2026 годы.\nК каждому ответу прикладываю SQL-запрос и строки, из которых он получен.",
     placeholder: "Например: сколько сделок было в 2024 году?",
     prompt: "Вопрос",
     send: "Отправить",
@@ -32,7 +32,7 @@ export const copy = {
   uz: {
     title: "UZEX bitimlari haqida so‘rang",
     intro:
-      "2022–2026-yillardagi 500 000 ta birja bitimi reyestri bo‘yicha javob beraman. Har bir javobga SQL so‘rovi va u olingan qatorlarni ilova qilaman.",
+      "2022–2026-yillardagi 500 000 ta birja bitimi reyestri bo‘yicha javob beraman.\nHar bir javobga SQL so‘rovi va u olingan qatorlarni ilova qilaman.",
     placeholder: "Masalan: 2023-yilda nechta bitim tuzilgan?",
     prompt: "Savol",
     send: "Yuborish",

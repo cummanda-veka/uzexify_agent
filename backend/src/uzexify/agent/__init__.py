@@ -182,53 +182,68 @@ async def answer_question(
 
     with observability.ask_span(session_id, channel, lang, model_name) as trace_id:
         calls: dict[str, str] = {}
-        try:
-            async with (
-                asyncio.timeout(s.agent_timeout_s),
-                rt.agent.run_stream_events(
-                    question,
-                    deps=deps,
-                    message_history=history,
-                    usage_limits=UsageLimits(request_limit=10, tool_calls_limit=12),
-                ) as stream,
-            ):
-                async for event in stream:
-                    if isinstance(event, FunctionToolCallEvent):
-                        calls[event.part.tool_call_id] = event.part.tool_name
-                        if on_event:
-                            await on_event(
-                                _call_event(
-                                    event.part.tool_call_id, event.part.tool_name, event.part.args_as_dict()
+        deadline = asyncio.get_running_loop().time() + s.agent_timeout_s
+        # A gateway disconnect mid-stream escapes both client retries and FallbackModel
+        # (they only cover the request before streaming starts), so rerun the agent once.
+        for attempt in range(2):
+            try:
+                async with (
+                    asyncio.timeout_at(deadline),
+                    rt.agent.run_stream_events(
+                        question,
+                        deps=deps,
+                        message_history=history,
+                        usage_limits=UsageLimits(request_limit=10, tool_calls_limit=12),
+                    ) as stream,
+                ):
+                    async for event in stream:
+                        if isinstance(event, FunctionToolCallEvent):
+                            calls[event.part.tool_call_id] = event.part.tool_name
+                            if on_event:
+                                await on_event(
+                                    _call_event(
+                                        event.part.tool_call_id,
+                                        event.part.tool_name,
+                                        event.part.args_as_dict(),
+                                    )
                                 )
-                            )
-                    elif isinstance(event, FunctionToolResultEvent):
-                        name = calls.get(event.part.tool_call_id, event.part.tool_name)
-                        if on_event:
-                            await on_event(
-                                _result_event(
-                                    event.part.tool_call_id, name, event.part.content, event.part.outcome
+                        elif isinstance(event, FunctionToolResultEvent):
+                            name = calls.get(event.part.tool_call_id, event.part.tool_name)
+                            if on_event:
+                                await on_event(
+                                    _result_event(
+                                        event.part.tool_call_id, name, event.part.content, event.part.outcome
+                                    )
                                 )
-                            )
-                    elif isinstance(event, AgentRunResultEvent):
-                        out = event.result.output
-                        kind, text, answer_lang = out.kind, out.text, out.language
-                        resp = event.result.all_messages()[-1]
-                        model_name = getattr(resp, "model_name", None) or model_name
-                        if kind == "clarify":
-                            _sessions[session_id] = event.result.all_messages()
-                            while len(_sessions) > MAX_SESSIONS:
-                                _sessions.popitem(last=False)
-        except TimeoutError:
-            kind, error_code, text = "error", "timeout", MESSAGES["timeout"][lang]
-        except (UnexpectedModelBehavior, UsageLimitExceeded) as e:
-            log.warning("agent gave up: %s", e)
-            if ev.sql:
-                kind, text = "answer", MESSAGES["fallback"][lang]
-            else:
-                kind, error_code, text = "error", "internal", MESSAGES["internal"][lang]
-        except (FallbackExceptionGroup, ModelAPIError) as e:
-            log.error("models unavailable: %s", e)
-            kind, error_code, text = "error", "unavailable", MESSAGES["unavailable"][lang]
+                        elif isinstance(event, AgentRunResultEvent):
+                            out = event.result.output
+                            kind, text, answer_lang = out.kind, out.text, out.language
+                            resp = event.result.all_messages()[-1]
+                            model_name = getattr(resp, "model_name", None) or model_name
+                            if kind == "clarify":
+                                _sessions[session_id] = event.result.all_messages()
+                                while len(_sessions) > MAX_SESSIONS:
+                                    _sessions.popitem(last=False)
+                break
+            except TimeoutError:
+                kind, error_code, text = "error", "timeout", MESSAGES["timeout"][lang]
+                break
+            except (UnexpectedModelBehavior, UsageLimitExceeded) as e:
+                log.warning("agent gave up: %s", e)
+                if ev.sql:
+                    kind, text = "answer", MESSAGES["fallback"][lang]
+                else:
+                    kind, error_code, text = "error", "internal", MESSAGES["internal"][lang]
+                break
+            except (FallbackExceptionGroup, ModelAPIError) as e:
+                remaining = deadline - asyncio.get_running_loop().time()
+                if attempt == 0 and remaining > 20:
+                    log.warning("model connection lost, rerunning agent (%.0fs left): %s", remaining, e)
+                    ev.sql.clear()
+                    ev.entities.clear()
+                    continue
+                log.error("models unavailable: %s", e)
+                kind, error_code, text = "error", "unavailable", MESSAGES["unavailable"][lang]
 
     evidence, entities = _evidence(ev)
     return AskResult(

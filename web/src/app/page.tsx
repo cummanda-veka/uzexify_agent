@@ -87,10 +87,7 @@ export default function Home() {
                 m.id === id ? { ...m, steps: [...m.steps, step] } : m,
               ),
             ),
-          onAnswer: (answer) => {
-            patch(id, { answer });
-            setOpenId(id);
-          },
+          onAnswer: (answer) => patch(id, { answer }),
           onError: (error) =>
             patch(id, {
               error: locale === "ru" ? error.message_ru : error.message_uz,
