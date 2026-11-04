@@ -74,18 +74,21 @@ export async function chartPng(
   return response.blob();
 }
 
+export type Effort = "low" | "medium" | "high";
+
 export async function askStream(
   question: string,
   sessionId: string,
   handlers: Handlers,
   signal: AbortSignal,
+  effort?: Effort,
 ) {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_BASE ?? ""}/api/ask/stream`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-Client": "web" },
-      body: JSON.stringify({ question, session_id: sessionId }),
+      body: JSON.stringify({ question, session_id: sessionId, effort }),
       signal,
     },
   );

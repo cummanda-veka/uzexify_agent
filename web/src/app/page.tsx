@@ -10,10 +10,24 @@ import {
 } from "@/components/bits";
 import { ExampleChips } from "@/components/chat/ExampleChips";
 import { type Message, MessageList } from "@/components/chat/MessageList";
-import { askStream } from "@/lib/api";
+import { askStream, type Effort } from "@/lib/api";
 import { copy, examples, type Locale } from "@/lib/i18n";
 
 const MONO = '"Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace';
+
+// Example questions shown in the empty prompt; Uzbek Cyrillic examples get a Cyrillic lead-in.
+const HINTS = Object.fromEntries(
+  (Object.keys(examples) as Locale[]).map((locale) => [
+    locale,
+    examples[locale].map((q) =>
+      locale === "uz" && /[а-яўқғҳ]/i.test(q)
+        ? `Масалан: ${q}`
+        : `${copy[locale].examplePrefix}${q}`,
+    ),
+  ]),
+) as Record<Locale, string[]>;
+
+const EFFORTS: Effort[] = ["low", "medium", "high"];
 
 export default function Home() {
   const [locale, setLocale] = useState<Locale>("ru");
@@ -22,10 +36,14 @@ export default function Home() {
   const [openId, setOpenId] = useState<string | null>(null);
   const session = useRef("");
   const controller = useRef<AbortController | null>(null);
+  // Thinking level, by index into EFFORTS (labels are localised; the index survives a language switch).
+  const effort = useRef<Effort>("low");
   const endRef = useRef<HTMLDivElement>(null);
   const busy = busyId !== null;
   const empty = messages.length === 0;
   const t = copy[locale];
+  const hints = HINTS[locale];
+  const effortLabels: readonly string[] = t.efforts;
 
   useEffect(() => {
     const saved = localStorage.getItem("uzexify-language");
@@ -94,6 +112,7 @@ export default function Home() {
             }),
         },
         controller.current.signal,
+        effort.current,
       );
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError")
@@ -108,13 +127,25 @@ export default function Home() {
     <PromptBar
       className="composer"
       placeholder={t.placeholder}
-      placeholders={examples[locale]}
-      placeholderPrefix={t.examplePrefix}
+      placeholders={hints}
       busyPlaceholder={`${t.working}…`}
       busy={busy}
       onSend={(text) => void send(text)}
       onStop={() => controller.current?.abort()}
-      labels={{ prompt: t.prompt, send: t.send, stop: t.stop }}
+      labels={{
+        prompt: t.prompt,
+        send: t.send,
+        stop: t.stop,
+        effort: t.effort,
+        effortHelp: t.effortHelp,
+        faster: t.faster,
+        smarter: t.smarter,
+      }}
+      efforts={effortLabels}
+      defaultEffort={effortLabels[EFFORTS.indexOf(effort.current)]}
+      onEffortChange={(label) => {
+        effort.current = EFFORTS[effortLabels.indexOf(label)] ?? "low";
+      }}
       background="rgba(22, 24, 33, 0.82)"
       color="#eef1f8"
       sparkColor="#7fb2ff"

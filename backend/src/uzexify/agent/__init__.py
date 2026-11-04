@@ -1,9 +1,8 @@
-import re
-
 """Agent entry point: `answer_question`."""
 
 import asyncio
 import logging
+import re
 import time
 import uuid
 from collections import OrderedDict
@@ -27,6 +26,7 @@ from pydantic_ai.run import AgentRunResultEvent
 
 from uzexify import observability
 from uzexify.agent.deps import AgentDeps, EvidenceLog
+from uzexify.agent.models import Effort, agent_model_for
 from uzexify.agent.runtime import get_runtime
 from uzexify.charts import ChartSpec
 from uzexify.settings import get_settings
@@ -213,6 +213,7 @@ async def answer_question(
     session_id: str | None = None,
     channel: str = "api",
     on_event: EventCb | None = None,
+    effort: Effort | None = None,
 ) -> AskResult:
     s = get_settings()
     rt = await get_runtime()
@@ -244,6 +245,7 @@ async def answer_question(
                         question,
                         deps=deps,
                         message_history=history,
+                        model=agent_model_for(effort) if effort else None,
                         usage_limits=UsageLimits(request_limit=10, tool_calls_limit=12),
                     ) as stream,
                 ):

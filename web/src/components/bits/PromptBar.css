@@ -269,7 +269,7 @@
 }
 
 .prompt-bar__ghost-line[data-out] {
-  animation: prompt-bar-fall-out 420ms cubic-bezier(0.55, 0, 1, 0.45) both;
+  animation: prompt-bar-fall-out 260ms cubic-bezier(0.55, 0, 1, 0.45) both;
 }
 
 @keyframes prompt-bar-fall-in {

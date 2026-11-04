@@ -48,12 +48,20 @@ export const CallChip = typed<{
   name: string;
   argument?: string;
   status: "running" | "done" | "error" | "idle";
+  expectedMs?: number;
   size?: number;
+  radius?: number;
   surfaceColor?: string;
   color?: string;
+  progressColor?: string;
+  progressOpacity?: number;
   doneColor?: string;
   errorColor?: string;
+  washOpacity?: number;
+  shake?: number;
   showTimer?: boolean;
+  onRetry?: () => void;
+  className?: string;
 }>(CallChipRaw);
 export type ListItem = {
   icon?: ReactNode;
@@ -90,7 +98,18 @@ export const PromptBar = typed<{
   busy?: boolean;
   onSend?: (text: string) => void;
   onStop?: () => void;
-  labels?: { prompt: string; send: string; stop: string };
+  labels?: {
+    prompt: string;
+    send: string;
+    stop: string;
+    effort?: string;
+    effortHelp?: string;
+    faster?: string;
+    smarter?: string;
+  };
+  efforts?: readonly string[];
+  defaultEffort?: string;
+  onEffortChange?: (label: string) => void;
   background?: string;
   color?: string;
   sparkColor?: string;

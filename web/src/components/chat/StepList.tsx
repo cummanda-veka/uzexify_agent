@@ -54,16 +54,28 @@ export function StepList({
     return (
       <CallChip
         key={call.id}
-        icon={call.tool === "run_sql" ? "terminal" : "search"}
+        className="step-chip"
+        icon={
+          call.tool === "run_sql"
+            ? "terminal"
+            : call.tool === "make_chart"
+              ? "edit"
+              : "search"
+        }
         name={name}
         argument={argument || resultLabel}
         status={status}
-        size={28}
-        surfaceColor="rgba(22, 24, 33, 0.85)"
+        expectedMs={call.tool === "run_sql" ? 3000 : 1500}
+        size={30}
+        radius={9}
+        surfaceColor="rgba(127, 178, 255, 0.05)"
         color="#cfd6e6"
+        progressColor="#7fb2ff"
+        progressOpacity={0.16}
         doneColor="#5fd39a"
         errorColor="#ff8a7a"
-        showTimer={false}
+        washOpacity={0.12}
+        showTimer={call.tool === "run_sql"}
       />
     );
   });

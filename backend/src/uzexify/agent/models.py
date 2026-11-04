@@ -68,9 +68,21 @@ def build_model(model_id: str, profile: ModelProfile | None = None, effort: str 
     return OpenAIChatModel(model_id, provider=_provider(), settings=settings)
 
 
-def build_agent_model() -> Model:
+def build_agent_model(effort: Effort | None = None) -> Model:
+    """Primary with fallback. `effort` (a user's thinking level) applies to both; without it the
+    primary uses LLM_REASONING_EFFORT or its profile level and the fallback its profile level."""
     s = get_settings()
-    primary = build_model(s.llm_model, effort=s.llm_reasoning_effort or None)
+    primary = build_model(s.llm_model, effort=effort or s.llm_reasoning_effort or None)
     if not s.llm_fallback_model or s.llm_fallback_model == s.llm_model:
         return primary
-    return FallbackModel(primary, build_model(s.llm_fallback_model))
+    return FallbackModel(primary, build_model(s.llm_fallback_model, effort=effort))
+
+
+_by_effort: dict[Effort, Model] = {}
+
+
+def agent_model_for(effort: Effort) -> Model:
+    """Cached model per thinking level, so each request does not rebuild clients."""
+    if effort not in _by_effort:
+        _by_effort[effort] = build_agent_model(effort)
+    return _by_effort[effort]

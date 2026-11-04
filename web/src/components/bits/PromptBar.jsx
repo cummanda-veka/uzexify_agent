@@ -24,7 +24,15 @@ const EASE_IN_OUT = [0.77, 0, 0.175, 1];
 const LINE = 22;
 const EDGE = 11;
 const NONE = [];
-const DEFAULT_LABELS = { prompt: 'Prompt', send: 'Send', stop: 'Stop' };
+const DEFAULT_LABELS = {
+  prompt: 'Prompt',
+  send: 'Send',
+  stop: 'Stop',
+  effort: 'Effort',
+  effortHelp: 'Higher effort thinks longer before answering',
+  faster: 'Faster',
+  smarter: 'Smarter'
+};
 
 const mix = (a, b, t) => a + (b - a) * t;
 const pathAt = (a, b, t) => {
@@ -483,21 +491,21 @@ export default function PromptBar({
           {open === 'effort' ? (
             <>
               <div className="prompt-bar__effort-head">
-                <span className="prompt-bar__effort-title">Effort</span>
+                <span className="prompt-bar__effort-title">{text.effort}</span>
                 <span className="prompt-bar__effort-level">{level}</span>
-                <span className="prompt-bar__effort-help" title="Higher effort thinks longer before answering">
+                <span className="prompt-bar__effort-help" title={text.effortHelp}>
                   <HugeiconsIcon icon={HelpCircleIcon} size={14} strokeWidth={1.8} />
                 </span>
               </div>
               <div className="prompt-bar__effort-ends">
-                <span>Faster</span>
-                <span>Smarter</span>
+                <span>{text.faster}</span>
+                <span>{text.smarter}</span>
               </div>
               <div
                 className="prompt-bar__effort-track"
                 role="slider"
                 tabIndex={0}
-                aria-label="Effort"
+                aria-label={text.effort}
                 aria-valuemin={0}
                 aria-valuemax={efforts.length - 1}
                 aria-valuenow={effortIndex}
@@ -623,7 +631,11 @@ export default function PromptBar({
                 ) : null}
                 <span key={`in-${ghost.n}`} className="prompt-bar__ghost-line">
                   {`${placeholderPrefix}${placeholders[ghost.cur]}`.split(' ').map((word, i) => (
-                    <span key={i} className="prompt-bar__ghost-word" style={{ animationDelay: `${i * 28}ms` }}>
+                    <span
+                      key={i}
+                      className="prompt-bar__ghost-word"
+                      style={{ animationDelay: `${(ghost.prev !== null ? 220 : 0) + i * 28}ms` }}
+                    >
                       {word}{' '}
                     </span>
                   ))}
@@ -683,10 +695,12 @@ export default function PromptBar({
               data-max={maxed ? '' : undefined}
               onMouseDown={e => e.preventDefault()}
               onClick={() => {
+                // Focus first: the input's onFocus closes every menu.
+                const next = !effortOpen;
+                focusInput();
                 setPlusOpen(false);
                 setModelOpen(false);
-                setEffortOpen(v => !v);
-                focusInput();
+                setEffortOpen(next);
               }}
             >
               <HugeiconsIcon icon={SparklesIcon} size={13} strokeWidth={2} />

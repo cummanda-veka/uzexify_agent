@@ -2,7 +2,7 @@ import asyncio
 import json
 import logging
 from contextlib import asynccontextmanager
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -42,6 +42,7 @@ app.add_middleware(
 class AskBody(BaseModel):
     question: str = Field(min_length=1, max_length=1000)
     session_id: str | None = None
+    effort: Literal["low", "medium", "high"] | None = None
 
 
 def _channel(x_client: str | None) -> str:
@@ -62,7 +63,7 @@ async def health():
 
 @app.post("/api/ask")
 async def ask(body: AskBody, x_client: Annotated[str | None, Header()] = None) -> AskResult:
-    return await answer_question(body.question, body.session_id, _channel(x_client))
+    return await answer_question(body.question, body.session_id, _channel(x_client), effort=body.effort)
 
 
 class ChartPngBody(BaseModel):
@@ -104,7 +105,9 @@ async def ask_stream(body: AskBody, x_client: Annotated[str | None, Header()] = 
 
     async def run() -> None:
         try:
-            res = await answer_question(body.question, body.session_id, _channel(x_client), on_event)
+            res = await answer_question(
+                body.question, body.session_id, _channel(x_client), on_event, effort=body.effort
+            )
             if res.kind == "error" and res.error_code in ("timeout", "unavailable"):
                 code = res.error_code
                 await queue.put(
