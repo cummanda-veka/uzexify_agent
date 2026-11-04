@@ -90,6 +90,10 @@ function SendGlyph({ busy, morphDuration, squash, tilt }) {
 
 export default function PromptBar({
   placeholder = 'Ask anything',
+  placeholders = NONE,
+  placeholderPrefix = '',
+  busyPlaceholder = '',
+  rotateMs = 3800,
   sources = NONE,
   commands = NONE,
   models = NONE,
@@ -146,6 +150,18 @@ export default function PromptBar({
   const [active, setActive] = useState(0);
   const [listening, setListening] = useState(false);
   const [pressed, setPressed] = useState(false);
+  // Rotating example: `ghost.cur` falls in from above, `ghost.prev` falls out below.
+  const [ghost, setGhost] = useState({ cur: 0, prev: null, n: 0 });
+
+  useEffect(() => {
+    if (placeholders.length < 2) return undefined;
+    setGhost({ cur: Math.floor(Math.random() * placeholders.length), prev: null, n: 0 });
+    const id = setInterval(() => {
+      if (document.hidden) return;
+      setGhost(g => ({ cur: (g.cur + 1) % placeholders.length, prev: g.cur, n: g.n + 1 }));
+    }, rotateMs);
+    return () => clearInterval(id);
+  }, [placeholders, rotateMs]);
 
   const model = models.find(m => m.key === modelKey) ?? models[0];
   const parsed = dismissed ? null : parseToken(draft);
@@ -454,6 +470,7 @@ export default function PromptBar({
         '--pb-press': pressScale
       }}
     >
+      <span className="prompt-bar__halo" aria-hidden="true" />
       {open ? (
         <div
           className="prompt-bar__menu"
@@ -577,7 +594,7 @@ export default function PromptBar({
           rows={1}
           value={draft}
           maxLength={1000}
-          placeholder={listening ? 'Listening…' : placeholder}
+          placeholder={listening ? 'Listening…' : placeholders.length || busyPlaceholder ? '' : placeholder}
           aria-label={text.prompt}
           onChange={e => {
             setDraft(e.target.value);
@@ -590,6 +607,31 @@ export default function PromptBar({
           onFocus={closeMenus}
           onKeyDown={onKeyDown}
         />
+        {!draft && !listening && (busy ? busyPlaceholder : placeholders.length) ? (
+          <span className="prompt-bar__ghost" aria-hidden="true">
+            {busy ? (
+              <span key="busy" className="prompt-bar__ghost-line prompt-bar__ghost-line--busy">
+                {busyPlaceholder}
+              </span>
+            ) : (
+              <>
+                {ghost.prev !== null ? (
+                  <span key={`out-${ghost.n}`} className="prompt-bar__ghost-line" data-out="">
+                    {placeholderPrefix}
+                    {placeholders[ghost.prev]}
+                  </span>
+                ) : null}
+                <span key={`in-${ghost.n}`} className="prompt-bar__ghost-line">
+                  {`${placeholderPrefix}${placeholders[ghost.cur]}`.split(' ').map((word, i) => (
+                    <span key={i} className="prompt-bar__ghost-word" style={{ animationDelay: `${i * 28}ms` }}>
+                      {word}{' '}
+                    </span>
+                  ))}
+                </span>
+              </>
+            )}
+          </span>
+        ) : null}
 
         <div className="prompt-bar__bar">
           {sources.length > 0 ? (
@@ -694,6 +736,7 @@ export default function PromptBar({
           </button>
         </div>
       </div>
+      <span className="prompt-bar__ring" aria-hidden="true" />
     </div>
   );
 }

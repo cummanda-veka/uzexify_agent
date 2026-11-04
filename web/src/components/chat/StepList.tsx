@@ -1,4 +1,4 @@
-import { CallChip, ThoughtLine } from "@/components/bits";
+import { CallChip, LatticeLoader, ThoughtLine } from "@/components/bits";
 import type { Step } from "@/lib/api";
 import { copy, type Locale } from "@/lib/i18n";
 
@@ -75,9 +75,25 @@ export function StepList({
       label={t.working}
       doneLabel={cancelled ? t.stopped : t.done}
       steps={chips}
-      glyph="sparkle"
+      glyph={
+        <LatticeLoader
+          className="steps-lattice"
+          status={working ? "working" : cancelled ? "error" : "done"}
+          label=""
+          doneLabel=""
+          errorLabel=""
+          showTimer={false}
+          cellSize={4}
+          gap={2}
+          color="#7fb2ff"
+          doneColor="#5fd39a"
+          errorColor="#ff8a7a"
+          glow
+          glowColor="rgba(127, 178, 255, 0.55)"
+        />
+      }
+      glyphStatic
       color="#b9c0d0"
-      glyphColor="#7fb2ff"
       fontSize={14}
       collapseOnSettle
     />

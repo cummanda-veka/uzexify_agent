@@ -11,7 +11,7 @@ import {
 import { ExampleChips } from "@/components/chat/ExampleChips";
 import { type Message, MessageList } from "@/components/chat/MessageList";
 import { askStream } from "@/lib/api";
-import { copy, type Locale } from "@/lib/i18n";
+import { copy, examples, type Locale } from "@/lib/i18n";
 
 const MONO = '"Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace';
 
@@ -108,6 +108,9 @@ export default function Home() {
     <PromptBar
       className="composer"
       placeholder={t.placeholder}
+      placeholders={examples[locale]}
+      placeholderPrefix={t.examplePrefix}
+      busyPlaceholder={`${t.working}…`}
       busy={busy}
       onSend={(text) => void send(text)}
       onStop={() => controller.current?.abort()}
@@ -152,11 +155,11 @@ export default function Home() {
           value={locale}
           onChange={(value) => changeLocale(value as Locale)}
           size="sm"
-          trackColor="rgba(16, 18, 26, 0.7)"
-          thumbColor="#eef1f8"
-          textColor="#eef1f8"
-          activeTextColor="#07080d"
-          radius={10}
+          trackColor="rgba(16, 18, 26, 0.6)"
+          thumbColor="rgba(127, 178, 255, 0.16)"
+          textColor="#7d869b"
+          activeTextColor="#eef1f8"
+          radius={9}
         />
       </header>
 

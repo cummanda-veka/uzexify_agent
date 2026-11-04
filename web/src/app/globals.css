@@ -120,7 +120,19 @@ button {
 
 .language {
   border: 1px solid var(--line);
+  font-family: var(--font-mono), monospace;
+  letter-spacing: 0.04em;
   backdrop-filter: blur(8px);
+}
+
+/* The lattice is the status line's glyph and animates itself (ThoughtLine gets glyphStatic). */
+.steps .thought-line__glyph {
+  width: auto;
+}
+
+.steps-lattice .lattice-loader__label,
+.steps-lattice .lattice-loader__timer {
+  display: none;
 }
 
 /* ---------- empty state ---------- */
@@ -166,8 +178,17 @@ button {
   text-align: left;
 }
 
-.composer .prompt-bar__input {
+.composer .prompt-bar__input,
+.composer .prompt-bar__ghost {
   font-size: 15px;
+}
+
+.composer .prompt-bar__field {
+  transition: border-color 240ms ease;
+}
+
+.composer .prompt-bar__field:focus-within {
+  border-color: color-mix(in srgb, var(--pb-spark) 35%, var(--line-2));
 }
 
 .examples {

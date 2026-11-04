@@ -5,6 +5,7 @@ import DecryptedTextRaw from "./DecryptedText";
 import GradientASCIIRaw from "./GradientASCII";
 import GradualBlurRaw from "./GradualBlur";
 import HalftoneMarkRaw from "./HalftoneMark";
+import LatticeLoaderRaw from "./LatticeLoader";
 import PromptBarRaw from "./PromptBar";
 import RubberSegmentRaw from "./RubberSegment";
 import ThoughtLineRaw from "./ThoughtLine";
@@ -16,6 +17,28 @@ const typed = <P>(component: unknown) => component as ComponentType<P>;
 export const GradientASCII = typed<Props>(GradientASCIIRaw);
 export const HalftoneMark = typed<Props>(HalftoneMarkRaw);
 export const GradualBlur = typed<Props>(GradualBlurRaw);
+export const LatticeLoader = typed<{
+  status?: "working" | "done" | "error";
+  label?: string;
+  doneLabel?: string;
+  errorLabel?: string;
+  pattern?: string;
+  grid?: 3 | 4;
+  shape?: "round" | "square";
+  color?: string;
+  doneColor?: string;
+  errorColor?: string;
+  cellSize?: number;
+  gap?: number;
+  fontSize?: number;
+  step?: number;
+  idleOpacity?: number;
+  glow?: boolean;
+  glowColor?: string;
+  showTimer?: boolean;
+  elapsed?: number;
+  className?: string;
+}>(LatticeLoaderRaw);
 export const DecryptedText = typed<Props & { text: string }>(DecryptedTextRaw);
 export const ThoughtLine = typed<Props & { steps?: ReactNode[] }>(
   ThoughtLineRaw,
@@ -60,6 +83,10 @@ export const RubberSegment = typed<{
 }>(RubberSegmentRaw);
 export const PromptBar = typed<{
   placeholder?: string;
+  placeholders?: string[];
+  placeholderPrefix?: string;
+  busyPlaceholder?: string;
+  rotateMs?: number;
   busy?: boolean;
   onSend?: (text: string) => void;
   onStop?: () => void;

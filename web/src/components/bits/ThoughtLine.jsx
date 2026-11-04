@@ -22,6 +22,7 @@ export default function ThoughtLine({
   doneLabel = '',
   renderLabel,
   glyph = 'sparkle',
+  glyphStatic = false,
   steps = EMPTY_STEPS,
   collapsible = true,
   collapseOnSettle = true,
@@ -167,7 +168,7 @@ export default function ThoughtLine({
   const head = (
     <>
       {glyph !== 'none' ? (
-        <span ref={glyphRef} className="thought-line__glyph" aria-hidden="true">
+        <span ref={glyphStatic ? undefined : glyphRef} className="thought-line__glyph" aria-hidden="true">
           {glyph === 'sparkle' ? (
             <HugeiconsIcon icon={SparklesIcon} size="100%" strokeWidth={2} />
           ) : glyph === 'dot' ? (
