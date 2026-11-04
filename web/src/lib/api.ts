@@ -57,6 +57,23 @@ type Handlers = {
   onError: (error: StreamError) => void;
 };
 
+/** Server-rendered infographic (same template as Telegram); the server re-validates chart + rows. */
+export async function chartPng(
+  chart: ChartSpec,
+  evidence: Evidence,
+): Promise<Blob> {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE ?? ""}/api/chart.png`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chart, evidence }),
+    },
+  );
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  return response.blob();
+}
+
 export async function askStream(
   question: string,
   sessionId: string,

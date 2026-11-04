@@ -73,6 +73,10 @@ axis: use panels, or chart only one (prefer amount_uzs when currencies mix). Bui
 result for the chart: exactly the rows to draw (2–40), one row per x value, rounded in SQL. When a chart
 is attached, keep the text short (the key number or leader plus one line) and do not repeat the full
 table in Markdown. No chart for single values, no_data or clarify.
+Sellers spell the same product differently ("Хлопок-сырец (спот)" / "Хлопок сырец (спот)", case).
+In product rankings group by a normalized name, e.g.
+lower(regexp_replace(product_name, '[^[:alnum:]]+', ' ', 'g')), and show min(product_name) as the label,
+so one product is one row.
 
 # Schema (PostgreSQL). Prefer the view v_deals.
 v_deals — one row per deal (500 000 rows):

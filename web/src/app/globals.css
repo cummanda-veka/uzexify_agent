@@ -381,10 +381,64 @@ button {
 }
 
 .answer-chart figcaption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   margin-bottom: 6px;
   color: var(--ink);
   font-size: 14px;
   font-weight: 500;
+}
+
+.chart-download {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border: 1px solid var(--line-2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--ink-2);
+  font-size: 12px;
+  font-weight: 400;
+  transition:
+    color 150ms ease,
+    background-color 150ms ease;
+}
+
+.chart-download:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--ink);
+}
+
+.chart-download[data-failed] {
+  border-color: rgba(255, 138, 122, 0.4);
+  color: var(--danger);
+}
+
+.chart-download .spin {
+  animation: spin 900ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.chart-scroll {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+@media (max-width: 600px) {
+  .chart-download span {
+    display: none;
+  }
 }
 
 .chart-panel + .chart-panel {

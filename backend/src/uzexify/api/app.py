@@ -4,16 +4,18 @@ import logging
 from contextlib import asynccontextmanager
 from typing import Annotated
 
-from fastapi import FastAPI, Header
+from fastapi import FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel, Field
 from sse_starlette import EventSourceResponse
 
 from uzexify import observability
-from uzexify.agent import MESSAGES, AskResult, answer_question
+from uzexify.agent import MESSAGES, AskResult, EvidenceItem, answer_question
 from uzexify.agent.runtime import close_runtime, get_runtime
+from uzexify.charts import ChartRejected, ChartSpec, chart_png, validate_chart
 from uzexify.settings import get_settings
+from uzexify.sqlguard import SqlResult
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("uzexify.api")
@@ -61,6 +63,36 @@ async def health():
 @app.post("/api/ask")
 async def ask(body: AskBody, x_client: Annotated[str | None, Header()] = None) -> AskResult:
     return await answer_question(body.question, body.session_id, _channel(x_client))
+
+
+class ChartPngBody(BaseModel):
+    chart: ChartSpec
+    evidence: EvidenceItem
+
+
+@app.post("/api/chart.png")
+async def chart_download(body: ChartPngBody) -> Response:
+    """Infographic PNG for download. The request is client-supplied, so it is re-validated exactly
+    like an agent chart (row limits, numeric values, one unit per axis) before rendering."""
+    spec, ev = body.chart, body.evidence
+    if spec.sql_id != ev.sql_id:
+        raise HTTPException(422, "chart and evidence refer to different queries")
+    result = SqlResult(ev.sql_id, ev.sql, ev.columns, ev.rows, ev.row_count, ev.truncated, ev.duration_ms)
+    try:
+        checked = validate_chart(
+            spec.id,
+            result,
+            spec.type,
+            spec.x,
+            [s.column for s in spec.series],
+            [s.unit for s in spec.series],
+            spec.title,
+            [s.label for s in spec.series],
+        )
+    except ChartRejected as e:
+        raise HTTPException(422, str(e)) from e
+    png = await asyncio.to_thread(chart_png, checked, result)
+    return Response(png, media_type="image/png")
 
 
 @app.post("/api/ask/stream")

@@ -186,7 +186,14 @@ def vega_lite(spec: ChartSpec, result: SqlResult) -> dict[str, Any]:
     cols = result.columns
     values = [dict(zip(cols, row, strict=True)) for row in result.rows]
     order = [str(row[cols.index(spec.x)]) for row in result.rows]
-    x_enc = {"field": spec.x, "type": "ordinal", "sort": order, "title": None, "axis": {"labelAngle": 0}}
+    long_labels = max(len(s) for s in order) > 14
+    x_enc = {
+        "field": spec.x,
+        "type": "ordinal",
+        "sort": order,
+        "title": None,
+        "axis": {"labelAngle": -35 if long_labels else 0, "labelLimit": 180},
+    }
     axis_style = {
         "labelColor": "#b9c0d0",
         "titleColor": "#8a93a8",
@@ -231,7 +238,9 @@ def vega_lite(spec: ChartSpec, result: SqlResult) -> dict[str, Any]:
         },
         "title": spec.title,
     }
-    width = 640
+    # Every category keeps its own room (the web chart scrolls the same way), so no label is dropped.
+    per_category = 0 if spec.type == "line" else len(spec.series) * 26 + 44
+    width = max(640, len(order) * per_category)
 
     def grouped(members: list[ChartSeries], unit: str, height: int) -> dict[str, Any]:
         # fold only reshapes the SQL columns into rows; no aggregation or computed values.
