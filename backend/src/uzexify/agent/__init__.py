@@ -14,6 +14,9 @@ from pydantic_ai import UsageLimits
 from pydantic_ai.exceptions import (
     FallbackExceptionGroup,
     ModelAPIError,
+    ModelConnectionError,
+    ModelServerError,
+    ModelUnavailableError,
     UnexpectedModelBehavior,
     UsageLimitExceeded,
 )
@@ -143,6 +146,33 @@ def _result_event(call_id: str, name: str, content: Any, outcome: str) -> dict[s
     }
 
 
+TRANSIENT_ERRORS = (ModelConnectionError, ModelServerError, ModelUnavailableError)
+
+
+def _leaf_errors(e: BaseException) -> list[BaseException]:
+    return (
+        [x for sub in e.exceptions for x in _leaf_errors(sub)] if isinstance(e, BaseExceptionGroup) else [e]
+    )
+
+
+def _is_transient(e: BaseException) -> bool:
+    """Only transport/server-side failures are worth a rerun; auth, not-found and bad requests are not."""
+    return all(isinstance(x, TRANSIENT_ERRORS) for x in _leaf_errors(e))
+
+
+def _describe_error(e: BaseException) -> str:
+    """Class, transport phase / in-stream flag and cause chain of each leaf error, for diagnosis."""
+    parts = []
+    for leaf in _leaf_errors(e):
+        where = f"[in_stream={getattr(leaf, 'in_stream', None)} phase={getattr(leaf, 'phase', None)}]"
+        chain, cur = [], leaf
+        while cur is not None and len(chain) < 5:
+            chain.append(f"{type(cur).__name__}: {str(cur)[:160]}")
+            cur = cur.__cause__ or cur.__context__
+        parts.append(f"{where} " + " <- ".join(chain))
+    return " | ".join(parts)
+
+
 def _evidence(ev: EvidenceLog) -> tuple[list[EvidenceItem], list[EntityItem]]:
     items = [
         EvidenceItem(**{k: v for k, v in asdict(r).items() if k in EvidenceItem.model_fields}) for r in ev.sql
@@ -183,9 +213,11 @@ async def answer_question(
     with observability.ask_span(session_id, channel, lang, model_name) as trace_id:
         calls: dict[str, str] = {}
         deadline = asyncio.get_running_loop().time() + s.agent_timeout_s
-        # A gateway disconnect mid-stream escapes both client retries and FallbackModel
-        # (they only cover the request before streaming starts), so rerun the agent once.
+        events_seen = 0
+        # Mitigation (root cause unconfirmed): transient transport failures surfaced as
+        # "Connection error." after client retries; rerun the whole agent once for those only.
         for attempt in range(2):
+            events_seen = 0
             try:
                 async with (
                     asyncio.timeout_at(deadline),
@@ -197,6 +229,7 @@ async def answer_question(
                     ) as stream,
                 ):
                     async for event in stream:
+                        events_seen += 1
                         if isinstance(event, FunctionToolCallEvent):
                             calls[event.part.tool_call_id] = event.part.tool_name
                             if on_event:
@@ -237,13 +270,19 @@ async def answer_question(
                 break
             except (FallbackExceptionGroup, ModelAPIError) as e:
                 remaining = deadline - asyncio.get_running_loop().time()
-                if attempt == 0 and remaining > 20:
-                    log.warning("model connection lost, rerunning agent (%.0fs left): %s", remaining, e)
+                log.error(
+                    "model error (attempt %d, %d stream events before failure): %s",
+                    attempt + 1,
+                    events_seen,
+                    _describe_error(e),
+                )
+                if attempt == 0 and remaining > 20 and _is_transient(e):
+                    log.warning("transient model transport error, rerunning agent (%.0fs left)", remaining)
                     ev.sql.clear()
                     ev.entities.clear()
                     continue
-                log.error("models unavailable: %s", e)
                 kind, error_code, text = "error", "unavailable", MESSAGES["unavailable"][lang]
+                break
 
     evidence, entities = _evidence(ev)
     return AskResult(
