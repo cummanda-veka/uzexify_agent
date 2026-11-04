@@ -1,6 +1,11 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { GradientASCII, HalftoneMark, PromptBar } from "@/components/bits";
+import {
+  GradientASCII,
+  HalftoneMark,
+  PromptBar,
+  RubberSegment,
+} from "@/components/bits";
 import { ExampleChips } from "@/components/chat/ExampleChips";
 import { type Message, MessageList } from "@/components/chat/MessageList";
 import { askStream } from "@/lib/api";
@@ -138,18 +143,22 @@ export default function Home() {
         >
           uzexify
         </button>
-        <fieldset className="language" aria-label="Language">
-          {(["ru", "uz"] as const).map((code) => (
-            <button
-              key={code}
-              type="button"
-              aria-pressed={locale === code}
-              onClick={() => changeLocale(code)}
-            >
-              {code === "ru" ? "RU" : "O‘Z"}
-            </button>
-          ))}
-        </fieldset>
+        <RubberSegment
+          className="language"
+          aria-label="Язык / Til"
+          items={[
+            { value: "ru", label: "RU" },
+            { value: "uz", label: "O‘Z" },
+          ]}
+          value={locale}
+          onChange={(value) => changeLocale(value as Locale)}
+          size="sm"
+          trackColor="rgba(16, 18, 26, 0.7)"
+          thumbColor="#eef1f8"
+          textColor="#eef1f8"
+          activeTextColor="#07080d"
+          radius={10}
+        />
       </header>
 
       {empty ? (
