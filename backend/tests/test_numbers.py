@@ -38,3 +38,15 @@ def test_signs():
 def test_bullets_and_ranges_are_not_signs():
     assert [n.value for n in extract_numbers("- 5 сделок\n- **7** сделок")] == [Decimal(5), Decimal(7)]
     assert [n.value for n in extract_numbers("от 100-200 тонн")] == [Decimal(100), Decimal(200)]
+
+
+def test_days_written_with_month_names_are_dates():
+    text = "С 3 января 2022 года по 30 октября 2026 года; 2026-yil 1-yanvardan 30-oktabrgacha; 30 октябрда"
+    assert extract_numbers(text) == []
+
+
+def test_scaled_number_matches_value_sql_returned_in_those_units():
+    shown = extract_numbers("25,70 трлн сумов")[0]
+    assert is_grounded(shown, [Decimal("25.70")])
+    assert is_grounded(shown, [Decimal("25700580756298.50")])
+    assert not is_grounded(shown, [Decimal("25.80")])

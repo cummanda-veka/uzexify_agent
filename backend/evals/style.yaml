@@ -1,0 +1,67 @@
+# Style benchmark: realistic questions (the welcome-screen pool plus refusals/clarifications).
+# No reference values here — correctness is covered by golden.yaml; this set measures how answers read.
+cases:
+  - {id: s_ru_01, lang: ru, question: "Сколько сделок было заключено в 2024 году?"}
+  - {id: s_ru_02, lang: ru, question: "Какой брокер провёл больше всего сделок на стороне покупателя в 2023 году?"}
+  - {id: s_ru_03, lang: ru, question: "Общая сумма экспортных сделок в 2025 году в сумах"}
+  - {id: s_ru_04, lang: ru, question: "Как менялось число сделок по месяцам в 2025 году?"}
+  - {id: s_ru_05, lang: ru, question: "Топ-5 покупателей цемента за всё время"}
+  - {id: s_ru_06, lang: ru, question: "У каких брокеров самая высокая доля аннулированных сделок?"}
+  - {id: s_ru_07, lang: ru, question: "Объём экспорта в долларах и в сумах по годам"}
+  - {id: s_ru_08, lang: ru, question: "Из какого региона склада продают больше всего карбамида?"}
+  - {id: s_ru_09, lang: ru, question: "Какая доля сделок 2025 года аннулирована?"}
+  - {id: s_ru_10, lang: ru, question: "Насколько итоговая цена в среднем выше стартовой на английских аукционах в 2025 году?"}
+  - {id: s_ru_11, lang: ru, question: "Какие 5 товаров принесли больше всего денег в 2025 году?"}
+  - {id: s_ru_12, lang: ru, question: "Сколько в среднем стоила тонна карбамида в 2026 году?"}
+  - {id: s_ru_13, lang: ru, question: "Какой товар чаще всего аннулируют из-за неоплаты?"}
+  - {id: s_ru_14, lang: ru, question: "Сколько сделок было в октябре 2026 года и сколько из них уже исполнено?"}
+  - {id: s_ru_15, lang: ru, question: "Какие регионы лидируют по продажам хлопка-сырца?"}
+  - {id: s_ru_16, lang: ru, question: "Кто крупнейший экспортёр за всё время?"}
+  - {id: s_ru_17, lang: ru, question: "В какой день недели заключается больше всего сделок?"}
+  - {id: s_ru_18, lang: ru, question: "Сколько компаний купили пшеницу в 2024 году?"}
+  - {id: s_ru_19, lang: ru, question: "Какой продавец заработал больше всего на продаже цемента в 2025 году?"}
+  - {id: s_ru_20, lang: ru, question: "Сколько сделок оплачено, но ещё не поставлено?"}
+  - {id: s_ru_21, lang: ru, question: "Как изменился курс доллара с января 2022 по октябрь 2026 года?"}
+  - {id: s_ru_22, lang: ru, question: "Какой брокер работает с наибольшим числом разных покупателей?"}
+  - {id: s_ru_23, lang: ru, question: "Сколько сделок в среднем заключается в день в 2026 году?"}
+  - {id: s_ru_24, lang: ru, question: "Какая самая крупная сделка по сумме за всё время?"}
+  - {id: s_ru_25, lang: ru, question: "Чем больше всего торгуют в Ташкентской области?"}
+  - {id: s_ru_26, lang: ru, question: "Доля форвардных и фьючерсных сделок среди всех сделок 2025 года"}
+  - {id: s_ru_27, lang: ru, question: "Сколько стоила тонна бензина АИ-92 в 2025 году?"}
+  - {id: s_ru_28, lang: ru, question: "В каком месяце 2024 года продали больше всего пшеницы?"}
+  - {id: s_ru_29, lang: ru, question: "Сравни число сделок в первом полугодии 2025 и 2026 года"}
+  - {id: s_ru_30, lang: ru, question: "Какие товары продаются только на экспорт?"}
+  - {id: s_ru_31, lang: ru, question: "Кто директор компании XUSIT POLIMER MCHJ?", expect_kind: no_data}
+  - {id: s_ru_32, lang: ru, question: "Сколько сделок было в 2027 году?", expect_kind: no_data}
+  - {id: s_ru_33, lang: ru, question: "Сколько сделок у компании RUKU?", expect_kind: clarify}
+  - {id: s_uz_01, lang: uz_latn, question: "2023-yilda nechta bitim tuzilgan?"}
+  - {id: s_uz_02, lang: uz_latn, question: "bug‘doy 2025-yilda jami qancha sotilgan?"}
+  - {id: s_uz_03, lang: uz_latn, question: "2024-yilda Farg‘ona viloyatida eng ko‘p bug‘doy sotib olgan 5 ta kompaniya"}
+  - {id: s_uz_04, lang: uz_latn, question: "2026-yilda qaysi tovar toifasi bo‘yicha savdo summasi eng katta?"}
+  - {id: s_uz_05, lang: uz_latn, question: "Sementning 1 tonnasi 2025-yilda qaysi viloyatda eng arzon sotilgan?"}
+  - {id: s_uz_06, lang: uz_latn, question: "2024-yilda eng yuqori dollar kursi qaysi kunda bo‘lgan?"}
+  - {id: s_uz_07, lang: uz_latn, question: "Qaysi broker eksport bitimlarini eng ko‘p olib borgan?"}
+  - {id: s_uz_08, lang: uz_latn, question: "2025-yilda eng ko‘p pul keltirgan 5 ta tovar qaysilar?"}
+  - {id: s_uz_09, lang: uz_latn, question: "2026-yilda karbamidning 1 tonnasi o‘rtacha qancha turgan?"}
+  - {id: s_uz_10, lang: uz_latn, question: "Qaysi tovar bo‘yicha bitimlar eng ko‘p bekor qilinadi?"}
+  - {id: s_uz_11, lang: uz_latn, question: "2026-yil oktabrda nechta bitim tuzilgan va ulardan qanchasi ijro etilgan?"}
+  - {id: s_uz_12, lang: uz_latn, question: "Paxta xomashyosi sotuvi bo‘yicha qaysi viloyatlar yetakchi?"}
+  - {id: s_uz_13, lang: uz_latn, question: "Butun davr mobaynida eng yirik eksportchi kim?"}
+  - {id: s_uz_14, lang: uz_latn, question: "Haftaning qaysi kunida eng ko‘p bitim tuziladi?"}
+  - {id: s_uz_15, lang: uz_latn, question: "2024-yilda nechta kompaniya bug‘doy sotib olgan?"}
+  - {id: s_uz_16, lang: uz_latn, question: "To‘langan, lekin hali yetkazib berilmagan bitimlar soni qancha?"}
+  - {id: s_uz_17, lang: uz_latn, question: "2022-yil yanvardan 2026-yil oktabrgacha dollar kursi qanchaga o‘zgargan?"}
+  - {id: s_uz_18, lang: uz_latn, question: "Butun davrdagi summasi eng katta bitim qaysi?"}
+  - {id: s_uz_19, lang: uz_latn, question: "Toshkent viloyatida eng ko‘p qaysi tovar sotiladi?"}
+  - {id: s_uz_20, lang: uz_latn, question: "2024-yilning qaysi oyida eng ko‘p bug‘doy sotilgan?"}
+  - {id: s_uz_21, lang: uz_latn, question: "2025 va 2026-yillarning birinchi yarmida bitimlar sonini solishtiring"}
+  - {id: s_uz_22, lang: uz_latn, question: "Qaysi broker eng ko‘p turli xaridorlar bilan ishlaydi?"}
+  - {id: s_uz_23, lang: uz_latn, question: "Oltin qancha sotilgan?", expect_kind: no_data}
+  - {id: s_uz_24, lang: uz_latn, question: "SHIQO kompaniyasining bitimlari nechta?", expect_kind: clarify}
+  - {id: s_cy_01, lang: uz_cyrl, question: "Ҳарайўм Кимё МЧЖ энг кўп қайси харидорларга сотган?"}
+  - {id: s_cy_02, lang: uz_cyrl, question: "2026-йилда кунига ўртача нечта битим тузилади?"}
+  - {id: s_cy_03, lang: uz_cyrl, question: "Қайси вилоятдаги харидорлар энг кўп цемент сотиб олган?"}
+  - {id: s_cy_04, lang: uz_cyrl, question: "2025-йилда экспорт битимлари суммаси долларда қанча бўлган?"}
+  - {id: s_cy_05, lang: uz_cyrl, question: "Энг кўп битим тузган сотувчи ким?"}
+  - {id: s_cy_06, lang: uz_cyrl, question: "2023-йилда бекор қилинган битимлар улуши қанча?"}
+  - {id: s_cy_07, lang: uz_cyrl, question: "2021 йилда нечта битим бўлган?", expect_kind: no_data}

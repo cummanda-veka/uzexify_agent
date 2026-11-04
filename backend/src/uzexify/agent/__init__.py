@@ -1,3 +1,5 @@
+import re
+
 """Agent entry point: `answer_question`."""
 
 import asyncio
@@ -86,18 +88,22 @@ MESSAGES = {
     "fallback": {
         "ru": "Не удалось сформулировать проверенный ответ; ниже результат запроса из базы.",
         "uz": "Tekshirilgan javobni shakllantirib bo‘lmadi; quyida bazadan olingan so‘rov natijasi.",
+        "uz_cyrl": "Текширилган жавобни шакллантириб бўлмади; қуйида базадан олинган сўров натижаси.",
     },
     "internal": {
         "ru": "Не удалось получить проверенный ответ. Попробуйте переформулировать вопрос.",
         "uz": "Tekshirilgan javob olinmadi. Savolni boshqacha yozib ko‘ring.",
+        "uz_cyrl": "Текширилган жавоб олинмади. Саволни бошқача ёзиб кўринг.",
     },
     "timeout": {
         "ru": "Превышено время ожидания ответа. Попробуйте упростить вопрос.",
         "uz": "Javob kutish vaqti tugadi. Savolni soddalashtirib ko‘ring.",
+        "uz_cyrl": "Жавоб кутиш вақти тугади. Саволни соддалаштириб кўринг.",
     },
     "unavailable": {
         "ru": "Языковая модель сейчас недоступна. Повторите попытку позже.",
         "uz": "Til modeli hozir mavjud emas. Keyinroq qayta urinib ko‘ring.",
+        "uz_cyrl": "Тил модели ҳозир мавжуд эмас. Кейинроқ қайта уриниб кўринг.",
     },
 }
 
@@ -213,6 +219,7 @@ async def answer_question(
     started = time.perf_counter()
     session_id = session_id or str(uuid.uuid4())
     lang = detect_lang(question)
+    msg_lang = "uz_cyrl" if lang == "uz" and re.search(r"[а-яёўқғҳ]", question, re.IGNORECASE) else lang
     ev = EvidenceLog()
     deps = AgentDeps(rt.pool, rt.embedder, ev, question)
     history = _sessions.pop(session_id, None)
@@ -271,14 +278,14 @@ async def answer_question(
                                     _sessions.popitem(last=False)
                 break
             except TimeoutError:
-                kind, error_code, text = "error", "timeout", MESSAGES["timeout"][lang]
+                kind, error_code, text = "error", "timeout", MESSAGES["timeout"][msg_lang]
                 break
             except (UnexpectedModelBehavior, UsageLimitExceeded) as e:
                 log.warning("agent gave up: %s", e)
                 if ev.sql:
-                    kind, text = "answer", MESSAGES["fallback"][lang]
+                    kind, text = "answer", MESSAGES["fallback"][msg_lang]
                 else:
-                    kind, error_code, text = "error", "internal", MESSAGES["internal"][lang]
+                    kind, error_code, text = "error", "internal", MESSAGES["internal"][msg_lang]
                 break
             except (FallbackExceptionGroup, ModelAPIError) as e:
                 remaining = deadline - asyncio.get_running_loop().time()
@@ -294,7 +301,7 @@ async def answer_question(
                     ev.entities.clear()
                     ev.charts.clear()
                     continue
-                kind, error_code, text = "error", "unavailable", MESSAGES["unavailable"][lang]
+                kind, error_code, text = "error", "unavailable", MESSAGES["unavailable"][msg_lang]
                 break
 
     evidence, entities = _evidence(ev)

@@ -1,5 +1,6 @@
 """Deterministic evaluators shared by the report and Pydantic Evals."""
 
+import re
 import unicodedata
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
@@ -60,7 +61,9 @@ def _language(case, result):
     if result["language"] != ("ru" if expected == "ru" else "uz"):
         return False
     text = result["text"]
-    for s in _data_strings(result):
+    names = set(_data_strings(result))
+    names |= {re.sub(r'"([^"]*)"', r"«\1»", s) for s in names}
+    for s in sorted(names, key=len, reverse=True):
         text = text.replace(s, " ")
     latin = sum("LATIN" in unicodedata.name(c, "") for c in text if c.isalpha())
     cyrillic = sum("CYRILLIC" in unicodedata.name(c, "") for c in text if c.isalpha())

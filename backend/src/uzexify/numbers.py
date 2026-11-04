@@ -11,6 +11,7 @@ class DisplayedNumber:
     value: Decimal
     tolerance: Decimal
     raw: str
+    scale: int = 0  # decimal exponent of a scale word ("трлн" -> 12), 0 if none
 
 
 _SCALES = {
@@ -36,11 +37,18 @@ _NUMBER = re.compile(
     re.IGNORECASE,
 )
 _DATE = re.compile(r"(?<!\d)(?:\d{2}\.\d{2}\.\d{4}|\d{4}-\d{2}-\d{2})(?!\d)")
+# A day written with a month name is part of a date, not a data value: "30 октября", "1-yanvardan",
+# "30 октябрда", "15-sentyabr".
+_MONTHS = (
+    r"январ|феврал|март|апрел|ма[йя]|июн|июл|август|сентябр|октябр|ноябр|декабр|"
+    r"yanvar|fevral|mart|aprel|may|iyun|iyul|avgust|sentabr|sentyabr|oktabr|noyabr|dekabr"
+)
+_DAY_MONTH = re.compile(rf"(?<!\d)\d{{1,2}}(?:-|[ \u00a0])(?:{_MONTHS})", re.IGNORECASE)
 _LIST_MARKER = re.compile(r"^[^\S\r\n]*\d+[.)](?!\d)", re.MULTILINE)
 
 
 def extract_numbers(text: str, question: str | None = None) -> list[DisplayedNumber]:
-    excluded = [m.span() for pattern in (_DATE, _LIST_MARKER) for m in pattern.finditer(text)]
+    excluded = [m.span() for pattern in (_DATE, _DAY_MONTH, _LIST_MARKER) for m in pattern.finditer(text)]
     question_values = {n.value for n in extract_numbers(question)} if question is not None else set()
     result = []
     for match in _NUMBER.finditer(text):
@@ -64,9 +72,15 @@ def extract_numbers(text: str, question: str | None = None) -> list[DisplayedNum
             continue
         precision = len(fraction.group(1)) if fraction else 0
         tolerance = Decimal("0.5") * (Decimal(10) ** (scale - precision))
-        result.append(DisplayedNumber(value=value, tolerance=tolerance, raw=raw))
+        result.append(DisplayedNumber(value=value, tolerance=tolerance, raw=raw, scale=scale))
     return result
 
 
 def is_grounded(n: DisplayedNumber, evidence: Iterable[Decimal]) -> bool:
-    return any(abs(n.value - value) <= n.tolerance for value in evidence)
+    """True if some evidence value matches at the shown precision. A scaled number ("25,70 трлн") also
+    matches a value SQL already returned in those units (25.70 from ROUND(sum / 1e12, 2))."""
+    unit = Decimal(10) ** n.scale
+    return any(
+        abs(n.value - value) <= n.tolerance or (n.scale and abs(n.value / unit - value) <= n.tolerance / unit)
+        for value in evidence
+    )

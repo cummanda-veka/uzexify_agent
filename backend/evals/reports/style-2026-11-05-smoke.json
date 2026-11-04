@@ -1,0 +1,55 @@
+{
+  "summary": {
+    "cases": 3,
+    "lint_clean": 3,
+    "lint_rules": {},
+    "judge_mean": 1,
+    "judge_min": 1,
+    "judge_ge9": 0,
+    "p95_ms": 8298
+  },
+  "cases": [
+    {
+      "id": "s_ru_01",
+      "lang": "ru",
+      "question": "Сколько сделок было заключено в 2024 году?",
+      "kind": "answer",
+      "text": "В 2024 году заключено **106 647 сделок**.\n- Без аннулированных: **99 324**.",
+      "charts": 0,
+      "duration_ms": 6901,
+      "lint": [],
+      "score": 1,
+      "judge": [
+        "judge error: ModelRequestRejectedError"
+      ]
+    },
+    {
+      "id": "s_uz_02",
+      "lang": "uz_latn",
+      "question": "bug‘doy 2025-yilda jami qancha sotilgan?",
+      "kind": "answer",
+      "text": "2025-yilda bug‘doy bo‘yicha jami **2 347 155 tonna** hajmida bitim tuzilgan.\n- Bekor qilingan bitimlarsiz: **2 191 361 tonna**.",
+      "charts": 0,
+      "duration_ms": 14054,
+      "lint": [],
+      "score": 1,
+      "judge": [
+        "judge error: ModelRequestRejectedError"
+      ]
+    },
+    {
+      "id": "s_cy_06",
+      "lang": "uz_cyrl",
+      "question": "2023-йилда бекор қилинган битимлар улуши қанча?",
+      "kind": "answer",
+      "text": "2023-йилда бекор қилинган битимлар улуши **6,72 %** бўлган: жами 93 985 та битимдан 6 313 таси бекор қилинган.",
+      "charts": 0,
+      "duration_ms": 8298,
+      "lint": [],
+      "score": 1,
+      "judge": [
+        "judge error: ModelRequestRejectedError"
+      ]
+    }
+  ]
+}
