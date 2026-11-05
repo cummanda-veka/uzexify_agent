@@ -40,6 +40,7 @@ export default function Home() {
   // Thinking level, by index into EFFORTS (labels are localised; the index survives a language switch).
   const effort = useRef<Effort>("low");
   const stick = useRef<StickToBottomContext>(null);
+  const dockRef = useRef<HTMLDivElement>(null);
   const busy = busyId !== null;
   const empty = messages.length === 0;
   const t = copy[locale];
@@ -89,6 +90,19 @@ export default function Home() {
       vv.removeEventListener("scroll", update);
     };
   }, []);
+
+  // The floating composer's height (grows with multi-line text) becomes the thread's bottom room.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: the dock mounts when `empty` flips
+  useEffect(() => {
+    const dock = dockRef.current;
+    if (!dock) return undefined;
+    const root = document.documentElement;
+    const observer = new ResizeObserver(() =>
+      root.style.setProperty("--dock-h", `${Math.round(dock.offsetHeight)}px`),
+    );
+    observer.observe(dock);
+    return () => observer.disconnect();
+  }, [empty]);
 
   // A send always brings the new question into view, even if the reader had scrolled up.
   // biome-ignore lint/correctness/useExhaustiveDependencies: runs when a message is added
@@ -295,12 +309,14 @@ export default function Home() {
             />
             <GradualBlur
               position="bottom"
-              height="3rem"
-              strength={1.2}
+              height="calc(var(--dock-h, 140px) + 2.5rem)"
+              strength={1.5}
               zIndex={3}
             />
           </StickToBottom>
-          <div className="dock">{composer}</div>
+          <div className="dock" ref={dockRef}>
+            {composer}
+          </div>
         </>
       )}
     </main>

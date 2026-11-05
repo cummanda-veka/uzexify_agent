@@ -369,6 +369,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* Without the fall-out animation the previous example would stay drawn under the new one. */
+  .prompt-bar__ghost-line[data-out] {
+    display: none;
+  }
+
   .prompt-bar__ghost-word,
   .prompt-bar__ghost-line[data-out],
   .prompt-bar__halo,
