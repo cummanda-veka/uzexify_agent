@@ -4,20 +4,23 @@ Country data: DB-IP Country Lite (CC BY 4.0, https://db-ip.com)."""
 
 import ipaddress
 import logging
-from functools import cache
 from pathlib import Path
 
 import maxminddb
 
 log = logging.getLogger(__name__)
 
+_readers: dict[str, maxminddb.Reader] = {}
 
-@cache
+
 def _reader(path: str) -> maxminddb.Reader | None:
-    if not Path(path).exists():
-        log.warning("geo database %s missing; country gate is open", path)
-        return None
-    return maxminddb.open_database(path)
+    """Open once; a missing file is retried on the next request, not cached."""
+    if path not in _readers:
+        if not Path(path).exists():
+            log.error("geo database %s missing; country gate denies all public traffic", path)
+            return None
+        _readers[path] = maxminddb.open_database(path)
+    return _readers[path]
 
 
 def country(ip: str, path: str) -> str | None:
@@ -36,15 +39,17 @@ def country(ip: str, path: str) -> str | None:
 
 
 def allowed(ip: str | None, countries: set[str], path: str) -> bool:
-    """True for allowed countries, private addresses (server-side and local traffic) and when the
-    database is absent; False for every other address, including ones the database cannot place."""
-    if not countries or ip is None:
+    """An empty country list disables the gate. Otherwise only allowed countries and private
+    addresses (internal traffic) pass; no IP, an unparsable IP, an unknown country or a missing
+    database all deny."""
+    if not countries:
         return True
+    if ip is None:
+        return False
     try:
-        if ipaddress.ip_address(ip).is_private or ipaddress.ip_address(ip).is_loopback:
-            return True
+        addr = ipaddress.ip_address(ip)
     except ValueError:
         return False
-    if _reader(path) is None:
+    if addr.is_private or addr.is_loopback:
         return True
     return country(ip, path) in countries
