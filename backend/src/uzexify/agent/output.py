@@ -98,6 +98,19 @@ def data_strings(ev: EvidenceLog) -> list[str]:
     return out
 
 
+_CODE_TOKEN = re.compile(r"[^\W\d_]*\d[\w‘’'-]*", re.UNICODE)
+
+
+def stray_numbers(text: str, question: str, ev: EvidenceLog) -> list[str]:
+    """Numbers in short UI text (chart title, legend) that are not grounded. Whole digit-bearing
+    tokens copied from data names ("АИ-92", "М00к") are masked first, so a product can be named;
+    a number merely appearing inside such a token ("2" in "АИ-92") is not an exemption."""
+    tokens = {t for s in data_strings(ev) for t in _CODE_TOKEN.findall(s) if not t.isdigit()}
+    for token in sorted(tokens, key=len, reverse=True):
+        text = re.sub(rf"(?<![\w-]){re.escape(token)}(?![\w-])", " ", text)
+    return ungrounded(text, question, ev)
+
+
 async def validate_answer(ctx: RunContext[AgentDeps], out: Answer) -> Answer:
     ev = ctx.deps.evidence
     if out.kind == "answer" and not ev.sql:

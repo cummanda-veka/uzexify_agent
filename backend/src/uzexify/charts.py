@@ -149,8 +149,9 @@ def validate_chart(
                     "(or use amount_uzs) before charting"
                 )
 
-    if chart_type in ("bar", "hbar", "line") and len(y) != 1:
-        raise ChartRejected(f"{chart_type} takes exactly one y column; use grouped_bar or panels for several")
+    if chart_type in ("bar", "hbar", "line") and len(y) > 1:
+        # Several lines / grouped bars on one axis: only if they measure the same thing.
+        _check_axis(y, units)
     if chart_type == "grouped_bar":
         if len(y) < 2:
             raise ChartRejected("grouped_bar needs 2+ comparable y columns")
@@ -263,10 +264,40 @@ def vega_lite(spec: ChartSpec, result: SqlResult) -> dict[str, Any]:
             },
         }
 
-    if spec.type in ("bar", "hbar", "line"):
+    if spec.type in ("bar", "hbar", "line") and len(spec.series) == 1:
         s = spec.series[0]
         return {**base, "width": width, "height": 320, **layer(s.column, s.unit, PALETTE[0], spec.type)}
-    if spec.type == "grouped_bar":
+    if spec.type == "line":
+        cols_ = [s.column for s in spec.series]
+        return {
+            **base,
+            "width": width,
+            "height": 320,
+            "transform": [{"fold": cols_, "as": ["series", "value"]}],
+            "mark": {"type": "line", "point": True, "strokeWidth": 2.5},
+            "encoding": {
+                "x": x_enc,
+                "y": {"field": "value", "type": "quantitative", "title": spec.series[0].unit},
+                "color": {
+                    "field": "series",
+                    "sort": cols_,
+                    "scale": {"domain": cols_, "range": PALETTE[: len(cols_)]},
+                    "legend": legend,
+                },
+            },
+        }
+    if spec.type == "hbar":
+        g = grouped(spec.series, spec.series[0].unit, 320)
+        enc = g["encoding"]
+        g["encoding"] = {
+            **enc,
+            "y": {**x_enc, "axis": {}},
+            "yOffset": enc["xOffset"],
+            "x": enc["y"],
+        }
+        del g["encoding"]["xOffset"]
+        return {**base, **g}
+    if spec.type in ("grouped_bar", "bar"):
         return {**base, **grouped(spec.series, spec.series[0].unit, 320)}
     # panels: one chart per unit (series sharing a unit share a panel), stacked, each with its own axis.
     groups: dict[str, list[ChartSeries]] = {}

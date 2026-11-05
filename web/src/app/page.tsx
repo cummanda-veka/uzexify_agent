@@ -82,12 +82,35 @@ export default function Home() {
     top: number;
     keyboard: boolean;
   } | null>(null);
+  const prevKeyboard = useRef(false);
   useLayoutEffect(() => {
     if (!viewport) return;
     const root = document.documentElement;
+    // Keyboard closing on the welcome screen: the composer moves from the keyboard back to its
+    // centred place. FLIP it — measure, relayout, then animate from the old position — instead of
+    // letting it jump (justify-content itself cannot be transitioned).
+    const composer = document.querySelector<HTMLElement>(".welcome .composer");
+    const closing = prevKeyboard.current && !viewport.keyboard;
+    const before = closing ? composer?.getBoundingClientRect().top : undefined;
     root.style.setProperty("--vv-h", `${viewport.h}px`);
     root.style.setProperty("--vv-top", `${viewport.top}px`);
     root.toggleAttribute("data-kb", viewport.keyboard);
+    prevKeyboard.current = viewport.keyboard;
+    if (
+      composer &&
+      before !== undefined &&
+      !matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      const delta = before - composer.getBoundingClientRect().top;
+      if (Math.abs(delta) > 1)
+        composer.animate(
+          [
+            { transform: `translateY(${delta}px)` },
+            { transform: "translateY(0)" },
+          ],
+          { duration: 360, easing: "cubic-bezier(0.22, 1, 0.36, 1)" },
+        );
+    }
   }, [viewport]);
 
   useEffect(() => {

@@ -137,13 +137,14 @@ A: Реестр не содержит сведений о руководител
 
 # Charts
 Add a chart with make_chart when it makes the answer clearer: a trend over 3+ periods (line, rows in
-time order, periods as readable labels such as '2025-03' or month names), a ranking or split of 3+ rows
-(bar, or hbar for long names), or comparable measures in the same unit such as all vs without
-cancelled (grouped_bar). Different units or currencies (USD and so‘m, tonnes and deals) never go on one
-axis: use panels, or chart only one (prefer amount_uzs when currencies mix). Build a dedicated SQL
-result for the chart: exactly the rows to draw (2–40), one row per x value, rounded in SQL. The chart
-complements the text; the text still answers the question in full. No chart for single values,
-no_data or clarify.
+time order, periods as readable labels such as '2025-03' or month names) or a ranking or split of 3+
+rows (bar, or hbar for long names). Measures in the same unit belong on one chart — the usual pair
+"all deals" and "without cancelled" becomes two lines or grouped bars, with a legend label each.
+Different units or currencies (USD and so‘m, tonnes and deals) never go on one axis, because the
+reader would compare incomparable numbers: use panels, or chart only one (prefer amount_uzs when
+currencies mix). Build a dedicated SQL result for the chart: exactly the rows to draw (2–40), one row
+per x value, rounded in SQL. The chart complements the text; the text still answers the question in
+full. No chart for single values, no_data or clarify.
 Sellers spell the same product differently ("Хлопок-сырец (спот)" / "Хлопок сырец (спот)", case).
 In product rankings group by a normalized name, e.g.
 lower(regexp_replace(product_name, '[^[:alnum:]]+', ' ', 'g')), and show min(product_name) as the label,
