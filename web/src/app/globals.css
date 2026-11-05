@@ -30,20 +30,21 @@
   box-sizing: border-box;
 }
 
+/* App shell: the document never scrolls (iOS cannot pan it when the keyboard opens). `.app` is
+   pinned to the visual viewport via --vv-h / --vv-top (set from visualViewport in page.tsx);
+   the thread is the only scroll container. */
 html,
 body {
+  height: 100%;
   margin: 0;
-  min-height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
   background: var(--bg);
   color: var(--ink);
 }
 
-/* Fixed chrome: the top bar and the input dock (its height is measured into --dock-h, the
-   on-screen keyboard into --kb). Focus moves and find-in-page keep targets clear of both. */
 html {
   --topbar-h: calc(56px + env(safe-area-inset-top));
-  scroll-padding-top: calc(var(--topbar-h) + 8px);
-  scroll-padding-bottom: calc(var(--dock-h, 160px) + var(--kb, 0px) + 8px);
 }
 
 body {
@@ -66,9 +67,29 @@ button {
 /* ---------- frame ---------- */
 
 .app {
-  position: relative;
-  min-height: 100dvh;
+  position: fixed;
+  top: var(--vv-top, 0px);
+  right: 0;
+  left: 0;
+  height: var(--vv-h, 100dvh);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   isolation: isolate;
+}
+
+/* Thread: StickToBottom frame (fills the space above the dock) → its scroller → content. */
+.thread-frame {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.thread-scroll {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scroll-padding-top: calc(var(--topbar-h) + 8px);
 }
 
 .backdrop {
@@ -96,7 +117,7 @@ button {
 }
 
 .topbar {
-  position: fixed;
+  position: absolute;
   inset: 0 0 auto;
   z-index: 5;
   display: flex;
@@ -146,25 +167,17 @@ button {
 
 /* ---------- empty state ---------- */
 
-/* The welcome screen is pinned to the visible viewport (above an open keyboard) and never scrolls:
-   the page is locked, and content that does not fit is dropped whole by height breakpoints rather
-   than clipped or pushed off-screen. */
-html[data-screen="welcome"],
-html[data-screen="welcome"] body {
-  overflow: hidden;
-  overscroll-behavior: none;
-}
-
+/* The welcome screen fills the shell and never scrolls; content that does not fit is dropped whole
+   by height breakpoints rather than clipped. */
 .welcome {
-  position: fixed;
-  inset: 0 0 var(--kb, 0px);
+  flex: 1 1 auto;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: calc(var(--topbar-h) + 8px) max(20px, env(safe-area-inset-right))
-    max(16px, calc(env(safe-area-inset-bottom) - var(--kb, 0px)))
-    max(20px, env(safe-area-inset-left));
+    max(16px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
   overflow: hidden;
   text-align: center;
 }
@@ -197,7 +210,7 @@ html[data-screen="welcome"] body {
   }
 }
 
-/* Keyboard open on the welcome screen: keep the title and the input only. */
+/* Keyboard open on the welcome screen: keep the title and the input, sitting on the keyboard. */
 html[data-kb] .welcome .mark,
 html[data-kb] .welcome p,
 html[data-kb] .welcome .examples {
@@ -210,6 +223,7 @@ html[data-kb] .welcome h1 {
 
 html[data-kb] .welcome {
   justify-content: flex-end;
+  padding-bottom: 12px;
 }
 
 /* PromptBar popovers use the same glass panel as the rest of the UI. */
@@ -300,8 +314,7 @@ html[data-kb] .welcome {
   width: min(var(--column), 100%);
   margin: 0 auto;
   padding: calc(var(--topbar-h) + 32px) max(20px, env(safe-area-inset-right))
-    calc(var(--dock-h, 160px) + var(--kb, 0px) + 24px)
-    max(20px, env(safe-area-inset-left));
+    24px max(20px, env(safe-area-inset-left));
 }
 
 .messages {
@@ -772,20 +785,20 @@ th {
   color: inherit;
 }
 
+/* The composer is the bottom row of the shell (not fixed), so it always sits on the keyboard. */
 .dock {
-  position: fixed;
-  /* --kb: on-screen keyboard height from visualViewport (set in page.tsx), so the input rides
-     above the keyboard on iOS/Android instead of staying under it. */
-  inset: auto 0 var(--kb, 0px);
+  position: relative;
   z-index: 4;
+  flex: none;
   display: flex;
   justify-content: center;
-  /* The home-indicator inset only matters with the keyboard closed. */
-  padding: 28px max(16px, env(safe-area-inset-right))
-    max(16px, calc(env(safe-area-inset-bottom) - var(--kb, 0px)))
-    max(16px, env(safe-area-inset-left));
-  transition: bottom 120ms ease-out;
-  background: linear-gradient(transparent, var(--bg) 45%);
+  padding: 8px max(16px, env(safe-area-inset-right))
+    max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+}
+
+/* The home-indicator inset is under the keyboard when it is open. */
+html[data-kb] .dock {
+  padding-bottom: 10px;
 }
 
 .stopped-message {
@@ -821,8 +834,7 @@ th {
 
   .thread {
     padding: calc(var(--topbar-h) + 16px) max(14px, env(safe-area-inset-right))
-      calc(var(--dock-h, 160px) + var(--kb, 0px) + 16px)
-      max(14px, env(safe-area-inset-left));
+      16px max(14px, env(safe-area-inset-left));
   }
 
   .question {

@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { StickToBottom, type StickToBottomContext } from "use-stick-to-bottom";
 import {
   DecryptedText,
   GradientASCII,
@@ -29,12 +30,6 @@ const HINTS = Object.fromEntries(
 
 const EFFORTS: Effort[] = ["low", "medium", "high"];
 
-const scrollToEnd = (smooth: boolean) =>
-  window.scrollTo({
-    top: document.documentElement.scrollHeight,
-    behavior: smooth ? "smooth" : "auto",
-  });
-
 export default function Home() {
   const [locale, setLocale] = useState<Locale>("ru");
   const [messages, setMessages] = useState<Message[]>([]);
@@ -44,8 +39,7 @@ export default function Home() {
   const controller = useRef<AbortController | null>(null);
   // Thinking level, by index into EFFORTS (labels are localised; the index survives a language switch).
   const effort = useRef<Effort>("low");
-  const dockRef = useRef<HTMLDivElement>(null);
-  const threadRef = useRef<HTMLDivElement>(null);
+  const stick = useRef<StickToBottomContext>(null);
   const busy = busyId !== null;
   const empty = messages.length === 0;
   const t = copy[locale];
@@ -65,93 +59,41 @@ export default function Home() {
     document.documentElement.lang = locale;
   }, [locale]);
 
-  // Scrolling. The thread scrolls with the window; the top bar and the input dock are fixed.
-  // - Mobile keyboards shrink only the visual viewport: their height goes into --kb so the dock rides
-  //   above them.
-  // - The dock's height (it grows with the text and wraps) goes into --dock-h, which the thread uses
-  //   as its bottom padding, so the last answer is never hidden under it.
-  // - The thread follows a running answer only while the reader is at the bottom; a send always
-  //   scrolls down, and re-scrolls while the viewport settles (keyboard closing).
-  const pinned = useRef(true);
-  const sentAt = useRef(0);
-
+  // Layout model (iOS-safe): the document never scrolls. `.app` is an app shell pinned to the
+  // *visual* viewport — its height and top follow visualViewport, so when the on-screen keyboard
+  // opens the shell shrinks, the composer sits right on the keyboard and Safari has nothing to pan.
+  // The thread is the only scroll container, managed by use-stick-to-bottom (follows a running
+  // answer while the reader is at the bottom, lets go as soon as they scroll up).
   useEffect(() => {
-    const root = document.documentElement;
-    // Only the reader's own input may unpin: smooth scrolls and growing content also fire `scroll`.
-    let userAt = 0;
-    const markUser = () => {
-      userAt = performance.now();
-    };
-    const onScroll = () => {
-      const gap = root.scrollHeight - (window.scrollY + window.innerHeight);
-      if (gap < 96) pinned.current = true;
-      else if (performance.now() - userAt < 800) pinned.current = false;
-    };
     const vv = window.visualViewport;
-    let lastKb = 0;
-    const onViewport = () => {
-      if (!vv) return;
-      const kb = Math.round(
-        Math.max(0, window.innerHeight - vv.height - vv.offsetTop),
-      );
-      if (kb === lastKb) return;
-      lastKb = kb;
-      root.style.setProperty("--kb", `${kb}px`);
-      root.toggleAttribute("data-kb", kb > 80);
-      // Keyboard opened or closed: keep the end in view if the reader was there.
-      if (pinned.current && root.dataset.screen === "thread")
-        scrollToEnd(false);
+    if (!vv) return undefined;
+    const root = document.documentElement;
+    let frame = 0;
+    const update = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        if (vv.scale > 1.01) return; // pinch-zoom, not a keyboard
+        root.style.setProperty("--vv-h", `${Math.round(vv.height)}px`);
+        root.style.setProperty("--vv-top", `${Math.round(vv.offsetTop)}px`);
+        root.toggleAttribute("data-kb", window.innerHeight - vv.height > 120);
+        // Safari may leave the layout viewport scrolled after the keyboard closes.
+        if (window.scrollY !== 0 && vv.offsetTop === 0) window.scrollTo(0, 0);
+      });
     };
-    const userEvents = ["wheel", "touchmove", "keydown"] as const;
-    onViewport();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    for (const e of userEvents)
-      window.addEventListener(e, markUser, { passive: true });
-    vv?.addEventListener("resize", onViewport);
-    vv?.addEventListener("scroll", onViewport);
+    update();
+    vv.addEventListener("resize", update);
+    vv.addEventListener("scroll", update);
     return () => {
-      window.removeEventListener("scroll", onScroll);
-      for (const e of userEvents) window.removeEventListener(e, markUser);
-      vv?.removeEventListener("resize", onViewport);
-      vv?.removeEventListener("scroll", onViewport);
+      cancelAnimationFrame(frame);
+      vv.removeEventListener("resize", update);
+      vv.removeEventListener("scroll", update);
     };
   }, []);
-
-  // The welcome screen fits the viewport and never scrolls (html[data-screen=welcome] locks it).
-  useEffect(() => {
-    document.documentElement.dataset.screen = empty ? "welcome" : "thread";
-  }, [empty]);
-
-  // The dock's height feeds the thread's bottom padding. While an answer is being produced, growth
-  // of the thread keeps the bottom in view (if the reader is there). Once it is done the reader owns
-  // the scroll: expanding evidence or a collapsing trace must not pull the page down.
-  const busyRef = useRef(false);
-  busyRef.current = busyId !== null;
-  // biome-ignore lint/correctness/useExhaustiveDependencies: the dock and thread mount when `empty` flips
-  useEffect(() => {
-    const dock = dockRef.current;
-    const thread = threadRef.current;
-    if (!dock || !thread) return undefined;
-    const root = document.documentElement;
-    let lastHeight = thread.offsetHeight;
-    const observer = new ResizeObserver(() => {
-      root.style.setProperty("--dock-h", `${Math.round(dock.offsetHeight)}px`);
-      const height = thread.offsetHeight;
-      const grew = height > lastHeight;
-      lastHeight = height;
-      if (grew && busyRef.current && pinned.current) scrollToEnd(false);
-    });
-    observer.observe(dock);
-    observer.observe(thread);
-    return () => observer.disconnect();
-  }, [empty]);
 
   // A send always brings the new question into view, even if the reader had scrolled up.
   // biome-ignore lint/correctness/useExhaustiveDependencies: runs when a message is added
   useEffect(() => {
-    if (empty) return;
-    pinned.current = true;
-    scrollToEnd(true);
+    if (!empty) void stick.current?.scrollToBottom("smooth");
   }, [messages.length, empty]);
 
   function changeLocale(next: Locale) {
@@ -195,7 +137,6 @@ export default function Home() {
   async function send(question: string, retryId?: string) {
     if (busy || !question.trim()) return;
     const id = retryId ?? crypto.randomUUID();
-    sentAt.current = performance.now();
     setMessages((current) =>
       retryId
         ? current.map((m) => (m.id === id ? { id, question, steps: [] } : m))
@@ -326,34 +267,40 @@ export default function Home() {
         </section>
       ) : (
         <>
-          <div className="thread" ref={threadRef}>
-            <MessageList
-              messages={messages}
-              locale={locale}
-              busyId={busyId}
-              openId={openId}
-              onToggle={onToggle}
-              onRetry={onRetry}
-              onPick={onPick}
+          <StickToBottom
+            className="thread-frame"
+            contextRef={stick}
+            initial="instant"
+            resize="smooth"
+          >
+            <StickToBottom.Content
+              className="thread"
+              scrollClassName="thread-scroll"
+            >
+              <MessageList
+                messages={messages}
+                locale={locale}
+                busyId={busyId}
+                openId={openId}
+                onToggle={onToggle}
+                onRetry={onRetry}
+                onPick={onPick}
+              />
+            </StickToBottom.Content>
+            <GradualBlur
+              position="top"
+              height="4.5rem"
+              strength={1.5}
+              zIndex={3}
             />
-          </div>
-          <GradualBlur
-            target="page"
-            position="top"
-            height="5rem"
-            strength={1.5}
-            zIndex={3}
-          />
-          <GradualBlur
-            target="page"
-            position="bottom"
-            height="9rem"
-            strength={1.5}
-            zIndex={3}
-          />
-          <div className="dock" ref={dockRef}>
-            {composer}
-          </div>
+            <GradualBlur
+              position="bottom"
+              height="3rem"
+              strength={1.2}
+              zIndex={3}
+            />
+          </StickToBottom>
+          <div className="dock">{composer}</div>
         </>
       )}
     </main>
