@@ -13,6 +13,7 @@ from sse_starlette import EventSourceResponse
 from uzexify import observability
 from uzexify.agent import MESSAGES, AskResult, EvidenceItem, answer_question
 from uzexify.agent.runtime import close_runtime, get_runtime
+from uzexify.api import geo
 from uzexify.api.limits import AgentGate, Busy, RateLimiter, client_key
 from uzexify.charts import ChartRejected, ChartSpec, chart_png, validate_chart
 from uzexify.settings import get_settings
@@ -60,6 +61,20 @@ async def health():
     except Exception as e:  # noqa: BLE001
         log.error("health failed: %s", e)
         return JSONResponse({"status": "unavailable"}, status_code=503)
+
+
+@app.get("/internal/geo")
+async def geo_gate(request: Request) -> Response:
+    """forward_auth target for Caddy: 204 lets the request through; outsiders get the /blocked page,
+    or a 403 for API calls."""
+    ip = (request.headers.get("x-forwarded-for") or "").split(",")[0].strip() or None
+    countries = {c.strip().upper() for c in _settings.allowed_countries.split(",") if c.strip()}
+    if geo.allowed(ip, countries, _settings.geo_db_path):
+        return Response(status_code=204)
+    uri = request.headers.get("x-forwarded-uri", "/")
+    if uri.startswith("/api/"):
+        return JSONResponse({"code": "region"}, status_code=403)
+    return Response(status_code=302, headers={"Location": "/blocked"})
 
 
 _settings = get_settings()

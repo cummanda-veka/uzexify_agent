@@ -27,6 +27,9 @@ class Settings(BaseSettings):
     asks_per_minute: int = 12
     max_concurrent_asks: int = 8
     queue_wait_s: float = 20
+    # Country gate for public web and API traffic (api/geo.py); empty list disables it.
+    allowed_countries: str = "UZ"
+    geo_db_path: str = "/geo/dbip-country-lite.mmdb"
     sql_timeout_ms: int = 10000
     sql_max_rows: int = 200
     company_match_min_score: float = 0.5

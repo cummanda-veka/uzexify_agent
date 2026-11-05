@@ -31,6 +31,7 @@ services:
     <<: *backend-env
     volumes:
       - ./data/uzex_spot_data:/data:ro
+      - ./geo:/geo:ro
     depends_on:
       db:
         condition: service_healthy

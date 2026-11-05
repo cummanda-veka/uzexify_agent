@@ -1,11 +1,24 @@
 {$PUBLIC_HOST} {
 	encode zstd gzip
-	handle /api/* {
-		reverse_proxy api:8000 {
-			flush_interval -1
-		}
-	}
-	handle {
+
+	# The page shown to visitors outside the allowed countries, and what it needs to render.
+	@open path /blocked /_next/* /favicon.ico /icon.png /apple-icon.png
+	handle @open {
 		reverse_proxy web:3000
+	}
+
+	handle {
+		# Country gate (backend /internal/geo): 204 passes, otherwise its redirect or 403 is returned.
+		forward_auth api:8000 {
+			uri /internal/geo
+		}
+		handle /api/* {
+			reverse_proxy api:8000 {
+				flush_interval -1
+			}
+		}
+		handle {
+			reverse_proxy web:3000
+		}
 	}
 }

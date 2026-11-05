@@ -16,6 +16,7 @@ dependencies = [
     "langfuse==5.1.0",
     "httpx",
     "vl-convert-python>=1.9.0.post1",
+    "maxminddb>=3.2.0",
 ]
 
 [project.scripts]
