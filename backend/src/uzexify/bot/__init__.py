@@ -4,6 +4,7 @@ import json
 import logging
 import re
 import secrets
+import uuid
 from contextlib import suppress
 from typing import Any
 
@@ -256,11 +257,11 @@ async def run_bot() -> None:
     dispatcher = Dispatcher()
     timeout = httpx.Timeout(settings.agent_timeout_s + 15, connect=10)
     # Conversation memory lives in the API, keyed by session id. /new switches the chat to a fresh
-    # session; the counter is per process, so a restart also starts clean conversations.
-    generation: dict[int, int] = {}
+    # session id; a fresh random id per chat (first use, /new, bot restart) never reuses old memory.
+    sessions: dict[int, str] = {}
 
     def session(chat_id: int) -> str:
-        return f"tg:{chat_id}:{generation.get(chat_id, 0)}"
+        return sessions.setdefault(chat_id, f"tg:{chat_id}:{uuid.uuid4().hex}")
 
     async def send_rich(chat_id: int, markdown: str, reply_markup=None) -> None:
         try:
@@ -375,7 +376,7 @@ async def run_bot() -> None:
 
         @dispatcher.message(Command("new"))
         async def new_chat(message: Message) -> None:
-            generation[message.chat.id] = generation.get(message.chat.id, 0) + 1
+            sessions[message.chat.id] = f"tg:{message.chat.id}:{uuid.uuid4().hex}"
             lang = lang_of(message)
             await message.answer(NEW_CHAT[lang], reply_markup=examples_keyboard(lang))
 
