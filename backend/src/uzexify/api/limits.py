@@ -60,10 +60,12 @@ class AgentGate:
 
 
 def client_key(forwarded_for: str | None, peer: str | None, session_id: str | None, channel: str) -> str:
-    """Rate-limit key: the Telegram chat for the bot (all bot traffic shares one IP), else the
-    original client IP that Caddy puts first in X-Forwarded-For."""
-    if channel == "telegram" and session_id:
-        return "tg:" + session_id.split(":")[1] if session_id.count(":") >= 2 else session_id
+    """Rate-limit key. Public traffic always passes Caddy, which sets X-Forwarded-For: it is limited
+    by the original client IP whatever X-Client or session_id it sends. Only requests that reach the
+    API directly on the internal network (the bot) are keyed by Telegram chat, since all bot traffic
+    shares one IP."""
     if forwarded_for:
         return forwarded_for.split(",")[0].strip()
+    if channel == "telegram" and session_id and session_id.count(":") >= 2:
+        return "tg:" + session_id.split(":")[1]
     return peer or "unknown"
