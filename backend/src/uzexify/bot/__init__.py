@@ -10,10 +10,26 @@ from typing import Any
 import httpx
 from aiogram import Bot, Dispatcher, F
 from aiogram.enums import ChatAction, ChatType
+from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters import CommandStart
-from aiogram.types import BufferedInputFile, Message
+from aiogram.methods import SendRichMessage, SendRichMessageDraft
+from aiogram.types import (
+    BufferedInputFile,
+    InputMediaPhoto,
+    InputRichMessage,
+    InputRichMessageMedia,
+    Message,
+)
 
 from uzexify.charts import ChartSpec, chart_png
+
+
+def _duration(answer: dict[str, Any]) -> str:
+    """Answer time as "⏱ 15,5 с" (decimal comma, one digit, NBSP before the unit)."""
+    seconds = f"{answer.get('duration_ms', 0) / 1000:.1f}".replace(".", ",")
+    return f"⏱ {seconds}\u00a0с"
+
+
 from uzexify.settings import get_settings
 from uzexify.sqlguard import SqlResult
 
@@ -79,7 +95,7 @@ def format_answer(answer: dict[str, Any]) -> str:
     """Render a Telegram HTML response, dropping rows before truncating SQL."""
     language = answer.get("language", "ru")
     title = "Asos" if language == "uz" else "Основание"
-    footer = f"⏱ {answer.get('duration_ms', 0) / 1000:g} с"
+    footer = _duration(answer)
     footer_html = html.escape(footer, quote=False)
     evidence = answer.get("evidence") or []
     sql = "\n\n".join(str(item.get("sql", "")) for item in evidence)[:1500]
@@ -151,7 +167,7 @@ async def _typing(bot: Bot, chat_id: int) -> None:
         await asyncio.sleep(4)
 
 
-def chart_images(answer: dict[str, Any]) -> list[tuple[str, bytes]]:
+def chart_images(answer: dict[str, Any]) -> list[tuple[ChartSpec, bytes]]:
     """PNG for each chart of the answer, rendered from the answer's own SQL evidence rows."""
     results = {
         item["sql_id"]: SqlResult(
@@ -172,10 +188,69 @@ def chart_images(answer: dict[str, Any]) -> list[tuple[str, bytes]]:
         if result is None:
             continue
         try:
-            images.append((f"{spec.id}.png", chart_png(spec, result)))
-        except Exception:  # a failed render must not lose the text answer that was already sent
+            images.append((spec, chart_png(spec, result)))
+        except Exception:  # a failed render must not lose the text answer
             log.exception("chart render failed: %s", spec.id)
     return images
+
+
+RICH_LIMIT = 32_000  # Bot API: 32768 characters per rich message; keep a margin
+EVIDENCE_ROWS = 10
+
+
+def _cell(value: Any) -> str:
+    return str(value).replace("|", "\\|").replace("\n", " ")
+
+
+def rich_answer(answer: dict[str, Any], images: list[tuple[ChartSpec, bytes]]) -> InputRichMessage:
+    """Bot API 10.1+ rich message: the agent's Markdown as is (real tables), charts embedded in the
+    body via tg://photo links, the evidence (SQL and rows) in a collapsible block."""
+    language = answer.get("language", "ru")
+    parts = [str(answer.get("text", ""))]
+    media = []
+    for spec, png in images:
+        title = spec.title.replace('"', "'")
+        parts.append(f'![](tg://photo?id={spec.id} "{title}")')
+        media.append(
+            InputRichMessageMedia(
+                id=spec.id, media=InputMediaPhoto(media=BufferedInputFile(png, filename=f"{spec.id}.png"))
+            )
+        )
+    evidence = answer.get("evidence") or []
+    footer = _duration(answer)
+
+    def details(rows_per_query: int) -> str:
+        if not evidence:
+            return ""
+        blocks = []
+        for item in evidence:
+            block = f"**{item.get('sql_id', '')}** {item.get('purpose', '')}\n\n```sql\n{item.get('sql', '')}\n```"
+            columns = item.get("columns") or []
+            rows = (item.get("rows") or [])[:rows_per_query]
+            if columns and rows:
+                block += "\n\n| " + " | ".join(_cell(c) for c in columns) + " |\n|"
+                block += "---|" * len(columns) + "\n"
+                block += "\n".join("| " + " | ".join(_cell(v) for v in row) + " |" for row in rows)
+            blocks.append(block)
+        summary = "Asos" if language == "uz" else "Основание ответа"
+        return f"<details><summary>{summary}</summary>\n\n" + "\n\n".join(blocks) + "\n\n</details>"
+
+    for rows_per_query in (EVIDENCE_ROWS, 3, 0):
+        markdown = "\n\n".join([*parts, details(rows_per_query), footer])
+        if len(markdown) <= RICH_LIMIT:
+            break
+    else:
+        markdown = "\n\n".join([*parts, footer])[:RICH_LIMIT]
+    return InputRichMessage(markdown=markdown, media=media or None)
+
+
+def rich_progress(done: list[str], current: str) -> InputRichMessage:
+    """Streaming draft while the agent works: finished steps, then a 'Thinking…' block with the
+    current one. Drafts are previews only; the answer itself is sent with sendRichMessage."""
+    lines = [f"- ✓ {step}" for step in done]
+    body = "\n".join(lines)
+    thinking = f"<tg-thinking>{html.escape(current, quote=False)}</tg-thinking>"
+    return InputRichMessage(markdown=f"{body}\n\n{thinking}" if body else thinking)
 
 
 async def run_bot() -> None:
@@ -211,17 +286,43 @@ async def run_bot() -> None:
                     json={"question": question, "session_id": f"tg:{message.chat.id}"},
                 ) as response:
                     response.raise_for_status()
+                    done: list[str] = []
+                    calling = ""
+                    working = "Ищу в данных" if language == "ru" else "Ma’lumotlar qidirilmoqda"
                     async for event, payload in _events(response):
                         if event == "step" and private:
-                            label = payload.get(f"label_{language}")
-                            if label:
-                                await bot.send_message_draft(
-                                    chat_id=message.chat.id, draft_id=draft_id, text=label
+                            label = payload.get(f"label_{language}") or ""
+                            if payload.get("type") == "tool_call":
+                                calling = label
+                            elif label:
+                                done.append(f"{calling} · {label}" if calling else label)
+                                calling = ""
+                            # A failed draft only costs the progress preview, never the answer.
+                            with suppress(TelegramBadRequest):
+                                await bot(
+                                    SendRichMessageDraft(
+                                        chat_id=message.chat.id,
+                                        draft_id=draft_id,
+                                        rich_message=rich_progress(done, calling or working),
+                                    )
                                 )
                         elif event == "answer":
-                            await message.answer(format_answer(payload), parse_mode="HTML")
-                            for name, png in await asyncio.to_thread(chart_images, payload):
-                                await message.answer_photo(BufferedInputFile(png, filename=name))
+                            images = await asyncio.to_thread(chart_images, payload)
+                            try:
+                                await bot(
+                                    SendRichMessage(
+                                        chat_id=message.chat.id, rich_message=rich_answer(payload, images)
+                                    )
+                                )
+                            except TelegramBadRequest:
+                                # Clients or content Telegram cannot render as a rich message: send the
+                                # classic HTML answer and the charts as photos.
+                                log.exception("rich message rejected; sending HTML")
+                                await message.answer(format_answer(payload), parse_mode="HTML")
+                                for spec, png in images:
+                                    await message.answer_photo(
+                                        BufferedInputFile(png, filename=f"{spec.id}.png"), caption=spec.title
+                                    )
                             return
                         elif event == "error":
                             error = payload.get(f"message_{language}") or error
