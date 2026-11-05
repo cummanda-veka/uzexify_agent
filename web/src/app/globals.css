@@ -190,6 +190,38 @@ button {
   flex: none;
   width: clamp(64px, 18cqh, 184px);
   margin-bottom: clamp(8px, 2.5cqh, 20px);
+  transition:
+    width 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    margin 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.welcome p {
+  max-height: 10em;
+  overflow: hidden;
+  transition:
+    opacity 200ms ease,
+    max-height 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    margin 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Keyboard open: the intro fades and folds away, the logo eases down to a compact size. */
+html[data-kb] .welcome .mark {
+  width: clamp(48px, 14cqh, 88px);
+  margin-bottom: 8px;
+}
+
+html[data-kb] .welcome p {
+  max-height: 0;
+  margin-top: 0;
+  margin-bottom: 16px;
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mark,
+  .welcome p {
+    transition: none;
+  }
 }
 
 /* Thresholds are on the welcome screen's content height (its padding excluded). */
