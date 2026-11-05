@@ -11,16 +11,21 @@ import httpx
 from aiogram import Bot, Dispatcher, F
 from aiogram.enums import ChatAction, ChatType
 from aiogram.exceptions import TelegramBadRequest
-from aiogram.filters import CommandStart
+from aiogram.filters import Command, CommandStart
 from aiogram.methods import SendRichMessage, SendRichMessageDraft
 from aiogram.types import (
     BufferedInputFile,
+    CallbackQuery,
+    Chat,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
     InputMediaPhoto,
     InputRichMessage,
     InputRichMessageMedia,
     Message,
 )
 
+from uzexify.bot.profile import EXAMPLES, EXAMPLES_TITLE, HELP, NEW_CHAT, START, apply_profile, ui_language
 from uzexify.charts import ChartSpec, chart_png
 from uzexify.settings import get_settings
 from uzexify.sqlguard import SqlResult
@@ -32,15 +37,6 @@ def _duration(answer: dict[str, Any]) -> str:
     """Answer time as "⏱ 15,5 с" (decimal comma, one digit, NBSP before the unit)."""
     seconds = f"{answer.get('duration_ms', 0) / 1000:.1f}".replace(".", ",")
     return f"⏱ {seconds}\u00a0с"
-
-
-START = (
-    "Задайте вопрос о сделках UZEX / UZEX bitimlari haqida savol bering.\n\n"
-    "• Сколько сделок было заключено в 2024 году?\n"
-    "• Какой брокер провёл больше всего сделок на стороне покупателя в 2023 году?\n"
-    "• 2023-yilda nechta bitim tuzilgan?\n"
-    "• bug‘doy 2025-yilda jami qancha sotilgan?"
-)
 
 
 def _escaped_prefix(text: str, limit: int) -> str:
@@ -259,19 +255,42 @@ async def run_bot() -> None:
     bot = Bot(token=settings.telegram_bot_token)
     dispatcher = Dispatcher()
     timeout = httpx.Timeout(settings.agent_timeout_s + 15, connect=10)
+    # Conversation memory lives in the API, keyed by session id. /new switches the chat to a fresh
+    # session; the counter is per process, so a restart also starts clean conversations.
+    generation: dict[int, int] = {}
+
+    def session(chat_id: int) -> str:
+        return f"tg:{chat_id}:{generation.get(chat_id, 0)}"
+
+    async def send_rich(chat_id: int, markdown: str, reply_markup=None) -> None:
+        try:
+            await bot(
+                SendRichMessage(
+                    chat_id=chat_id,
+                    rich_message=InputRichMessage(markdown=markdown),
+                    reply_markup=reply_markup,
+                )
+            )
+        except TelegramBadRequest:
+            await bot.send_message(
+                chat_id, markdown.replace("**", "").replace("## ", ""), reply_markup=reply_markup
+            )
+
+    def examples_keyboard(lang: str) -> InlineKeyboardMarkup:
+        return InlineKeyboardMarkup(
+            inline_keyboard=[
+                [InlineKeyboardButton(text=q, callback_data=f"ex:{lang}:{i}")]
+                for i, q in enumerate(EXAMPLES[lang])
+            ]
+        )
+
     async with httpx.AsyncClient(timeout=timeout) as client:
 
-        @dispatcher.message(CommandStart())
-        async def start(message: Message) -> None:
-            await message.answer(START)
-
-        @dispatcher.message(F.text)
-        async def ask(message: Message) -> None:
-            question = message.text or ""
+        async def answer(chat: Chat, question: str) -> None:
             language = _language(question)
-            private = message.chat.type == ChatType.PRIVATE
+            private = chat.type == ChatType.PRIVATE
             draft_id = secrets.randbelow(2**31 - 1) + 1
-            typing = None if private else asyncio.create_task(_typing(bot, message.chat.id))
+            typing = None if private else asyncio.create_task(_typing(bot, chat.id))
             error = (
                 "Не удалось получить ответ сервиса. Попробуйте ещё раз."
                 if language == "ru"
@@ -282,7 +301,7 @@ async def run_bot() -> None:
                     "POST",
                     f"{settings.api_base_url.rstrip('/')}/api/ask/stream",
                     headers={"X-Client": "telegram"},
-                    json={"question": question, "session_id": f"tg:{message.chat.id}"},
+                    json={"question": question, "session_id": session(chat.id)},
                 ) as response:
                     response.raise_for_status()
                     done: list[str] = []
@@ -300,7 +319,7 @@ async def run_bot() -> None:
                             with suppress(TelegramBadRequest):
                                 await bot(
                                     SendRichMessageDraft(
-                                        chat_id=message.chat.id,
+                                        chat_id=chat.id,
                                         draft_id=draft_id,
                                         rich_message=rich_progress(done, calling or working),
                                     )
@@ -310,17 +329,19 @@ async def run_bot() -> None:
                             try:
                                 await bot(
                                     SendRichMessage(
-                                        chat_id=message.chat.id, rich_message=rich_answer(payload, images)
+                                        chat_id=chat.id, rich_message=rich_answer(payload, images)
                                     )
                                 )
                             except TelegramBadRequest:
-                                # Clients or content Telegram cannot render as a rich message: send the
-                                # classic HTML answer and the charts as photos.
+                                # Content Telegram cannot render as a rich message: classic HTML answer
+                                # and the charts as photos.
                                 log.exception("rich message rejected; sending HTML")
-                                await message.answer(format_answer(payload), parse_mode="HTML")
+                                await bot.send_message(chat.id, format_answer(payload), parse_mode="HTML")
                                 for spec, png in images:
-                                    await message.answer_photo(
-                                        BufferedInputFile(png, filename=f"{spec.id}.png"), caption=spec.title
+                                    await bot.send_photo(
+                                        chat.id,
+                                        BufferedInputFile(png, filename=f"{spec.id}.png"),
+                                        caption=spec.title,
                                     )
                             return
                         elif event == "error":
@@ -333,8 +354,45 @@ async def run_bot() -> None:
                     typing.cancel()
                     with suppress(asyncio.CancelledError):
                         await typing
-            await message.answer(error)
+            await bot.send_message(chat.id, error)
 
+        def lang_of(message: Message) -> str:
+            return ui_language(message.from_user.language_code if message.from_user else None)
+
+        @dispatcher.message(CommandStart())
+        async def start(message: Message) -> None:
+            lang = lang_of(message)
+            await send_rich(message.chat.id, START[lang], examples_keyboard(lang))
+
+        @dispatcher.message(Command("help"))
+        async def help_(message: Message) -> None:
+            await send_rich(message.chat.id, HELP[lang_of(message)])
+
+        @dispatcher.message(Command("examples"))
+        async def examples(message: Message) -> None:
+            lang = lang_of(message)
+            await message.answer(EXAMPLES_TITLE[lang], reply_markup=examples_keyboard(lang))
+
+        @dispatcher.message(Command("new"))
+        async def new_chat(message: Message) -> None:
+            generation[message.chat.id] = generation.get(message.chat.id, 0) + 1
+            lang = lang_of(message)
+            await message.answer(NEW_CHAT[lang], reply_markup=examples_keyboard(lang))
+
+        @dispatcher.callback_query(F.data.startswith("ex:"))
+        async def pick_example(query: CallbackQuery) -> None:
+            _, lang, index = (query.data or "").split(":")
+            question = EXAMPLES[lang][int(index)]
+            await query.answer()
+            if isinstance(query.message, Message):
+                await query.message.answer(f"❓ {question}")
+                await answer(query.message.chat, question)
+
+        @dispatcher.message(F.text)
+        async def ask(message: Message) -> None:
+            await answer(message.chat, message.text or "")
+
+        await apply_profile(bot)
         try:
             await dispatcher.start_polling(bot)
         finally:
