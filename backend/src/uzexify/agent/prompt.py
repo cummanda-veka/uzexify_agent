@@ -190,7 +190,7 @@ EXAMPLES = """# Examples (question -> tool calls)
 - Average price of a product in 2026 -> SELECT currency, unit,
     round(sum(amount) FILTER (WHERE status <> 'Аннулирован(Не оплачен)')
           / nullif(sum(volume) FILTER (WHERE status <> 'Аннулирован(Не оплачен)'),0),2) AS weighted_avg,
-    round(avg(unit_price),2) AS simple_avg FROM v_deals WHERE product IN (...) AND deal_date >= ... GROUP BY 1,2
+    round(avg(unit_price) FILTER (WHERE status <> 'Аннулирован(Не оплачен)'),2) AS simple_avg FROM v_deals WHERE product IN (...) AND deal_date >= ... GROUP BY 1,2
 - "2024-yilda Farg‘ona viloyatida eng ko‘p bug‘doy sotib olgan 5 ta kompaniya" -> search_products('bug‘doy','пшеница'),
   then SELECT buyer_inn, buyer_name, unit, round(sum(volume),2) AS volume FROM v_deals
   WHERE product IN (...) AND region_uz = 'Farg‘ona viloyati' AND deal_date >= DATE '2024-01-01'
