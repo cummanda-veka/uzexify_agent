@@ -69,25 +69,50 @@ export default function Home() {
     const vv = window.visualViewport;
     if (!vv) return undefined;
     const root = document.documentElement;
+    // iOS reports the keyboard opening at once but its closing only after the slide-out animation
+    // (~250 ms), which kept the composer hanging in mid-air. The keyboard can only be up while an
+    // editable element has focus, so without focus the shell snaps to the full height immediately.
+    const editing = () => {
+      const el = document.activeElement;
+      return (
+        el instanceof HTMLElement &&
+        (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName))
+      );
+    };
+    const apply = () => {
+      if (vv.scale > 1.01) return; // pinch-zoom, not a keyboard
+      const keyboard = editing() && window.innerHeight - vv.height > 120;
+      root.style.setProperty(
+        "--vv-h",
+        `${Math.round(keyboard ? vv.height : window.innerHeight)}px`,
+      );
+      root.style.setProperty(
+        "--vv-top",
+        `${Math.round(keyboard ? vv.offsetTop : 0)}px`,
+      );
+      root.toggleAttribute("data-kb", keyboard);
+      // Safari may leave the layout viewport scrolled after the keyboard closes.
+      if (!keyboard && window.scrollY !== 0) window.scrollTo(0, 0);
+    };
     let frame = 0;
     const update = () => {
       cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        if (vv.scale > 1.01) return; // pinch-zoom, not a keyboard
-        root.style.setProperty("--vv-h", `${Math.round(vv.height)}px`);
-        root.style.setProperty("--vv-top", `${Math.round(vv.offsetTop)}px`);
-        root.toggleAttribute("data-kb", window.innerHeight - vv.height > 120);
-        // Safari may leave the layout viewport scrolled after the keyboard closes.
-        if (window.scrollY !== 0 && vv.offsetTop === 0) window.scrollTo(0, 0);
-      });
+      frame = requestAnimationFrame(apply);
     };
+    // Blur is synchronous with the tap that dismisses the keyboard; focus moving to another field
+    // is checked after the event settles.
+    const onFocusOut = () => setTimeout(apply, 0);
     update();
     vv.addEventListener("resize", update);
     vv.addEventListener("scroll", update);
+    document.addEventListener("focusout", onFocusOut);
+    document.addEventListener("focusin", update);
     return () => {
       cancelAnimationFrame(frame);
       vv.removeEventListener("resize", update);
       vv.removeEventListener("scroll", update);
+      document.removeEventListener("focusout", onFocusOut);
+      document.removeEventListener("focusin", update);
     };
   }, []);
 
