@@ -21,7 +21,15 @@ from pydantic_ai.exceptions import (
     UnexpectedModelBehavior,
     UsageLimitExceeded,
 )
-from pydantic_ai.messages import FunctionToolCallEvent, FunctionToolResultEvent, ModelMessage
+from pydantic_ai.messages import (
+    FunctionToolCallEvent,
+    FunctionToolResultEvent,
+    ModelMessage,
+    ModelRequest,
+    ModelResponse,
+    TextPart,
+    UserPromptPart,
+)
 from pydantic_ai.run import AgentRunResultEvent
 
 from uzexify import observability
@@ -82,7 +90,31 @@ class AgentTimeout(Exception):
     pass
 
 
-_sessions: OrderedDict[str, list[ModelMessage]] = OrderedDict()
+# Conversation memory per session: the last few turns in compact form (question, answer text and
+# the SQL it ran). Tool results are not kept: numbers must be re-queried in the new turn anyway,
+# since the validator only accepts evidence from the current run.
+MAX_TURNS = 4
+_sessions: OrderedDict[str, list[tuple[str, str]]] = OrderedDict()
+
+
+def _history(turns: list[tuple[str, str]]) -> list[ModelMessage] | None:
+    if not turns:
+        return None
+    out: list[ModelMessage] = []
+    for question, answer in turns:
+        out.append(ModelRequest(parts=[UserPromptPart(question)]))
+        out.append(ModelResponse(parts=[TextPart(answer)]))
+    return out
+
+
+def _remember(session_id: str, question: str, text: str, ev: EvidenceLog) -> None:
+    sql = "\n".join(f"-- {r.sql_id}: {r.sql}" for r in ev.sql)
+    turns = _sessions.pop(session_id, [])
+    turns.append((question, f"{text}\n\n[SQL used]\n{sql}" if sql else text))
+    _sessions[session_id] = turns[-MAX_TURNS:]
+    while len(_sessions) > MAX_SESSIONS:
+        _sessions.popitem(last=False)
+
 
 MESSAGES = {
     "fallback": {
@@ -223,14 +255,14 @@ async def answer_question(
     msg_lang = "uz_cyrl" if lang == "uz" and re.search(r"[а-яёўқғҳ]", question, re.IGNORECASE) else lang
     ev = EvidenceLog()
     deps = AgentDeps(rt.pool, rt.embedder, ev, question)
-    history = _sessions.pop(session_id, None)
+    history = _history(_sessions.get(session_id, []))
     model_name = s.llm_model
     kind: Kind = "error"
     text = ""
     error_code = None
     answer_lang: Literal["ru", "uz"] = lang
 
-    with observability.ask_span(session_id, channel, lang, model_name) as trace_id:
+    with observability.ask_span(session_id, channel, lang, model_name, question) as trace_id:
         calls: dict[str, str] = {}
         deadline = asyncio.get_running_loop().time() + s.agent_timeout_s
         events_seen = 0
@@ -274,10 +306,8 @@ async def answer_question(
                             kind, text, answer_lang = out.kind, out.text, out.language
                             resp = event.result.all_messages()[-1]
                             model_name = getattr(resp, "model_name", None) or model_name
-                            if kind == "clarify":
-                                _sessions[session_id] = event.result.all_messages()
-                                while len(_sessions) > MAX_SESSIONS:
-                                    _sessions.popitem(last=False)
+                            if kind in ("answer", "no_data", "clarify"):
+                                _remember(session_id, question, text, ev)
                 break
             except TimeoutError:
                 kind, error_code, text = "error", "timeout", MESSAGES["timeout"][msg_lang]
@@ -305,6 +335,7 @@ async def answer_question(
                     continue
                 kind, error_code, text = "error", "unavailable", MESSAGES["unavailable"][msg_lang]
                 break
+        observability.set_ask_output(kind, text)
 
     evidence, entities = _evidence(ev)
     return AskResult(

@@ -29,6 +29,12 @@ const HINTS = Object.fromEntries(
 
 const EFFORTS: Effort[] = ["low", "medium", "high"];
 
+const scrollToEnd = (smooth: boolean) =>
+  window.scrollTo({
+    top: document.documentElement.scrollHeight,
+    behavior: smooth ? "smooth" : "auto",
+  });
+
 export default function Home() {
   const [locale, setLocale] = useState<Locale>("ru");
   const [messages, setMessages] = useState<Message[]>([]);
@@ -38,7 +44,8 @@ export default function Home() {
   const controller = useRef<AbortController | null>(null);
   // Thinking level, by index into EFFORTS (labels are localised; the index survives a language switch).
   const effort = useRef<Effort>("low");
-  const endRef = useRef<HTMLDivElement>(null);
+  const dockRef = useRef<HTMLDivElement>(null);
+  const threadRef = useRef<HTMLDivElement>(null);
   const busy = busyId !== null;
   const empty = messages.length === 0;
   const t = copy[locale];
@@ -58,12 +65,82 @@ export default function Home() {
     document.documentElement.lang = locale;
   }, [locale]);
 
-  const lastStepCount = messages.at(-1)?.steps.length ?? 0;
-  const lastAnswered = Boolean(messages.at(-1)?.answer);
+  // Scrolling. The thread scrolls with the window; the top bar and the input dock are fixed.
+  // - Mobile keyboards shrink only the visual viewport: their height goes into --kb so the dock rides
+  //   above them.
+  // - The dock's height (it grows with the text and wraps) goes into --dock-h, which the thread uses
+  //   as its bottom padding, so the last answer is never hidden under it.
+  // - The thread follows a running answer only while the reader is at the bottom; a send always
+  //   scrolls down, and re-scrolls while the viewport settles (keyboard closing).
+  const pinned = useRef(true);
+  const sentAt = useRef(0);
+
   useEffect(() => {
-    if (messages.length === 0 && lastStepCount === 0 && !lastAnswered) return;
-    endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, [messages.length, lastStepCount, lastAnswered]);
+    const root = document.documentElement;
+    // Only the reader's own input may unpin: smooth scrolls and growing content also fire `scroll`.
+    let userAt = 0;
+    const markUser = () => {
+      userAt = performance.now();
+    };
+    const onScroll = () => {
+      const gap = root.scrollHeight - (window.scrollY + window.innerHeight);
+      if (gap < 96) pinned.current = true;
+      else if (performance.now() - userAt < 800) pinned.current = false;
+    };
+    const vv = window.visualViewport;
+    const onViewport = () => {
+      if (vv) {
+        const kb = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+        root.style.setProperty("--kb", `${Math.round(kb)}px`);
+        root.toggleAttribute("data-kb", kb > 80);
+      }
+      if (pinned.current && root.dataset.screen === "thread")
+        scrollToEnd(false);
+    };
+    const userEvents = ["wheel", "touchmove", "keydown"] as const;
+    onViewport();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    for (const e of userEvents)
+      window.addEventListener(e, markUser, { passive: true });
+    vv?.addEventListener("resize", onViewport);
+    vv?.addEventListener("scroll", onViewport);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      for (const e of userEvents) window.removeEventListener(e, markUser);
+      vv?.removeEventListener("resize", onViewport);
+      vv?.removeEventListener("scroll", onViewport);
+    };
+  }, []);
+
+  // The welcome screen fits the viewport and never scrolls (html[data-screen=welcome] locks it).
+  useEffect(() => {
+    document.documentElement.dataset.screen = empty ? "welcome" : "thread";
+  }, [empty]);
+
+  // The dock's height feeds the thread's bottom padding; any growth of the thread (steps, answer,
+  // chart, expanded evidence of the last message) keeps the bottom in view while pinned.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: the dock and thread mount when `empty` flips
+  useEffect(() => {
+    const dock = dockRef.current;
+    const thread = threadRef.current;
+    if (!dock || !thread) return undefined;
+    const root = document.documentElement;
+    const observer = new ResizeObserver(() => {
+      root.style.setProperty("--dock-h", `${Math.round(dock.offsetHeight)}px`);
+      if (pinned.current) scrollToEnd(performance.now() - sentAt.current < 600);
+    });
+    observer.observe(dock);
+    observer.observe(thread);
+    return () => observer.disconnect();
+  }, [empty]);
+
+  // A send always brings the new question into view, even if the reader had scrolled up.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: runs when a message is added
+  useEffect(() => {
+    if (empty) return;
+    pinned.current = true;
+    scrollToEnd(true);
+  }, [messages.length, empty]);
 
   function changeLocale(next: Locale) {
     setLocale(next);
@@ -87,6 +164,7 @@ export default function Home() {
   async function send(question: string, retryId?: string) {
     if (busy || !question.trim()) return;
     const id = retryId ?? crypto.randomUUID();
+    sentAt.current = performance.now();
     setMessages((current) =>
       retryId
         ? current.map((m) => (m.id === id ? { id, question, steps: [] } : m))
@@ -217,7 +295,7 @@ export default function Home() {
         </section>
       ) : (
         <>
-          <div className="thread">
+          <div className="thread" ref={threadRef}>
             <MessageList
               messages={messages}
               locale={locale}
@@ -230,7 +308,6 @@ export default function Home() {
               }}
               pick={(label) => void send(label)}
             />
-            <div ref={endRef} />
           </div>
           <GradualBlur
             target="page"
@@ -246,7 +323,9 @@ export default function Home() {
             strength={1.5}
             zIndex={3}
           />
-          <div className="dock">{composer}</div>
+          <div className="dock" ref={dockRef}>
+            {composer}
+          </div>
         </>
       )}
     </main>

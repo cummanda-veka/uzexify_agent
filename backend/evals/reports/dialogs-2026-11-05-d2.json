@@ -1,0 +1,152 @@
+[
+  {
+    "id": "carbamide_ru",
+    "turns": [
+      {
+        "turn": 1,
+        "q": "Сколько в среднем стоила тонна карбамида в 2026 году?",
+        "kind": "answer",
+        "text": "С 1 января по 30 октября 2026 года средняя цена тонны карбамида составила **5,83 млн сумов**, взвешенная по объёму сделок. Простая средняя цена — 5,84 млн сумов за тонну. Обе рассчитаны без аннулированных сделок; данные за год доступны по 30 октября.",
+        "sql": [
+          "Средняя взвешенная и простая цена карбамида по валютам за доступную часть 2026 года"
+        ],
+        "charts": 0,
+        "seconds": 13.5,
+        "problems": []
+      },
+      {
+        "turn": 2,
+        "q": "Покажи изменение цены на графике",
+        "kind": "answer",
+        "text": "Средняя цена тонны карбамида, взвешенная по объёму сделок, выросла с **5,12 млн сумов** в январе до **6,01 млн сумов** в августе, затем снизилась до 5,91 млн сумов в октябре.",
+        "sql": [
+          "Помесячная взвешенная и простая средняя цена карбамида за 2026 год"
+        ],
+        "charts": 1,
+        "seconds": 14.4,
+        "problems": []
+      },
+      {
+        "turn": 3,
+        "q": "А по месяцам за 2026 год?",
+        "kind": "answer",
+        "text": "Цена тонны карбамида, взвешенная по объёму, росла с января до августа 2026 года, а затем снизилась. На графике показана взвешенная цена; обе средние рассчитаны без аннулированных сделок.\n\n| Месяц | Взвешенная цена, млн сумов за тонну | Простая средняя, млн сумов за тонну |\n|---|---:|---:|\n| Январь | 5,12 | 5,13 |\n| Февраль | 5,16 | 5,16 |\n| Март | 5,38 | 5,39 |\n| Апрель | 5,64 | 5,63 |\n| Май | 5,82 | 5,83 |\n| Июнь | 5,90 | 5,88 |\n| Июль | 5,97 | 5,97 |\n| Август | 6,01 | 6,02 |\n| Сентябрь | 6,01 | 6,01 |\n| Октябрь | 5,91 | 5,92 |\n\nДанные за октябрь доступны по 30 октября.",
+        "sql": [
+          "Помесячные взвешенные и простые средние цены карбамида за 2026 год"
+        ],
+        "charts": 1,
+        "seconds": 19.9,
+        "problems": []
+      },
+      {
+        "turn": 4,
+        "q": "Кто из продавцов продавал его дороже всех?",
+        "kind": "answer",
+        "text": "С 1 января по 30 октября 2026 года дороже всех в среднем продавала карбамид компания «\"Godu Industriya\" MChJ»: **6,04 млн сумов за тонну** по цене, взвешенной по объёму. Простая средняя цена её сделок — 6,01 млн сумов за тонну. Аннулированные сделки не учитывались.",
+        "sql": [
+          "Определить продавца с самой высокой средней взвешенной ценой карбамида в 2026 году"
+        ],
+        "charts": 0,
+        "seconds": 11.7,
+        "problems": []
+      },
+      {
+        "turn": 5,
+        "q": "А сколько у него сделок аннулировано?",
+        "kind": "answer",
+        "text": "С 1 января по 30 октября 2026 года у «\"Godu Industriya\" MChJ» аннулировано **12 сделок** по продаже карбамида из 100 заключённых.",
+        "sql": [
+          "Число аннулированных сделок продавца по карбамиду за 2026 год"
+        ],
+        "charts": 0,
+        "seconds": 9.9,
+        "problems": []
+      },
+      {
+        "turn": 6,
+        "q": "Сравни среднюю цену с 2025 годом",
+        "kind": "answer",
+        "text": "Средняя цена продажи карбамида компанией «\"Godu Industriya\" MChJ», взвешенная по объёму, выросла с **5 149 679,89 сума за тонну** в 2025 году до **6 037 926,86 сума** с января по 30 октября 2026 года — на 17,25 %. Простая средняя за те же периоды составила соответственно 5 124 512,38 и 6 011 929,90 сума за тонну. Аннулированные сделки не учитывались.",
+        "sql": [
+          "Сравнить среднюю цену карбамида продавца по годам и рассчитать изменение"
+        ],
+        "charts": 0,
+        "seconds": 20.8,
+        "problems": []
+      }
+    ]
+  },
+  {
+    "id": "company_uz",
+    "turns": [
+      {
+        "turn": 1,
+        "q": "RUKU kompaniyasi nechta bitim tuzgan?",
+        "kind": "clarify",
+        "text": "Qaysi kompaniyani nazarda tutdingiz?\n\n- “RUKUSHO‘ FERMER MCHJ” — Namangan viloyati\n- “RUKUJO QURILISH XK” — Qashqadaryo viloyati",
+        "sql": [],
+        "charts": 0,
+        "seconds": 6.3,
+        "problems": []
+      },
+      {
+        "turn": 2,
+        "q": "Namangandagisi",
+        "kind": "answer",
+        "text": "“RUKUSHO‘ FERMER MCHJ” 2022-yil 3-yanvardan 2026-yil 30-oktabrgacha bekor qilinganlarni hisobga olmaganda **1 617 ta bitim** tuzgan. Bekor qilinganlar bilan jami 1 736 ta.",
+        "sql": [
+          "Kompaniyaning barcha va bekor qilinmagan bitimlari soni"
+        ],
+        "charts": 0,
+        "seconds": 9.6,
+        "problems": []
+      },
+      {
+        "turn": 3,
+        "q": "Unga kim eng ko‘p sotgan?",
+        "kind": "answer",
+        "text": "“RUKUSHO‘ FERMER MCHJ” xaridor sifatida bitim tuzmagan, faqat sotuvchi bo‘lgan. Uning eng ko‘p bitim tuzgan xaridori — “Zoket Invest” OK: **87 ta bitim**, bekor qilinganlar bilan jami 88 ta.",
+        "sql": [
+          "Kompaniyaning eng ko‘p bitim tuzgan xaridorini aniqlash"
+        ],
+        "charts": 0,
+        "seconds": 12.1,
+        "problems": []
+      },
+      {
+        "turn": 4,
+        "q": "Shu sotuvchining boshqa xaridorlari kimlar?",
+        "kind": "answer",
+        "text": "“RUKUSHO‘ FERMER MCHJ”ning “Zoket Invest” OKdan boshqa xaridorlari orasida bitimlar soni bo‘yicha **HO‘CHAL GROUP MCHJ** yetakchi — bekor qilinganlarsiz **32 ta bitim**, ular bilan birga 33 ta.\n\nQuyida 2022-yil 3-yanvardan 2026-yil 30-oktabrgacha eng ko‘p bitim tuzgan boshqa xaridorlar keltirilgan.\n\n| Xaridor | Bekor qilinganlarsiz | Jami |\n|---|---:|---:|\n| HO‘CHAL GROUP MCHJ | 32 | 33 |\n| “Fo‘sor Qurilish” MChJ | 29 | 33 |\n| “Moto Group” MChJ | 22 | 24 |\n| “Cho‘hifi Savdo” MChJ | 15 | 15 |\n| YOVOL TRADE MCHJ | 12 | 13 |\n| “ПАФИВЎР ПЛУС” МЧЖ | 10 | 10 |\n| CHISHI LOGISTIK MCHJ | 9 | 10 |\n| “Nedaz Group” MChJ | 9 | 10 |\n| “Pachuyin Servis” MChJ | 9 | 9 |\n| “ЛАЧЕР ПЛУС” АЖ | 9 | 9 |\n\nRo‘yxatdan tashqari yana 1 107 ta xaridor bor.",
+        "sql": [
+          "Sotuvchining yetakchi xaridoridan boshqa xaridorlarini bitimlar soni bo‘yicha saralash"
+        ],
+        "charts": 1,
+        "seconds": 20.5,
+        "problems": []
+      },
+      {
+        "turn": 5,
+        "q": "Grafikda ko‘rsat",
+        "kind": "answer",
+        "text": "Grafikda “RUKUSHO‘ FERMER MCHJ”ning “Zoket Invest” OKdan boshqa eng yirik xaridorlari bitimlar soni bo‘yicha ko‘rsatilgan.",
+        "sql": [
+          "Avvalgi javobdagi boshqa xaridorlar reytingini grafik uchun qayta hisoblash"
+        ],
+        "charts": 1,
+        "seconds": 11.2,
+        "problems": []
+      },
+      {
+        "turn": 6,
+        "q": "2027-yilda u nechta bitim tuzadi?",
+        "kind": "no_data",
+        "text": "Kelajakdagi bitimlar sonini aniqlab bo‘lmaydi: reyestrda faqat 2026-yil 30-oktabrgacha tuzilgan bitimlar haqidagi ma’lumotlar bor.",
+        "sql": [],
+        "charts": 0,
+        "seconds": 3.0,
+        "problems": []
+      }
+    ]
+  }
+]

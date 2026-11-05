@@ -1,0 +1,53 @@
+# Multi-turn conversations: follow-ups that only make sense with the earlier turns.
+# `expect` per turn: answer | no_data | clarify; `must` lists words the answer has to contain
+# (case-insensitive), so a lost topic shows up as a failure.
+- id: carbamide_ru
+  turns:
+    - q: Сколько в среднем стоила тонна карбамида в 2026 году?
+      expect: answer
+      must: [карбамид]
+    - q: Покажи изменение цены на графике
+      expect: answer
+      chart: true
+    - q: А по месяцам за 2026 год?
+      expect: answer
+      chart: true
+    - q: Кто из продавцов продавал его дороже всех?
+      expect: answer
+    - q: А сколько у него сделок аннулировано?
+      expect: answer
+    - q: Сравни среднюю цену с 2025 годом
+      expect: answer
+      must: ["2025"]
+- id: company_uz
+  turns:
+    - q: RUKU kompaniyasi nechta bitim tuzgan?
+      expect: clarify
+    - q: Namangandagisi
+      expect: answer
+    - q: Unga kim eng ko‘p sotgan?
+      expect: answer
+    - q: Shu sotuvchining boshqa xaridorlari kimlar?
+      expect: answer
+    - q: Grafikda ko‘rsat
+      expect: answer
+      chart: true
+    - q: 2027-yilda u nechta bitim tuzadi?
+      expect: no_data
+- id: cancellations_mixed
+  turns:
+    - q: Какая доля сделок 2025 года аннулирована?
+      expect: answer
+    - q: А по регионам?
+      expect: answer
+    - q: Где хуже всего?
+      expect: answer
+    - q: Какие товары там чаще всего аннулируют?
+      expect: answer
+    - q: Шу товар бўйича 2026 йилда вазият қандай?
+      expect: answer
+      script: cyrl
+    - q: Ойма-ой кўрсат
+      expect: answer
+      script: cyrl
+      chart: true

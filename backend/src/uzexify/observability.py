@@ -32,7 +32,9 @@ def init_tracing() -> bool:
 
 
 @contextmanager
-def ask_span(session_id: str, channel: str, language: str, model: str) -> Generator[str | None]:
+def ask_span(
+    session_id: str, channel: str, language: str, model: str, question: str
+) -> Generator[str | None]:
     if not _enabled:
         yield None
         return
@@ -40,10 +42,18 @@ def ask_span(session_id: str, channel: str, language: str, model: str) -> Genera
 
     client = get_client()
     with (
-        client.start_as_current_observation(as_type="span", name="ask"),
+        client.start_as_current_observation(as_type="span", name="ask", input=question),
         propagate_attributes(session_id=session_id, tags=[channel, language], metadata={"model": model}),
     ):
         yield client.get_current_trace_id()
+
+
+def set_ask_output(kind: str, text: str) -> None:
+    """Final answer on the `ask` span, so a trace list shows question → answer at a glance."""
+    if _enabled:
+        from langfuse import get_client
+
+        get_client().update_current_span(output={"kind": kind, "text": text})
 
 
 def score(trace_id: str, name: str, value: float) -> None:

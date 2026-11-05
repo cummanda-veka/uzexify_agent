@@ -14,7 +14,11 @@ export const metadata: Metadata = {
     "Ответы на вопросы о биржевых сделках UZEX на русском и узбекском, с SQL-основанием.",
 };
 
-export const viewport: Viewport = { themeColor: "#07080d" };
+// viewport-fit=cover makes env(safe-area-inset-*) report the notch / home-indicator insets.
+export const viewport: Viewport = {
+  themeColor: "#07080d",
+  viewportFit: "cover",
+};
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

@@ -38,6 +38,14 @@ body {
   color: var(--ink);
 }
 
+/* Fixed chrome: the top bar and the input dock (its height is measured into --dock-h, the
+   on-screen keyboard into --kb). Focus moves and find-in-page keep targets clear of both. */
+html {
+  --topbar-h: calc(56px + env(safe-area-inset-top));
+  scroll-padding-top: calc(var(--topbar-h) + 8px);
+  scroll-padding-bottom: calc(var(--dock-h, 160px) + var(--kb, 0px) + 8px);
+}
+
 body {
   font-family: var(--font-sans), system-ui, sans-serif;
   font-size: 15px;
@@ -94,8 +102,9 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 56px;
-  padding: 0 20px;
+  height: var(--topbar-h);
+  padding: env(safe-area-inset-top) max(20px, env(safe-area-inset-right)) 0
+    max(20px, env(safe-area-inset-left));
   background: linear-gradient(var(--bg) 30%, transparent);
 }
 
@@ -137,19 +146,66 @@ button {
 
 /* ---------- empty state ---------- */
 
+/* The welcome screen is pinned to the visible viewport (above an open keyboard) and never scrolls:
+   the page is locked, and content that does not fit is dropped whole by height breakpoints rather
+   than clipped or pushed off-screen. */
+html[data-screen="welcome"],
+html[data-screen="welcome"] body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 .welcome {
+  position: fixed;
+  inset: 0 0 var(--kb, 0px);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100dvh;
-  padding: 88px 20px 48px;
+  padding: calc(var(--topbar-h) + 8px) max(20px, env(safe-area-inset-right))
+    max(16px, calc(env(safe-area-inset-bottom) - var(--kb, 0px)))
+    max(20px, env(safe-area-inset-left));
+  overflow: hidden;
   text-align: center;
 }
 
 .mark {
-  width: clamp(120px, 22vh, 184px);
-  margin-bottom: 20px;
+  flex: none;
+  width: clamp(72px, 18vh, 184px);
+  margin-bottom: clamp(8px, 2.5vh, 20px);
+}
+
+@media (max-height: 760px) {
+  .examples .example:nth-child(n + 5) {
+    display: none;
+  }
+}
+
+@media (max-height: 640px) {
+  .examples .example:nth-child(n + 3) {
+    display: none;
+  }
+
+  .welcome p {
+    display: none;
+  }
+}
+
+@media (max-height: 520px) {
+  .mark {
+    display: none;
+  }
+}
+
+/* Keyboard open on the welcome screen: keep the title and the input only. */
+html[data-kb] .welcome .mark,
+html[data-kb] .welcome p,
+html[data-kb] .welcome .examples {
+  display: none;
+}
+
+html[data-kb] .welcome h1 {
+  margin-bottom: 16px;
 }
 
 .welcome h1 {
@@ -164,7 +220,7 @@ button {
 .welcome p {
   max-width: 640px;
   white-space: pre-line;
-  margin: 12px 0 28px;
+  margin: clamp(6px, 1.5vh, 12px) 0 clamp(14px, 3.5vh, 28px);
   color: var(--ink-2);
   text-wrap: pretty;
 }
@@ -224,7 +280,9 @@ button {
 .thread {
   width: min(var(--column), 100%);
   margin: 0 auto;
-  padding: 88px 20px 200px;
+  padding: calc(var(--topbar-h) + 32px) max(20px, env(safe-area-inset-right))
+    calc(var(--dock-h, 160px) + var(--kb, 0px) + 24px)
+    max(20px, env(safe-area-inset-left));
 }
 
 .messages {
@@ -697,11 +755,17 @@ th {
 
 .dock {
   position: fixed;
-  inset: auto 0 0;
+  /* --kb: on-screen keyboard height from visualViewport (set in page.tsx), so the input rides
+     above the keyboard on iOS/Android instead of staying under it. */
+  inset: auto 0 var(--kb, 0px);
   z-index: 4;
   display: flex;
   justify-content: center;
-  padding: 28px 16px max(16px, env(safe-area-inset-bottom));
+  /* The home-indicator inset only matters with the keyboard closed. */
+  padding: 28px max(16px, env(safe-area-inset-right))
+    max(16px, calc(env(safe-area-inset-bottom) - var(--kb, 0px)))
+    max(16px, env(safe-area-inset-left));
+  transition: bottom 120ms ease-out;
   background: linear-gradient(transparent, var(--bg) 45%);
 }
 
