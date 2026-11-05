@@ -57,7 +57,7 @@ uv run uzexify smoke                  # check LLM gateway models
 uv run uzexify ask "Сколько сделок было заключено в 2024 году?" [--json]
 uv run uzexify serve --port 8000      # API (bind 127.0.0.1; use 127.0.0.1, not localhost, from httpx)
 uv run uzexify bot                    # needs TELEGRAM_BOT_TOKEN
-cd web && bun install && NEXT_PUBLIC_API_BASE=http://localhost:8000 bun dev
+cd ../web && bun install && NEXT_PUBLIC_API_BASE=http://localhost:8000 bun dev
 ```
 - Lint, format, types:
   - backend: `uv run ruff format src tests && uv run ruff check src tests && uv run ty check src`;
@@ -97,12 +97,12 @@ cd web && bun install && NEXT_PUBLIC_API_BASE=http://localhost:8000 bun dev
   - Command: `cd backend && uv run pytest` (pytest + pytest-asyncio, `asyncio_mode=auto`).
   - Pure tests: no DB or LLM. `test_geo.py` skips its country test when the mmdb file is missing.
   - Write tests for behavior (grounding, limits, sessions, geo), not for wording.
-- Evals (need DB + LLM; reports land in `backend/evals/reports/`):
-  - `uv run python -m evals.run --target local|http [--base-url URL] --label NAME`:
+- Evals (run from `backend/`; need DB + LLM; reports land in `backend/evals/reports/`):
+  - `uv run python -m evals.run --target local --label NAME`; against a running API: `uv run python -m evals.run --target http --base-url http://127.0.0.1:8000 --label NAME`:
     - golden set; checks kind, grounded numbers, language/script, latency ≤ 90 s, charts;
     - `--target http` hits a running API.
   - `uv run python -m evals.dialog_run [--only id,...] --label NAME` — multi-turn memory (`dialogs.yaml`).
   - `uv run python -m evals.style_run --label NAME [--judge ID]` — `style_lint` + LLM judge, scored 1–10.
-  - `uv run python -m evals.retrieval --variants lexical,hybrid-gemini,…` — entity search recall/MRR.
+  - `uv run python -m evals.retrieval --variants lexical,hybrid-gemini,hybrid-voyage,hybrid-gemini+rerank` — entity search recall/MRR.
 - Web has no test suite. Verify UI in a real browser against the API.
 - Before claiming a change works, run the changed path: an `ask` question, a curl to the endpoint, or the relevant eval.
