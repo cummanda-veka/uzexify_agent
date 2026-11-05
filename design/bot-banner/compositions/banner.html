@@ -1,11 +1,9 @@
 <html
   data-composition-variables='[
-    {"id":"kicker","type":"string","label":"Kicker","default":"UZEX · реестр сделок 2022–2026"},
-    {"id":"headline","type":"string","label":"Headline","default":"Сколько продано, кто купил, почём"},
-    {"id":"sub","type":"string","label":"Subline","default":"Бот считает по 500 000 сделок биржи и прикладывает к ответу SQL-запрос."},
-    {"id":"chip1","type":"string","label":"Chip 1","default":"Русский и узбекский"},
-    {"id":"chip2","type":"string","label":"Chip 2","default":"Таблицы и графики"},
-    {"id":"chip3","type":"string","label":"Chip 3","default":"SQL к каждой цифре"}
+    {"id":"head_ru","type":"string","label":"Headline RU","default":"Сколько продано, кто купил, почём"},
+    {"id":"sub_ru","type":"string","label":"Subline RU","default":"500 000 сделок биржи UZEX и SQL к каждому ответу"},
+    {"id":"head_uz","type":"string","label":"Headline UZ","default":"Qancha sotilgan, kim olgan, narxi qancha"},
+    {"id":"sub_uz","type":"string","label":"Subline UZ","default":"UZEX birjasining 500 000 bitimi va har javobga SQL"}
   ]'
 >
 <template>
@@ -44,53 +42,31 @@
     #banner-copy {
       position: absolute;
       left: 590px;
-      right: 80px;
+      right: 70px;
       top: 0;
       bottom: 0;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      gap: 26px;
+      gap: 34px;
     }
-    #banner-kicker {
-      font-family: "JetBrains Mono", monospace;
-      font-size: 24px;
-      letter-spacing: 0.04em;
-      color: #7fb2ff;
-    }
-    #banner-headline {
-      margin: 0;
-      font-size: 62px;
-      line-height: 1.06;
+    .banner-lang h2 {
+      margin: 0 0 12px;
+      font-size: 46px;
+      line-height: 1.08;
       font-weight: 700;
       letter-spacing: -0.02em;
       text-wrap: balance;
     }
-    #banner-sub {
+    .banner-lang p {
       margin: 0;
-      font-size: 27px;
+      font-size: 24px;
       line-height: 1.4;
       color: #b9c0d0;
-      text-wrap: pretty;
     }
-    #banner-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 8px;
-    }
-    .banner-chip {
-      padding: 10px 18px;
-      border: 1.5px solid rgba(255, 255, 255, 0.14);
-      border-radius: 999px;
-      background: rgba(22, 24, 33, 0.7);
-      font-size: 22px;
-      color: #dbe2f1;
-    }
-    .banner-chip b {
-      color: #ffb547;
-      font-weight: 700;
-      margin-right: 8px;
+    #banner-rule {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.14);
     }
   </style>
   <div id="root" data-composition-id="banner" data-width="1280" data-height="720" data-no-timeline>
@@ -98,13 +74,14 @@
     <div id="banner-grid"></div>
     <img id="banner-mark" src="assets/mark.png" alt="UZEXify" />
     <div id="banner-copy">
-      <div id="banner-kicker" data-var-text="kicker">UZEX · реестр сделок 2022–2026</div>
-      <h1 id="banner-headline" data-var-text="headline">Сколько продано, кто купил, почём</h1>
-      <p id="banner-sub" data-var-text="sub">Бот считает по 500 000 сделок биржи и прикладывает к ответу SQL-запрос.</p>
-      <div id="banner-chips">
-        <span class="banner-chip"><b>●</b><span data-var-text="chip1">Русский и узбекский</span></span>
-        <span class="banner-chip"><b>●</b><span data-var-text="chip2">Таблицы и графики</span></span>
-        <span class="banner-chip"><b>●</b><span data-var-text="chip3">SQL к каждой цифре</span></span>
+      <div class="banner-lang">
+        <h2 id="banner-head-ru" data-var-text="head_ru">Сколько продано, кто купил, почём</h2>
+        <p id="banner-sub-ru" data-var-text="sub_ru">500 000 сделок биржи UZEX и SQL к каждому ответу</p>
+      </div>
+      <div id="banner-rule"></div>
+      <div class="banner-lang">
+        <h2 id="banner-head-uz" data-var-text="head_uz">Qancha sotilgan, kim olgan, narxi qancha</h2>
+        <p id="banner-sub-uz" data-var-text="sub_uz">UZEX birjasining 500 000 bitimi va har javobga SQL</p>
       </div>
     </div>
   </div>
