@@ -7,7 +7,6 @@ import {
   ArrowDown01Icon,
   Cancel01Icon,
   File02Icon,
-  HelpCircleIcon,
   Mic01Icon,
   PlusSignIcon,
   SparklesIcon,
@@ -29,7 +28,6 @@ const DEFAULT_LABELS = {
   send: 'Send',
   stop: 'Stop',
   effort: 'Effort',
-  effortHelp: 'Higher effort thinks longer before answering',
   faster: 'Faster',
   smarter: 'Smarter'
 };
@@ -493,9 +491,6 @@ export default function PromptBar({
               <div className="prompt-bar__effort-head">
                 <span className="prompt-bar__effort-title">{text.effort}</span>
                 <span className="prompt-bar__effort-level">{level}</span>
-                <span className="prompt-bar__effort-help" title={text.effortHelp}>
-                  <HugeiconsIcon icon={HelpCircleIcon} size={14} strokeWidth={1.8} />
-                </span>
               </div>
               <div className="prompt-bar__effort-ends">
                 <span>{text.faster}</span>

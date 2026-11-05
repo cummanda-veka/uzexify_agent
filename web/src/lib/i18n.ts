@@ -11,8 +11,6 @@ export const copy = {
     examples: "Можно начать с этого",
     examplePrefix: "Например: ",
     effort: "Глубина размышлений",
-    effortHelp:
-      "Чем глубже, тем дольше модель обдумывает запросы и проверяет себя",
     faster: "Быстрее",
     smarter: "Тщательнее",
     efforts: ["Быстро", "Обычно", "Глубоко"],
@@ -47,8 +45,6 @@ export const copy = {
     examples: "Shulardan boshlash mumkin",
     examplePrefix: "Masalan: ",
     effort: "Fikrlash chuqurligi",
-    effortHelp:
-      "Qanchalik chuqur bo‘lsa, model so‘rovlar ustida shuncha uzoq o‘ylaydi va o‘zini tekshiradi",
     faster: "Tezroq",
     smarter: "Puxtaroq",
     efforts: ["Tez", "Odatiy", "Chuqur"],

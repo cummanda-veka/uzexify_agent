@@ -88,12 +88,17 @@ export default function Home() {
       else if (performance.now() - userAt < 800) pinned.current = false;
     };
     const vv = window.visualViewport;
+    let lastKb = 0;
     const onViewport = () => {
-      if (vv) {
-        const kb = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
-        root.style.setProperty("--kb", `${Math.round(kb)}px`);
-        root.toggleAttribute("data-kb", kb > 80);
-      }
+      if (!vv) return;
+      const kb = Math.round(
+        Math.max(0, window.innerHeight - vv.height - vv.offsetTop),
+      );
+      if (kb === lastKb) return;
+      lastKb = kb;
+      root.style.setProperty("--kb", `${kb}px`);
+      root.toggleAttribute("data-kb", kb > 80);
+      // Keyboard opened or closed: keep the end in view if the reader was there.
       if (pinned.current && root.dataset.screen === "thread")
         scrollToEnd(false);
     };
@@ -117,17 +122,24 @@ export default function Home() {
     document.documentElement.dataset.screen = empty ? "welcome" : "thread";
   }, [empty]);
 
-  // The dock's height feeds the thread's bottom padding; any growth of the thread (steps, answer,
-  // chart, expanded evidence of the last message) keeps the bottom in view while pinned.
+  // The dock's height feeds the thread's bottom padding. While an answer is being produced, growth
+  // of the thread keeps the bottom in view (if the reader is there). Once it is done the reader owns
+  // the scroll: expanding evidence or a collapsing trace must not pull the page down.
+  const busyRef = useRef(false);
+  busyRef.current = busyId !== null;
   // biome-ignore lint/correctness/useExhaustiveDependencies: the dock and thread mount when `empty` flips
   useEffect(() => {
     const dock = dockRef.current;
     const thread = threadRef.current;
     if (!dock || !thread) return undefined;
     const root = document.documentElement;
+    let lastHeight = thread.offsetHeight;
     const observer = new ResizeObserver(() => {
       root.style.setProperty("--dock-h", `${Math.round(dock.offsetHeight)}px`);
-      if (pinned.current) scrollToEnd(performance.now() - sentAt.current < 600);
+      const height = thread.offsetHeight;
+      const grew = height > lastHeight;
+      lastHeight = height;
+      if (grew && busyRef.current && pinned.current) scrollToEnd(false);
     });
     observer.observe(dock);
     observer.observe(thread);
@@ -215,7 +227,6 @@ export default function Home() {
         send: t.send,
         stop: t.stop,
         effort: t.effort,
-        effortHelp: t.effortHelp,
         faster: t.faster,
         smarter: t.smarter,
       }}

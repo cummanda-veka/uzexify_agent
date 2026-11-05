@@ -467,17 +467,20 @@
 
 .prompt-bar__menu[data-kind='effort'] {
   right: auto;
-  width: 248px;
+  width: max-content;
+  min-width: 280px;
   padding: 12px 14px 14px;
   transform-origin: bottom left;
 }
 
 .prompt-bar__effort-head {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
   font-size: 13px;
   line-height: 18px;
+  white-space: nowrap;
 }
 
 .prompt-bar__effort-title {
@@ -485,13 +488,8 @@
 }
 
 .prompt-bar__effort-level {
+  color: var(--pb-spark);
   font-weight: 500;
-}
-
-.prompt-bar__effort-help {
-  display: inline-flex;
-  margin-left: auto;
-  color: var(--pb-muted);
 }
 
 .prompt-bar__effort-ends {

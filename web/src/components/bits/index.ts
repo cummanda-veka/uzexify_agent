@@ -103,7 +103,6 @@ export const PromptBar = typed<{
     send: string;
     stop: string;
     effort?: string;
-    effortHelp?: string;
     faster?: string;
     smarter?: string;
   };

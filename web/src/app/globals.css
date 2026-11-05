@@ -208,6 +208,17 @@ html[data-kb] .welcome h1 {
   margin-bottom: 16px;
 }
 
+html[data-kb] .welcome {
+  justify-content: flex-end;
+}
+
+/* PromptBar popovers use the same glass panel as the rest of the UI. */
+.composer .prompt-bar__menu {
+  border: 1px solid var(--line-2);
+  background: rgba(16, 18, 26, 0.94);
+  backdrop-filter: blur(14px);
+}
+
 .welcome h1 {
   margin: 0;
   font-size: clamp(26px, 4vw, 36px);
@@ -237,6 +248,14 @@ html[data-kb] .welcome h1 {
 .composer .prompt-bar__input,
 .composer .prompt-bar__ghost {
   font-size: 15px;
+}
+
+/* iOS zooms into inputs below 16px on focus. */
+@media (pointer: coarse) {
+  .composer .prompt-bar__input,
+  .composer .prompt-bar__ghost {
+    font-size: 16px;
+  }
 }
 
 .composer .prompt-bar__field {
@@ -792,11 +811,8 @@ th {
 
 @media (max-width: 600px) {
   .topbar {
-    padding: 0 12px;
-  }
-
-  .welcome {
-    padding-top: 72px;
+    padding: env(safe-area-inset-top) max(12px, env(safe-area-inset-right)) 0
+      max(12px, env(safe-area-inset-left));
   }
 
   .welcome p {
@@ -804,7 +820,9 @@ th {
   }
 
   .thread {
-    padding: 72px 14px 190px;
+    padding: calc(var(--topbar-h) + 16px) max(14px, env(safe-area-inset-right))
+      calc(var(--dock-h, 160px) + var(--kb, 0px) + 16px)
+      max(14px, env(safe-area-inset-left));
   }
 
   .question {
