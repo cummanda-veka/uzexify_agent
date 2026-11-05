@@ -31,7 +31,9 @@ def test_gate_turns_away_after_wait():
 
 def test_client_key():
     assert client_key("203.0.113.5, 10.0.0.2", "10.0.0.2", None, "web") == "203.0.113.5"
-    # Bot traffic shares one IP; each chat is its own client.
+    # The bot calls the API directly (no proxy header); each chat is its own client.
+    assert client_key(None, "172.18.0.3", "tg:42:abc", "telegram") == "tg:42"
+    assert client_key(None, "172.18.0.3", "tg:42:def", "telegram") == "tg:42"
 
 
 def test_public_client_cannot_switch_keys_by_posing_as_bot():
@@ -41,5 +43,3 @@ def test_public_client_cannot_switch_keys_by_posing_as_bot():
     limiter = RateLimiter(2)
     results = [limiter.allow(client_key("203.0.113.5", None, f"tg:{n}:x", "telegram")) for n in range(3)]
     assert results == [True, True, False]
-    assert client_key(None, "172.18.0.3", "tg:42:abc", "telegram") == "tg:42"
-    assert client_key(None, "172.18.0.3", "tg:42:def", "telegram") == "tg:42"
