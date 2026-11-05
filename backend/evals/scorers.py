@@ -60,11 +60,13 @@ def _language(case, result):
     expected = case["lang"]
     if result["language"] != ("ru" if expected == "ru" else "uz"):
         return False
-    text = result["text"]
-    names = set(_data_strings(result))
-    names |= {re.sub(r'"([^"]*)"', r"«\1»", s) for s in names}
-    for s in sorted(names, key=len, reverse=True):
-        text = text.replace(s, " ")
+    # Names copied from the data keep their own script; compare without quote marks, since the
+    # answer may set a name in «», “” or "" regardless of how the registry stores it.
+    unquote = lambda s: re.sub(r"[\"«»“”„]", "", s)
+    text = unquote(result["text"])
+    for s in sorted({unquote(n) for n in _data_strings(result)}, key=len, reverse=True):
+        if len(s) >= 3:
+            text = text.replace(s, " ")
     latin = sum("LATIN" in unicodedata.name(c, "") for c in text if c.isalpha())
     cyrillic = sum("CYRILLIC" in unicodedata.name(c, "") for c in text if c.isalpha())
     return latin > cyrillic if expected == "uz_latn" else cyrillic > latin
