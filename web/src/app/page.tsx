@@ -1,5 +1,14 @@
 "use client";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  addTransitionType,
+  startTransition,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  ViewTransition,
+} from "react";
 import { StickToBottom, type StickToBottomContext } from "use-stick-to-bottom";
 import {
   DecryptedText,
@@ -65,10 +74,26 @@ export default function Home() {
   // opens the shell shrinks, the composer sits right on the keyboard and Safari has nothing to pan.
   // The thread is the only scroll container, managed by use-stick-to-bottom (follows a running
   // answer while the reader is at the bottom, lets go as soon as they scroll up).
+  // Viewport state: shell height/offset and whether the on-screen keyboard is up. Flipping the
+  // keyboard runs as a React view transition, so the welcome decor fades out/in and the title and
+  // composer glide to their new places instead of jumping.
+  const [viewport, setViewport] = useState<{
+    h: number;
+    top: number;
+    keyboard: boolean;
+  } | null>(null);
+  useLayoutEffect(() => {
+    if (!viewport) return;
+    const root = document.documentElement;
+    root.style.setProperty("--vv-h", `${viewport.h}px`);
+    root.style.setProperty("--vv-top", `${viewport.top}px`);
+    root.toggleAttribute("data-kb", viewport.keyboard);
+  }, [viewport]);
+  const keyboard = viewport?.keyboard ?? false;
+
   useEffect(() => {
     const vv = window.visualViewport;
     if (!vv) return undefined;
-    const root = document.documentElement;
     // iOS reports the keyboard opening at once but its closing only after the slide-out animation
     // (~250 ms), which kept the composer hanging in mid-air. The keyboard can only be up while an
     // editable element has focus, so without focus the shell snaps to the full height immediately.
@@ -79,20 +104,24 @@ export default function Home() {
         (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName))
       );
     };
+    let last: boolean | null = null;
     const apply = () => {
       if (vv.scale > 1.01) return; // pinch-zoom, not a keyboard
-      const keyboard = editing() && window.innerHeight - vv.height > 120;
-      root.style.setProperty(
-        "--vv-h",
-        `${Math.round(keyboard ? vv.height : window.innerHeight)}px`,
-      );
-      root.style.setProperty(
-        "--vv-top",
-        `${Math.round(keyboard ? vv.offsetTop : 0)}px`,
-      );
-      root.toggleAttribute("data-kb", keyboard);
+      const kb = editing() && window.innerHeight - vv.height > 120;
+      const next = {
+        h: Math.round(kb ? vv.height : window.innerHeight),
+        top: Math.round(kb ? vv.offsetTop : 0),
+        keyboard: kb,
+      };
+      if (last !== null && kb !== last) {
+        startTransition(() => {
+          addTransitionType("keyboard");
+          setViewport(next);
+        });
+      } else setViewport(next);
+      last = kb;
       // Safari may leave the layout viewport scrolled after the keyboard closes.
-      if (!keyboard && window.scrollY !== 0) window.scrollTo(0, 0);
+      if (!kb && window.scrollY !== 0) window.scrollTo(0, 0);
     };
     let frame = 0;
     const update = () => {
@@ -176,11 +205,19 @@ export default function Home() {
   async function send(question: string, retryId?: string) {
     if (busy || !question.trim()) return;
     const id = retryId ?? crypto.randomUUID();
-    setMessages((current) =>
-      retryId
-        ? current.map((m) => (m.id === id ? { id, question, steps: [] } : m))
-        : [...current, { id, question, steps: [] }],
-    );
+    const add = () =>
+      setMessages((current) =>
+        retryId
+          ? current.map((m) => (m.id === id ? { id, question, steps: [] } : m))
+          : [...current, { id, question, steps: [] }],
+      );
+    // Leaving the welcome screen is a view transition: the composer glides down into the dock.
+    if (messagesRef.current.length === 0)
+      startTransition(() => {
+        addTransitionType("start-chat");
+        add();
+      });
+    else add();
     setBusyId(id);
     controller.current = new AbortController();
     try {
@@ -284,63 +321,81 @@ export default function Home() {
       </header>
 
       {empty ? (
-        <section className="welcome">
-          <div className="mark">
-            <HalftoneMark label="UZEXify" />
-          </div>
-          <h1>
-            <DecryptedText
-              key={locale}
-              text={t.title}
-              animateOn="view"
-              sequential
-              revealDirection="start"
-              speed={35}
-              characters="=+xX0S8#@"
-              encryptedClassName="encrypted"
-            />
-          </h1>
-          <p>{t.intro}</p>
-          {composer}
-          <ExampleChips locale={locale} onSelect={(q) => void send(q)} />
-        </section>
+        <ViewTransition exit="vt-fade-out">
+          <section className="welcome">
+            {!keyboard && (
+              <ViewTransition enter="vt-rise" exit="vt-sink">
+                <div className="mark">
+                  <HalftoneMark label="UZEXify" />
+                </div>
+              </ViewTransition>
+            )}
+            <ViewTransition name="welcome-title">
+              <h1>
+                <DecryptedText
+                  key={locale}
+                  text={t.title}
+                  animateOn="view"
+                  sequential
+                  revealDirection="start"
+                  speed={35}
+                  characters="=+xX0S8#@"
+                  encryptedClassName="encrypted"
+                />
+              </h1>
+            </ViewTransition>
+            {!keyboard && (
+              <ViewTransition enter="vt-rise" exit="vt-sink">
+                <p>{t.intro}</p>
+              </ViewTransition>
+            )}
+            <ViewTransition name="composer">{composer}</ViewTransition>
+            {!keyboard && (
+              <ViewTransition enter="vt-rise" exit="vt-sink">
+                <ExampleChips locale={locale} onSelect={(q) => void send(q)} />
+              </ViewTransition>
+            )}
+          </section>
+        </ViewTransition>
       ) : (
         <>
-          <StickToBottom
-            className="thread-frame"
-            contextRef={stick}
-            initial="instant"
-            resize="smooth"
-          >
-            <StickToBottom.Content
-              className="thread"
-              scrollClassName="thread-scroll"
+          <ViewTransition enter="vt-rise">
+            <StickToBottom
+              className="thread-frame"
+              contextRef={stick}
+              initial="instant"
+              resize="smooth"
             >
-              <MessageList
-                messages={messages}
-                locale={locale}
-                busyId={busyId}
-                openId={openId}
-                onToggle={onToggle}
-                onRetry={onRetry}
-                onPick={onPick}
+              <StickToBottom.Content
+                className="thread"
+                scrollClassName="thread-scroll"
+              >
+                <MessageList
+                  messages={messages}
+                  locale={locale}
+                  busyId={busyId}
+                  openId={openId}
+                  onToggle={onToggle}
+                  onRetry={onRetry}
+                  onPick={onPick}
+                />
+              </StickToBottom.Content>
+              <GradualBlur
+                position="top"
+                height="4.5rem"
+                strength={1.5}
+                zIndex={3}
               />
-            </StickToBottom.Content>
-            <GradualBlur
-              position="top"
-              height="4.5rem"
-              strength={1.5}
-              zIndex={3}
-            />
-            <GradualBlur
-              position="bottom"
-              height="calc(var(--dock-h, 140px) + 2.5rem)"
-              strength={1.5}
-              zIndex={3}
-            />
-          </StickToBottom>
+              <GradualBlur
+                position="bottom"
+                height="calc(var(--dock-h, 140px) + 2.5rem)"
+                strength={1.5}
+                zIndex={3}
+              />
+            </StickToBottom>
+          </ViewTransition>
           <div className="dock" ref={dockRef}>
-            {composer}
+            <ViewTransition name="composer">{composer}</ViewTransition>
           </div>
         </>
       )}

@@ -210,13 +210,8 @@ button {
   }
 }
 
-/* Keyboard open on the welcome screen: keep the title and the input, sitting on the keyboard. */
-html[data-kb] .welcome .mark,
-html[data-kb] .welcome p,
-html[data-kb] .welcome .examples {
-  display: none;
-}
-
+/* Keyboard open on the welcome screen: only the title and the input stay (the logo, intro and
+   examples are unmounted by page.tsx), sitting on the keyboard. */
 html[data-kb] .welcome h1 {
   margin-bottom: 16px;
 }
@@ -224,6 +219,55 @@ html[data-kb] .welcome h1 {
 html[data-kb] .welcome {
   justify-content: flex-end;
   padding-bottom: 12px;
+}
+
+/* ---------- view transitions (React <ViewTransition>) ----------
+   The page itself never cross-fades; named parts (title, composer) glide to their new boxes and
+   the welcome decor rises in / sinks out with a soft blur. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+
+::view-transition-group(*) {
+  animation-duration: 420ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+::view-transition-new(.vt-rise) {
+  animation: vt-rise-in 460ms cubic-bezier(0.22, 1, 0.36, 1) 60ms both;
+}
+
+::view-transition-old(.vt-sink) {
+  animation: vt-sink-out 240ms cubic-bezier(0.55, 0, 1, 0.45) both;
+}
+
+::view-transition-old(.vt-fade-out) {
+  animation: vt-sink-out 280ms cubic-bezier(0.55, 0, 1, 0.45) both;
+}
+
+@keyframes vt-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+    filter: blur(8px);
+  }
+}
+
+@keyframes vt-sink-out {
+  to {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.96);
+    filter: blur(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
 }
 
 /* PromptBar popovers use the same glass panel as the rest of the UI. */
