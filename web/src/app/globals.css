@@ -167,9 +167,13 @@ button {
 
 /* ---------- empty state ---------- */
 
-/* The welcome screen fills the shell and never scrolls; content that does not fit is dropped whole
-   by height breakpoints rather than clipped. */
+/* The welcome screen fills the shell and never scrolls. It is a size container: when its height
+   shrinks (small screen, or the on-screen keyboard shrinking the shell) the parts that no longer fit
+   are dropped whole — extra examples first, then all examples, then the intro, the logo last —
+   with no animation. Units are relative to the welcome screen, not the window, so the keyboard
+   counts. */
 .welcome {
+  container-type: size;
   flex: 1 1 auto;
   min-height: 0;
   display: flex;
@@ -184,47 +188,53 @@ button {
 
 .mark {
   flex: none;
-  width: clamp(72px, 18vh, 184px);
-  margin-bottom: clamp(8px, 2.5vh, 20px);
+  width: clamp(64px, 18cqh, 184px);
+  margin-bottom: clamp(8px, 2.5cqh, 20px);
 }
 
-@media (max-height: 760px) {
-  .examples .example:nth-child(n + 5) {
+/* Thresholds are on the welcome screen's content height (its padding excluded). */
+@container (max-height: 640px) {
+  .welcome .examples .example:nth-child(n + 5) {
     display: none;
   }
 }
 
-@media (max-height: 640px) {
-  .examples .example:nth-child(n + 3) {
+@container (max-height: 560px) {
+  .welcome .examples .example:nth-child(n + 3) {
     display: none;
   }
+}
 
+@container (max-height: 480px) {
+  .welcome .examples {
+    display: none;
+  }
+}
+
+@container (max-height: 360px) {
   .welcome p {
     display: none;
   }
+
+  section.welcome h1 {
+    margin-bottom: 16px;
+  }
 }
 
-@media (max-height: 520px) {
-  .mark {
+@container (max-height: 260px) {
+  .welcome .mark {
     display: none;
   }
 }
 
-/* Keyboard open on the welcome screen: only the title and the input stay (the logo, intro and
-   examples are unmounted by page.tsx), sitting on the keyboard. */
-html[data-kb] .welcome h1 {
-  margin-bottom: 16px;
-}
-
+/* Keyboard open: the input sits on the keyboard, whatever still fits stays above it. */
 html[data-kb] .welcome {
   justify-content: flex-end;
   padding-bottom: 12px;
 }
 
-/* ---------- view transitions (React <ViewTransition>) ----------
-   Three phases, never overlapping on screen: outgoing parts leave fast (0–160 ms), the title and
-   composer glide to their new boxes (0–380 ms, mostly done by ~220 ms), incoming parts appear only
-   after that (220–600 ms). Otherwise a moving title slides across an intro that is still fading. */
+/* ---------- view transitions (React <ViewTransition>), welcome → chat only ----------
+   The welcome screen fades out, the composer glides into the dock, the thread fades in. */
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;
@@ -235,27 +245,14 @@ html[data-kb] .welcome {
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-::view-transition-old(.vt-sink),
 ::view-transition-old(.vt-fade-out) {
   animation: vt-sink-out 160ms cubic-bezier(0.55, 0, 1, 0.45) both;
-}
-
-::view-transition-new(.vt-rise) {
-  animation: vt-rise-in 380ms cubic-bezier(0.22, 1, 0.36, 1) 220ms both;
 }
 
 /* A screen-tall region (the thread) only fades: any scale or offset on it reads as content
    "arriving" at its place at the end of the transition. */
 ::view-transition-new(.vt-appear) {
   animation: vt-appear-in 320ms ease-out 120ms both;
-}
-
-@keyframes vt-rise-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-    filter: blur(6px);
-  }
 }
 
 @keyframes vt-sink-out {

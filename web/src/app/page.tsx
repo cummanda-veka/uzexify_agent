@@ -74,9 +74,9 @@ export default function Home() {
   // opens the shell shrinks, the composer sits right on the keyboard and Safari has nothing to pan.
   // The thread is the only scroll container, managed by use-stick-to-bottom (follows a running
   // answer while the reader is at the bottom, lets go as soon as they scroll up).
-  // Viewport state: shell height/offset and whether the on-screen keyboard is up. Flipping the
-  // keyboard runs as a React view transition, so the welcome decor fades out/in and the title and
-  // composer glide to their new places instead of jumping.
+  // Viewport state: shell height/offset and whether the on-screen keyboard is up. The welcome screen
+  // does not react to the keyboard beyond its height: parts that no longer fit are dropped by CSS
+  // container queries on the welcome screen's own height.
   const [viewport, setViewport] = useState<{
     h: number;
     top: number;
@@ -89,7 +89,6 @@ export default function Home() {
     root.style.setProperty("--vv-top", `${viewport.top}px`);
     root.toggleAttribute("data-kb", viewport.keyboard);
   }, [viewport]);
-  const keyboard = viewport?.keyboard ?? false;
 
   useEffect(() => {
     const vv = window.visualViewport;
@@ -104,22 +103,14 @@ export default function Home() {
         (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName))
       );
     };
-    let last: boolean | null = null;
     const apply = () => {
       if (vv.scale > 1.01) return; // pinch-zoom, not a keyboard
       const kb = editing() && window.innerHeight - vv.height > 120;
-      const next = {
+      setViewport({
         h: Math.round(kb ? vv.height : window.innerHeight),
         top: Math.round(kb ? vv.offsetTop : 0),
         keyboard: kb,
-      };
-      if (last !== null && kb !== last) {
-        startTransition(() => {
-          addTransitionType("keyboard");
-          setViewport(next);
-        });
-      } else setViewport(next);
-      last = kb;
+      });
       // Safari may leave the layout viewport scrolled after the keyboard closes.
       if (!kb && window.scrollY !== 0) window.scrollTo(0, 0);
     };
@@ -325,38 +316,24 @@ export default function Home() {
       {empty ? (
         <ViewTransition exit="vt-fade-out">
           <section className="welcome">
-            {!keyboard && (
-              <ViewTransition enter="vt-rise" exit="vt-sink">
-                <div className="mark">
-                  <HalftoneMark label="UZEXify" />
-                </div>
-              </ViewTransition>
-            )}
-            <ViewTransition name="welcome-title">
-              <h1>
-                <DecryptedText
-                  key={locale}
-                  text={t.title}
-                  animateOn="view"
-                  sequential
-                  revealDirection="start"
-                  speed={35}
-                  characters="=+xX0S8#@"
-                  encryptedClassName="encrypted"
-                />
-              </h1>
-            </ViewTransition>
-            {!keyboard && (
-              <ViewTransition enter="vt-rise" exit="vt-sink">
-                <p>{t.intro}</p>
-              </ViewTransition>
-            )}
+            <div className="mark">
+              <HalftoneMark label="UZEXify" />
+            </div>
+            <h1>
+              <DecryptedText
+                key={locale}
+                text={t.title}
+                animateOn="view"
+                sequential
+                revealDirection="start"
+                speed={35}
+                characters="=+xX0S8#@"
+                encryptedClassName="encrypted"
+              />
+            </h1>
+            <p>{t.intro}</p>
             <ViewTransition name="composer">{composer}</ViewTransition>
-            {!keyboard && (
-              <ViewTransition enter="vt-rise" exit="vt-sink">
-                <ExampleChips locale={locale} onSelect={(q) => void send(q)} />
-              </ViewTransition>
-            )}
+            <ExampleChips locale={locale} onSelect={(q) => void send(q)} />
           </section>
         </ViewTransition>
       ) : (
