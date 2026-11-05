@@ -82,9 +82,9 @@ cd web && bun install && NEXT_PUBLIC_API_BASE=http://localhost:8000 bun dev
   - `compose.yaml`, `Caddyfile`;
   - `backend/pyproject.toml` (deps pinned);
   - `backend/src/uzexify/settings.py`;
-- DB schema: `backend/src/uzexify/db/schema.sql`, executed by `ingest.py`. `ingest.EXPECTED` row counts must match (deals 500000, contracts 6616, …).
+  - `.env.example`;
   - `web/package.json`, `web/biome.json`, `web/Dockerfile` (Bun build → Node 24 standalone).
-- DB schema: packaged `db/schema.sql`, executed by `ingest.py`. `ingest.EXPECTED` row counts must match (deals 500000, contracts 6616, …).
+- DB schema: `backend/src/uzexify/db/schema.sql`, executed by `ingest.py`. `ingest.EXPECTED` row counts must match (deals 500000, contracts 6616, …).
 
 ## Runtime/Tooling Preferences
 - Backend: Python `>=3.14,<3.15`, **uv** only (`uv run …`, `uv add …`); never use pip or a bare `python` for project code.
