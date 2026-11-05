@@ -1,7 +1,7 @@
 {
   "version": 1,
   "historyId": "258834c7-b344-4750-842b-6a60263918b0",
-  "currentRevision": "11497d3e-7799-4de6-9a2d-8517c7d01f51",
+  "currentRevision": "d666ad83-1319-4d83-ba8f-5ce2699c1859",
   "pendingChanges": false,
   "files": {
     "AGENTS.md": {
@@ -17,8 +17,8 @@
       "content": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/21/21ce149c3a5e2ed03ddd2064347db297d48e1eee5cdad1134dc5d9e2f0edbcd1"
     },
     "compositions/banner.html": {
-      "hash": "4bad195b7080a9921d7a40bc20210a31b22493369dcbac1361183bb1c4394a2d",
-      "content": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/4b/4bad195b7080a9921d7a40bc20210a31b22493369dcbac1361183bb1c4394a2d"
+      "hash": "b72b07c0e0727611fa3409262886d932ddd958ed0a60366057374d4d5c075886",
+      "content": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/b7/b72b07c0e0727611fa3409262886d932ddd958ed0a60366057374d4d5c075886"
     },
     "hyperframes.json": {
       "hash": "53dbce1e19aa713cbb12ee0bc4d206143b45ab15e6ffbfcaa8f69572d4d24d50",
@@ -35,6 +35,66 @@
     "package.json": {
       "hash": "daf3f2e4f9a5727ae4c8328ff09d668d53128186db6985e86f635fe056275a56",
       "content": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/da/daf3f2e4f9a5727ae4c8328ff09d668d53128186db6985e86f635fe056275a56"
+    },
+    "out/uzexify-banner-1280x720.png": {
+      "hash": "eb148074d83df35c425890c3f215a79eb6d0f8c9158c9439a7d979fa0b407cb0",
+      "content": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/eb/eb148074d83df35c425890c3f215a79eb6d0f8c9158c9439a7d979fa0b407cb0"
+    },
+    "out/uzexify-banner-640x360.png": {
+      "hash": "afa9ed5c09458a45dccc3d6d2d40245b51c1d6ae74451699969636d4fbf3ab26",
+      "content": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/af/afa9ed5c09458a45dccc3d6d2d40245b51c1d6ae74451699969636d4fbf3ab26"
+    },
+    "assets/fonts/geist-400-cyrillic-ext.woff2": {
+      "hash": "08cad7a4a21ffaf473755c33a1ce98ec7437ee31b4df19d9bdbdf3c4590146f1",
+      "content": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/08/08cad7a4a21ffaf473755c33a1ce98ec7437ee31b4df19d9bdbdf3c4590146f1"
+    },
+    "assets/fonts/geist-400-cyrillic.woff2": {
+      "hash": "ae599dc01d753fa73f0d2123cc5e0213e82211ffb9260e1d8f97ab8285c84a64",
+      "content": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/ae/ae599dc01d753fa73f0d2123cc5e0213e82211ffb9260e1d8f97ab8285c84a64"
+    },
+    "assets/fonts/geist-400-latin-ext.woff2": {
+      "hash": "d6e7b2bf2758db7289a0f4183ea2f90108fe5cff6563d6d9bf82ddc361fc2737",
+      "content": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/d6/d6e7b2bf2758db7289a0f4183ea2f90108fe5cff6563d6d9bf82ddc361fc2737"
+    },
+    "assets/fonts/geist-400-latin.woff2": {
+      "hash": "fd943a89f854696def158c9889e67894ca613f81bed98d1c1c3509f4d7061772",
+      "content": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/fd/fd943a89f854696def158c9889e67894ca613f81bed98d1c1c3509f4d7061772"
+    },
+    "assets/fonts/geist-600-cyrillic-ext.woff2": {
+      "hash": "8572975e17205bf5ef6dfe3559d1fcd61703cbb3416b1451bc4a4ecf24bea607",
+      "content": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/85/8572975e17205bf5ef6dfe3559d1fcd61703cbb3416b1451bc4a4ecf24bea607"
+    },
+    "assets/fonts/geist-600-cyrillic.woff2": {
+      "hash": "6116e4e4b076761ac36090de9c9ce50b188766715ced53a29933120d9620fff2",
+      "content": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/61/6116e4e4b076761ac36090de9c9ce50b188766715ced53a29933120d9620fff2"
+    },
+    "assets/fonts/geist-600-latin-ext.woff2": {
+      "hash": "890ad57bfb6eeda013e99d49fcc5cd7ae51d4469c091ab89ff4791a386c3e34e",
+      "content": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/89/890ad57bfb6eeda013e99d49fcc5cd7ae51d4469c091ab89ff4791a386c3e34e"
+    },
+    "assets/fonts/geist-600-latin.woff2": {
+      "hash": "1481d68e23c9f9dd9c92a3a4d759c69616cd2419ab0fc082911214bbb18e7dfa",
+      "content": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/14/1481d68e23c9f9dd9c92a3a4d759c69616cd2419ab0fc082911214bbb18e7dfa"
+    },
+    "assets/fonts/geist-700-cyrillic-ext.woff2": {
+      "hash": "e51d6a0994f8a65d3fd1afa3d6165c7a4097a4db0bc9bd634fda956c2ac59d6d",
+      "content": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/e5/e51d6a0994f8a65d3fd1afa3d6165c7a4097a4db0bc9bd634fda956c2ac59d6d"
+    },
+    "assets/fonts/geist-700-cyrillic.woff2": {
+      "hash": "c677ec34d46c68ec37c0b8ebbf44332cf3008136862ac92b322ad670f9dd0929",
+      "content": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/c6/c677ec34d46c68ec37c0b8ebbf44332cf3008136862ac92b322ad670f9dd0929"
+    },
+    "assets/fonts/geist-700-latin-ext.woff2": {
+      "hash": "a78a64329956be23fbd983db9af8348aefdc497dc9eea698f629b3c5377e305d",
+      "content": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/a7/a78a64329956be23fbd983db9af8348aefdc497dc9eea698f629b3c5377e305d"
+    },
+    "assets/fonts/geist-700-latin.woff2": {
+      "hash": "3dbd8705472af1efbda989c32d854a57bd7ef4a2f807c91eedb1f06bfa8e051b",
+      "content": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/3d/3dbd8705472af1efbda989c32d854a57bd7ef4a2f807c91eedb1f06bfa8e051b"
+    },
+    "out/v3.png": {
+      "hash": "eb148074d83df35c425890c3f215a79eb6d0f8c9158c9439a7d979fa0b407cb0",
+      "content": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/eb/eb148074d83df35c425890c3f215a79eb6d0f8c9158c9439a7d979fa0b407cb0"
     }
   },
   "revisions": {
@@ -399,12 +459,169 @@
           "after": null
         }
       }
+    },
+    "4cc344d3-8b87-477c-b76d-caaa0aeaf6d6": {
+      "actor": {
+        "kind": "outside",
+        "name": "Outside"
+      },
+      "label": "Changed outside the app",
+      "startedAt": 1793845456620,
+      "endedAt": 1793845456632,
+      "files": {
+        "assets/fonts/geist-cyrillic-ext.woff2": {
+          "before": null,
+          "after": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/85/8572975e17205bf5ef6dfe3559d1fcd61703cbb3416b1451bc4a4ecf24bea607"
+        },
+        "assets/fonts/geist-cyrillic.woff2": {
+          "before": null,
+          "after": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/61/6116e4e4b076761ac36090de9c9ce50b188766715ced53a29933120d9620fff2"
+        },
+        "assets/fonts/geist-latin-ext.woff2": {
+          "before": null,
+          "after": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/89/890ad57bfb6eeda013e99d49fcc5cd7ae51d4469c091ab89ff4791a386c3e34e"
+        },
+        "assets/fonts/geist-latin.woff2": {
+          "before": null,
+          "after": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/14/1481d68e23c9f9dd9c92a3a4d759c69616cd2419ab0fc082911214bbb18e7dfa"
+        },
+        "compositions/banner.html": {
+          "before": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/4b/4bad195b7080a9921d7a40bc20210a31b22493369dcbac1361183bb1c4394a2d",
+          "after": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/aa/aacbcb1b393c004e9684e6ae4457c759ae7cb47bdf8aac24fc8c3f727718b544"
+        },
+        "out/uzexify-banner-1280x720.png": {
+          "before": null,
+          "after": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/3c/3c3c9e2fa15304850acccabd6267eda5b75197fb582eefeefdc93fbd86ae0c41"
+        },
+        "out/uzexify-banner-640x360.png": {
+          "before": null,
+          "after": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/14/142d2ec87c33e82c4f34937ffc291f0520e128cb1f8d7197e614194fe72e75f6"
+        }
+      }
+    },
+    "f598fc4b-d8e4-4d36-b624-95136569c2b0": {
+      "actor": {
+        "kind": "outside",
+        "name": "Outside"
+      },
+      "label": "Changed outside the app",
+      "startedAt": 1793845488466,
+      "endedAt": 1793845488490,
+      "files": {
+        "assets/fonts/geist-400-cyrillic-ext.woff2": {
+          "before": null,
+          "after": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/08/08cad7a4a21ffaf473755c33a1ce98ec7437ee31b4df19d9bdbdf3c4590146f1"
+        },
+        "assets/fonts/geist-400-cyrillic.woff2": {
+          "before": null,
+          "after": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/ae/ae599dc01d753fa73f0d2123cc5e0213e82211ffb9260e1d8f97ab8285c84a64"
+        },
+        "assets/fonts/geist-400-latin-ext.woff2": {
+          "before": null,
+          "after": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/d6/d6e7b2bf2758db7289a0f4183ea2f90108fe5cff6563d6d9bf82ddc361fc2737"
+        },
+        "assets/fonts/geist-400-latin.woff2": {
+          "before": null,
+          "after": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/fd/fd943a89f854696def158c9889e67894ca613f81bed98d1c1c3509f4d7061772"
+        },
+        "assets/fonts/geist-600-cyrillic-ext.woff2": {
+          "before": null,
+          "after": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/85/8572975e17205bf5ef6dfe3559d1fcd61703cbb3416b1451bc4a4ecf24bea607"
+        },
+        "assets/fonts/geist-600-cyrillic.woff2": {
+          "before": null,
+          "after": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/61/6116e4e4b076761ac36090de9c9ce50b188766715ced53a29933120d9620fff2"
+        },
+        "assets/fonts/geist-600-latin-ext.woff2": {
+          "before": null,
+          "after": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/89/890ad57bfb6eeda013e99d49fcc5cd7ae51d4469c091ab89ff4791a386c3e34e"
+        },
+        "assets/fonts/geist-600-latin.woff2": {
+          "before": null,
+          "after": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/14/1481d68e23c9f9dd9c92a3a4d759c69616cd2419ab0fc082911214bbb18e7dfa"
+        },
+        "assets/fonts/geist-700-cyrillic-ext.woff2": {
+          "before": null,
+          "after": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/e5/e51d6a0994f8a65d3fd1afa3d6165c7a4097a4db0bc9bd634fda956c2ac59d6d"
+        },
+        "assets/fonts/geist-700-cyrillic.woff2": {
+          "before": null,
+          "after": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/c6/c677ec34d46c68ec37c0b8ebbf44332cf3008136862ac92b322ad670f9dd0929"
+        },
+        "assets/fonts/geist-700-latin-ext.woff2": {
+          "before": null,
+          "after": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/a7/a78a64329956be23fbd983db9af8348aefdc497dc9eea698f629b3c5377e305d"
+        },
+        "assets/fonts/geist-700-latin.woff2": {
+          "before": null,
+          "after": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/3d/3dbd8705472af1efbda989c32d854a57bd7ef4a2f807c91eedb1f06bfa8e051b"
+        },
+        "assets/fonts/geist-cyrillic-ext.woff2": {
+          "before": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/85/8572975e17205bf5ef6dfe3559d1fcd61703cbb3416b1451bc4a4ecf24bea607",
+          "after": null
+        },
+        "assets/fonts/geist-cyrillic.woff2": {
+          "before": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/61/6116e4e4b076761ac36090de9c9ce50b188766715ced53a29933120d9620fff2",
+          "after": null
+        },
+        "assets/fonts/geist-latin-ext.woff2": {
+          "before": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/89/890ad57bfb6eeda013e99d49fcc5cd7ae51d4469c091ab89ff4791a386c3e34e",
+          "after": null
+        },
+        "assets/fonts/geist-latin.woff2": {
+          "before": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/14/1481d68e23c9f9dd9c92a3a4d759c69616cd2419ab0fc082911214bbb18e7dfa",
+          "after": null
+        },
+        "compositions/banner.html": {
+          "before": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/aa/aacbcb1b393c004e9684e6ae4457c759ae7cb47bdf8aac24fc8c3f727718b544",
+          "after": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/b7/b72b07c0e0727611fa3409262886d932ddd958ed0a60366057374d4d5c075886"
+        },
+        "out/uzexify-banner-1280x720.png": {
+          "before": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/3c/3c3c9e2fa15304850acccabd6267eda5b75197fb582eefeefdc93fbd86ae0c41",
+          "after": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/2a/2a44e1621372cead67aa9141d562d741ef52c6bac4ccdca3483cc0d5298c21b8"
+        },
+        "out/uzexify-banner-640x360.png": {
+          "before": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/14/142d2ec87c33e82c4f34937ffc291f0520e128cb1f8d7197e614194fe72e75f6",
+          "after": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/61/61daf9f789c2f053712a9a72580a7e4df78e25ed939af8d35f92fb91af85f36c"
+        },
+        "out/uzexify-banner-geist-1280x720.png": {
+          "before": null,
+          "after": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/2a/2a44e1621372cead67aa9141d562d741ef52c6bac4ccdca3483cc0d5298c21b8"
+        }
+      }
+    },
+    "d666ad83-1319-4d83-ba8f-5ce2699c1859": {
+      "actor": {
+        "kind": "outside",
+        "name": "Outside"
+      },
+      "label": "Changed outside the app",
+      "startedAt": 1793845493578,
+      "endedAt": 1793845493590,
+      "files": {
+        "out/uzexify-banner-1280x720.png": {
+          "before": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/2a/2a44e1621372cead67aa9141d562d741ef52c6bac4ccdca3483cc0d5298c21b8",
+          "after": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/eb/eb148074d83df35c425890c3f215a79eb6d0f8c9158c9439a7d979fa0b407cb0"
+        },
+        "out/uzexify-banner-640x360.png": {
+          "before": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/61/61daf9f789c2f053712a9a72580a7e4df78e25ed939af8d35f92fb91af85f36c",
+          "after": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/af/afa9ed5c09458a45dccc3d6d2d40245b51c1d6ae74451699969636d4fbf3ab26"
+        },
+        "out/uzexify-banner-geist-1280x720.png": {
+          "before": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/2a/2a44e1621372cead67aa9141d562d741ef52c6bac4ccdca3483cc0d5298c21b8",
+          "after": null
+        },
+        "out/v3.png": {
+          "before": null,
+          "after": "/Users/ded/.cache/hyperframes/history/258834c7-b344-4750-842b-6a60263918b0/blobs/eb/eb148074d83df35c425890c3f215a79eb6d0f8c9158c9439a7d979fa0b407cb0"
+        }
+      }
     }
   },
   "checks": {
     "latest": {
-      "revision": "b6c35d83-4c73-4cd9-b982-687cef2ae42c",
-      "id": "f8a086ac-954c-44ec-9bd2-f8077cf74832"
+      "revision": "4cc344d3-8b87-477c-b76d-caaa0aeaf6d6",
+      "id": "2c0e8739-7f19-4e35-b711-269459775b06"
     },
     "revisions": {
       "eed08699-9a08-4d47-bfa8-ceef15eb8a7c": [
@@ -493,6 +710,35 @@
           "inputScope": "local-project-files",
           "attribution": "recorded-revision"
         }
+      ],
+      "4cc344d3-8b87-477c-b76d-caaa0aeaf6d6": [
+        {
+          "id": "2c0e8739-7f19-4e35-b711-269459775b06",
+          "scope": "project",
+          "report": "/Users/ded/Projects/others/uzexify_agent/design/bot-banner/.hyperframes/artifacts/checks/2c0e8739-7f19-4e35-b711-269459775b06.json",
+          "metadata": {
+            "ok": true,
+            "browserSkipped": false,
+            "options": {
+              "samples": 9,
+              "atTransitions": false,
+              "maxIssues": 80,
+              "collapseStatic": true,
+              "tolerance": 2,
+              "timeout": 45000,
+              "contrast": true,
+              "strict": false,
+              "snapshots": false,
+              "browserGpuMode": "auto"
+            }
+          },
+          "createdAt": 1793845458597,
+          "contentHash": "b1ef8a8a4184cb58b31ad4f53407c9cb7ebcd768de88f7497535de985e8c1b00",
+          "revision": "4cc344d3-8b87-477c-b76d-caaa0aeaf6d6",
+          "inputFingerprint": "0bac621be895e200b2e5f62fc6f811c71faf165e1dd9dc0aa74e04d7afb89867",
+          "inputScope": "local-project-files",
+          "attribution": "recorded-revision"
+        }
       ]
     },
     "unversioned": [
@@ -528,14 +774,14 @@
   "snapshots": {
     "latest": {
       "revision": null,
-      "id": "70747257-1365-4373-8841-d6e506049ab1-0"
+      "id": "92f1950a-2d37-48cb-9767-8607b892eb1b-0"
     },
     "revisions": {},
     "unversioned": [
       {
         "scope": "full",
-        "id": "70747257-1365-4373-8841-d6e506049ab1-0",
-        "image": "/Users/ded/Projects/others/uzexify_agent/design/bot-banner/tmp/frame-00-at-0.5s.png",
+        "id": "92f1950a-2d37-48cb-9767-8607b892eb1b-0",
+        "image": "/Users/ded/Projects/others/uzexify_agent/design/bot-banner/tmp3/frame-00-at-0.5s.png",
         "time": 0.5,
         "metadata": {
           "width": 1280,
@@ -545,10 +791,10 @@
           "warnings": [],
           "partial": false
         },
-        "createdAt": 1793843609691,
-        "contentHash": "4f53d67e335b5a565e649e2a0cd42a6bffc5dfb6cf5065ad275f74abc4f59332",
+        "createdAt": 1793845494949,
+        "contentHash": "a91f72b766b8d612e496619afbc42c0e88219adc821e2b3361ac8757712a9965",
         "revision": null,
-        "inputFingerprint": "1b1fdfa64f9857072b1562f4c57d8ffd770a6a9a44684c4afa9afbe5abe2ab95",
+        "inputFingerprint": "92b4380dcc8d8fdcea97f4a16f4cde038631b57a3af5e36e1ec9f7b105ad424b",
         "inputScope": "local-project-files",
         "attribution": "inputs-changed"
       }
