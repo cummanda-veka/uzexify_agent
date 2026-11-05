@@ -79,7 +79,7 @@ def format_answer(answer: dict[str, Any]) -> str:
     """Render a Telegram HTML response, dropping rows before truncating SQL."""
     language = answer.get("language", "ru")
     title = "Asos" if language == "uz" else "Основание"
-    footer = f"⏱ {answer.get('duration_ms', 0) / 1000:g} с · {answer.get('model', '')}"
+    footer = f"⏱ {answer.get('duration_ms', 0) / 1000:g} с"
     footer_html = html.escape(footer, quote=False)
     evidence = answer.get("evidence") or []
     sql = "\n\n".join(str(item.get("sql", "")) for item in evidence)[:1500]

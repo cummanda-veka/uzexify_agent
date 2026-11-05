@@ -314,7 +314,7 @@ html[data-kb] .welcome {
   width: min(var(--column), 100%);
   margin: 0 auto;
   padding: calc(var(--topbar-h) + 32px) max(20px, env(safe-area-inset-right))
-    24px max(20px, env(safe-area-inset-left));
+    40px max(20px, env(safe-area-inset-left));
 }
 
 .messages {
@@ -616,14 +616,6 @@ html[data-kb] .welcome {
 
 .encrypted {
   color: var(--accent);
-}
-
-.answer-meta {
-  display: flex;
-  gap: 12px;
-  color: var(--muted);
-  font-family: var(--font-mono), monospace;
-  font-size: 12px;
 }
 
 .evidence {

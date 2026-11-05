@@ -77,9 +77,6 @@ export function AnswerCard({
           radius={14}
         />
       )}
-      {answer.model && (
-        <div className="answer-meta">{answer.model.split("/").pop()}</div>
-      )}
       <EvidencePanel
         answer={answer}
         locale={locale}
