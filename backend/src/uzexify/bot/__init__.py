@@ -22,6 +22,10 @@ from aiogram.types import (
 )
 
 from uzexify.charts import ChartSpec, chart_png
+from uzexify.settings import get_settings
+from uzexify.sqlguard import SqlResult
+
+log = logging.getLogger(__name__)
 
 
 def _duration(answer: dict[str, Any]) -> str:
@@ -29,11 +33,6 @@ def _duration(answer: dict[str, Any]) -> str:
     seconds = f"{answer.get('duration_ms', 0) / 1000:.1f}".replace(".", ",")
     return f"⏱ {seconds}\u00a0с"
 
-
-from uzexify.settings import get_settings
-from uzexify.sqlguard import SqlResult
-
-log = logging.getLogger(__name__)
 
 START = (
     "Задайте вопрос о сделках UZEX / UZEX bitimlari haqida savol bering.\n\n"
