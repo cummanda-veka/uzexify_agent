@@ -573,13 +573,19 @@ html[data-kb] .welcome {
   top: 0;
   right: 0;
   z-index: 2;
+  width: max-content;
   max-width: min(70%, 260px);
   pointer-events: none;
+}
+
+.chart-readout > * {
+  max-width: 100%;
 }
 
 .chart-tooltip {
   display: grid;
   gap: 4px;
+  max-width: 100%;
   padding: 8px 10px;
   border: 1px solid var(--line-2);
   border-radius: 10px;
@@ -590,6 +596,13 @@ html[data-kb] .welcome {
   line-height: 1.35;
 }
 
+/* Names from the data can be long single tokens; let them break instead of widening the box. */
+.chart-tooltip__title,
+.chart-tooltip__row span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .chart-tooltip__title {
   color: var(--ink);
   font-weight: 500;
@@ -597,7 +610,7 @@ html[data-kb] .welcome {
 
 .chart-tooltip__row {
   display: grid;
-  grid-template-columns: 8px 1fr auto;
+  grid-template-columns: 8px minmax(0, 1fr) auto;
   align-items: baseline;
   gap: 8px;
   color: var(--ink-2);
