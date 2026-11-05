@@ -1,4 +1,4 @@
-import ReactMarkdown from "react-markdown";
+import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { AnimatedList } from "@/components/bits";
 import type { AskResponse } from "@/lib/api";
@@ -6,17 +6,30 @@ import { copy, type Locale } from "@/lib/i18n";
 import { AnswerChart } from "./AnswerChart";
 import { EvidencePanel } from "./EvidencePanel";
 
+// Module-level so ReactMarkdown sees the same component types on every render; inline objects
+// would make React remount every table (visible as a blink).
+const REMARK_PLUGINS = [remarkGfm];
+const MD_COMPONENTS: Components = {
+  table: ({ node: _node, ...props }) => (
+    <div className="md-table">
+      <table {...props} />
+    </div>
+  ),
+};
+
 export function AnswerCard({
+  id,
   answer,
   locale,
   open,
   onToggle,
   onPick,
 }: {
+  id: string;
   answer: AskResponse;
   locale: Locale;
   open: boolean;
-  onToggle: () => void;
+  onToggle: (id: string) => void;
   /** Sends a clarify candidate back as the follow-up question; absent when picking is not possible. */
   onPick?: (label: string) => void;
 }) {
@@ -37,14 +50,8 @@ export function AnswerCard({
       )}
       <div className="answer-text markdown">
         <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
-          components={{
-            table: ({ node: _node, ...props }) => (
-              <div className="md-table">
-                <table {...props} />
-              </div>
-            ),
-          }}
+          remarkPlugins={REMARK_PLUGINS}
+          components={MD_COMPONENTS}
         >
           {answer.text}
         </ReactMarkdown>
@@ -77,7 +84,7 @@ export function AnswerCard({
         answer={answer}
         locale={locale}
         open={open}
-        onToggle={onToggle}
+        onToggle={() => onToggle(id)}
       />
     </article>
   );

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   DecryptedText,
   GradientASCII,
@@ -173,6 +173,25 @@ export default function Home() {
     setOpenId(null);
   }
 
+  // Stable handlers for the memoised message list (it skips settled exchanges on re-render).
+  const sendRef = useRef<(question: string, retryId?: string) => Promise<void>>(
+    async () => {},
+  );
+  const messagesRef = useRef(messages);
+  messagesRef.current = messages;
+  const onToggle = useCallback(
+    (id: string) => setOpenId((current) => (current === id ? null : id)),
+    [],
+  );
+  const onPick = useCallback(
+    (label: string) => void sendRef.current(label),
+    [],
+  );
+  const onRetry = useCallback((id: string) => {
+    const message = messagesRef.current.find((m) => m.id === id);
+    if (message) void sendRef.current(message.question, id);
+  }, []);
+
   async function send(question: string, retryId?: string) {
     if (busy || !question.trim()) return;
     const id = retryId ?? crypto.randomUUID();
@@ -212,6 +231,7 @@ export default function Home() {
       setBusyId(null);
     }
   }
+  sendRef.current = send;
 
   const composer = (
     <PromptBar
@@ -312,12 +332,9 @@ export default function Home() {
               locale={locale}
               busyId={busyId}
               openId={openId}
-              setOpenId={setOpenId}
-              retry={(id) => {
-                const message = messages.find((m) => m.id === id);
-                if (message) void send(message.question, id);
-              }}
-              pick={(label) => void send(label)}
+              onToggle={onToggle}
+              onRetry={onRetry}
+              onPick={onPick}
             />
           </div>
           <GradualBlur
