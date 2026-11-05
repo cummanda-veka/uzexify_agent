@@ -22,6 +22,11 @@ class Settings(BaseSettings):
     openrouter_api_key: str = ""
 
     agent_timeout_s: float = 75
+    # Load protection (api/limits.py): questions per client per minute, concurrent agent runs,
+    # and how long a question may wait for a free run before it is turned away.
+    asks_per_minute: int = 12
+    max_concurrent_asks: int = 8
+    queue_wait_s: float = 20
     sql_timeout_ms: int = 10000
     sql_max_rows: int = 200
     company_match_min_score: float = 0.5

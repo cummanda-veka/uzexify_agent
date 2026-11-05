@@ -323,7 +323,7 @@ async def run_bot() -> None:
                     async for event, payload in _events(response):
                         if event == "step" and private:
                             label = payload.get(f"label_{language}") or ""
-                            if payload.get("type") == "tool_call":
+                            if payload.get("type") in ("tool_call", "queued"):
                                 calling = label
                             elif label:
                                 done.append(f"{calling} · {label}" if calling else label)

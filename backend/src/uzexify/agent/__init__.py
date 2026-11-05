@@ -132,6 +132,16 @@ MESSAGES = {
         "uz": "Javob kutish vaqti tugadi. Savolni soddalashtirib ko‘ring.",
         "uz_cyrl": "Жавоб кутиш вақти тугади. Саволни соддалаштириб кўринг.",
     },
+    "rate_limited": {
+        "ru": "Слишком много вопросов подряд. Подождите минуту и спросите снова.",
+        "uz": "Ketma-ket juda ko‘p savol berildi. Bir daqiqa kutib, qayta so‘rang.",
+        "uz_cyrl": "Кетма-кет жуда кўп савол берилди. Бир дақиқа кутиб, қайта сўранг.",
+    },
+    "busy": {
+        "ru": "Сейчас много вопросов от других пользователей. Повторите через минуту.",
+        "uz": "Hozir boshqa foydalanuvchilardan savollar ko‘p. Bir daqiqadan keyin qayta urinib ko‘ring.",
+        "uz_cyrl": "Ҳозир бошқа фойдаланувчилардан саволлар кўп. Бир дақиқадан кейин қайта уриниб кўринг.",
+    },
     "unavailable": {
         "ru": "Языковая модель сейчас недоступна. Повторите попытку позже.",
         "uz": "Til modeli hozir mavjud emas. Keyinroq qayta urinib ko‘ring.",
