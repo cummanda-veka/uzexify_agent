@@ -485,6 +485,8 @@ export default function PromptBar({
             open === 'at' ? 'Sources' : open === 'slash' ? 'Commands' : open === 'model' ? 'Models' : 'Effort'
           }
           data-kind={open}
+          // Taps inside the menu (labels, padding) must not blur the prompt either.
+          onMouseDown={e => e.preventDefault()}
         >
           {open === 'effort' ? (
             <>
@@ -506,12 +508,14 @@ export default function PromptBar({
                 aria-valuenow={effortIndex}
                 aria-valuetext={level}
                 style={{ '--pb-effort-x': stepAt(effortIndex), '--pb-effort-fill': fillAt(effortIndex) }}
+                // Pointer input must not move focus off the prompt (see the effort button); the
+                // slider stays keyboard-focusable via Tab.
+                onMouseDown={e => e.preventDefault()}
                 onPointerDown={e => {
                   if (e.button !== 0) return;
                   try {
                     e.currentTarget.setPointerCapture(e.pointerId);
                   } catch {}
-                  e.currentTarget.focus({ preventScroll: true });
                   effortFromPointer(e);
                 }}
                 onPointerMove={e => {
@@ -689,13 +693,13 @@ export default function PromptBar({
               data-on={effortOpen ? '' : undefined}
               data-max={maxed ? '' : undefined}
               onMouseDown={e => e.preventDefault()}
-              onClick={() => {
-                // Focus first: the input's onFocus closes every menu.
-                const next = !effortOpen;
-                focusInput();
+              onClick={e => {
+                // The picker never changes input focus: opening it does not raise the keyboard on
+                // touch screens, and choosing a level does not dismiss it (see the slider below).
+                e.stopPropagation();
                 setPlusOpen(false);
                 setModelOpen(false);
-                setEffortOpen(next);
+                setEffortOpen(v => !v);
               }}
             >
               <HugeiconsIcon icon={SparklesIcon} size={13} strokeWidth={2} />

@@ -563,6 +563,59 @@ html[data-kb] .welcome {
   }
 }
 
+.chart-panel {
+  position: relative;
+}
+
+/* Chart tooltip slot: top-right of the panel, above the plot, outside the scrolling area. */
+.chart-readout {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
+  max-width: min(70%, 260px);
+  pointer-events: none;
+}
+
+.chart-tooltip {
+  display: grid;
+  gap: 4px;
+  padding: 8px 10px;
+  border: 1px solid var(--line-2);
+  border-radius: 10px;
+  background: rgba(16, 18, 26, 0.96);
+  box-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.chart-tooltip__title {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.chart-tooltip__row {
+  display: grid;
+  grid-template-columns: 8px 1fr auto;
+  align-items: baseline;
+  gap: 8px;
+  color: var(--ink-2);
+}
+
+.chart-tooltip__row i {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.chart-tooltip__row b {
+  color: var(--ink);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
 .chart-panel + .chart-panel {
   margin-top: 12px;
   padding-top: 12px;

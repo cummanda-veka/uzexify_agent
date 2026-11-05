@@ -14,7 +14,6 @@ import {
   type ChartConfig,
   ChartContainer,
   ChartTooltip,
-  ChartTooltipContent,
 } from "@/components/ui/chart";
 import {
   type ChartSeries,
@@ -86,6 +85,51 @@ function WrappedTick({
         </tspan>
       ))}
     </text>
+  );
+}
+
+// Tooltip values: large numbers in scale words with two decimals ("12,23 трлн"), like the answer
+// text; smaller ones in full with digit groups.
+const READOUT_LOCALE = { ru: "ru-RU", uz: "uz-Latn" } as const;
+function readoutValue(value: number, language: "ru" | "uz"): string {
+  return new Intl.NumberFormat(READOUT_LOCALE[language], {
+    notation: Math.abs(value) >= 1e6 ? "compact" : "standard",
+    maximumFractionDigits: 2,
+  }).format(value);
+}
+
+type ReadoutItem = { dataKey?: string | number; value?: unknown };
+
+/** Chart readout shown in the panel's tooltip slot: the category, then one line per series. */
+function Readout({
+  active,
+  payload,
+  label,
+  series,
+  language,
+}: {
+  active?: boolean;
+  payload?: ReadoutItem[];
+  label?: unknown;
+  series: Keyed[];
+  language: "ru" | "uz";
+}) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="chart-tooltip">
+      <div className="chart-tooltip__title">{String(label ?? "")}</div>
+      {payload.map((item) => {
+        const s = series.find((x) => x.key === item.dataKey);
+        if (!s || typeof item.value !== "number") return null;
+        return (
+          <div key={s.key} className="chart-tooltip__row">
+            <i style={{ background: s.color }} />
+            <span>{s.label}</span>
+            <b>{readoutValue(item.value, language)}</b>
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
@@ -189,6 +233,7 @@ export function AnswerChart({
           series={series}
           rows={rows}
           compact={COMPACT[language]}
+          language={language}
         />
       ))}
     </figure>
@@ -201,13 +246,16 @@ function Panel({
   series,
   rows,
   compact,
+  language,
 }: {
   uid: string;
   type: ChartSpec["type"];
   series: Keyed[];
   rows: Row[];
   compact: Intl.NumberFormat;
+  language: "ru" | "uz";
 }) {
+  const [readout, setReadout] = useState<HTMLDivElement | null>(null);
   const config: ChartConfig = Object.fromEntries(
     series.map((s) => [s.key, { label: s.label, color: s.color }]),
   );
@@ -248,12 +296,15 @@ function Panel({
       ))}
     </defs>
   );
-  const tooltip = (
+  // The tooltip renders into a fixed readout in the panel (outside the horizontally scrolling area),
+  // so it is never clipped by the card and never sits under the finger on touch screens.
+  const tooltip = readout ? (
     <ChartTooltip
+      portal={readout}
       cursor={{ fill: "rgba(255,255,255,0.04)" }}
-      content={<ChartTooltipContent indicator="dot" className="min-w-52" />}
+      content={<Readout series={series} language={language} />}
     />
-  );
+  ) : null;
   const axisTick = { fill: "#8a93a8", fontSize: 12 };
   const valueAxis = {
     tickFormatter: (v: number) => compact.format(v),
@@ -267,6 +318,7 @@ function Panel({
   return (
     <div className="chart-panel">
       <div className="chart-unit">{unit}</div>
+      <div className="chart-readout" ref={setReadout} />
       <div className="chart-scroll">
         <ChartContainer
           config={config}
