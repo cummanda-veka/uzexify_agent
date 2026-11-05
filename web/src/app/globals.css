@@ -222,43 +222,53 @@ html[data-kb] .welcome {
 }
 
 /* ---------- view transitions (React <ViewTransition>) ----------
-   The page itself never cross-fades; named parts (title, composer) glide to their new boxes and
-   the welcome decor rises in / sinks out with a soft blur. */
+   Three phases, never overlapping on screen: outgoing parts leave fast (0–160 ms), the title and
+   composer glide to their new boxes (0–380 ms, mostly done by ~220 ms), incoming parts appear only
+   after that (220–600 ms). Otherwise a moving title slides across an intro that is still fading. */
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;
 }
 
 ::view-transition-group(*) {
-  animation-duration: 420ms;
+  animation-duration: 380ms;
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-::view-transition-new(.vt-rise) {
-  animation: vt-rise-in 460ms cubic-bezier(0.22, 1, 0.36, 1) 60ms both;
-}
-
-::view-transition-old(.vt-sink) {
-  animation: vt-sink-out 240ms cubic-bezier(0.55, 0, 1, 0.45) both;
-}
-
+::view-transition-old(.vt-sink),
 ::view-transition-old(.vt-fade-out) {
-  animation: vt-sink-out 280ms cubic-bezier(0.55, 0, 1, 0.45) both;
+  animation: vt-sink-out 160ms cubic-bezier(0.55, 0, 1, 0.45) both;
+}
+
+::view-transition-new(.vt-rise) {
+  animation: vt-rise-in 380ms cubic-bezier(0.22, 1, 0.36, 1) 220ms both;
+}
+
+/* A screen-tall region (the thread) only fades: any scale or offset on it reads as content
+   "arriving" at its place at the end of the transition. */
+::view-transition-new(.vt-appear) {
+  animation: vt-appear-in 320ms ease-out 120ms both;
 }
 
 @keyframes vt-rise-in {
   from {
     opacity: 0;
-    transform: translateY(14px) scale(0.96);
-    filter: blur(8px);
+    transform: translateY(10px);
+    filter: blur(6px);
   }
 }
 
 @keyframes vt-sink-out {
   to {
     opacity: 0;
-    transform: translateY(-10px) scale(0.96);
-    filter: blur(8px);
+    transform: translateY(-6px);
+    filter: blur(6px);
+  }
+}
+
+@keyframes vt-appear-in {
+  from {
+    opacity: 0;
   }
 }
 

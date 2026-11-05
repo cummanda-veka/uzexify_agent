@@ -301,6 +301,8 @@ function Panel({
   const tooltip = readout ? (
     <ChartTooltip
       portal={readout}
+      // Tap/click only: on touch screens a swipe across the chart must scroll, not open the readout.
+      trigger="click"
       cursor={{ fill: "rgba(255,255,255,0.04)" }}
       content={<Readout series={series} language={language} />}
     />

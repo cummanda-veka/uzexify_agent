@@ -146,14 +146,16 @@ export default function Home() {
   }, []);
 
   // The floating composer's height (grows with multi-line text) becomes the thread's bottom room.
+  // Measured in a layout effect so it is in place before a view transition snapshots the new page.
   // biome-ignore lint/correctness/useExhaustiveDependencies: the dock mounts when `empty` flips
-  useEffect(() => {
+  useLayoutEffect(() => {
     const dock = dockRef.current;
     if (!dock) return undefined;
     const root = document.documentElement;
-    const observer = new ResizeObserver(() =>
-      root.style.setProperty("--dock-h", `${Math.round(dock.offsetHeight)}px`),
-    );
+    const measure = () =>
+      root.style.setProperty("--dock-h", `${Math.round(dock.offsetHeight)}px`);
+    measure();
+    const observer = new ResizeObserver(measure);
     observer.observe(dock);
     return () => observer.disconnect();
   }, [empty]);
@@ -359,7 +361,7 @@ export default function Home() {
         </ViewTransition>
       ) : (
         <>
-          <ViewTransition enter="vt-rise">
+          <ViewTransition enter="vt-appear">
             <StickToBottom
               className="thread-frame"
               contextRef={stick}
