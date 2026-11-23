@@ -44,6 +44,6 @@ if [[ "$(psql "SELECT count(*) FROM products WHERE embedding IS NULL")" != "0" ]
   remote "sudo docker compose run --rm api uzexify embed" \
     || echo "embedding failed; product search stays lexical until the next deploy" >&2
 fi
-remote "sudo docker compose restart api"
+remote "sudo docker compose restart api caddy"  # pick up new data and a changed Caddyfile
 
 remote "sudo docker image prune -f >/dev/null; sudo docker compose ps --format '{{.Name}} {{.Status}}'"
