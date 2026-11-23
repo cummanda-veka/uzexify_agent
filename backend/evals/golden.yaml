@@ -166,7 +166,7 @@ cases:
     question: В каком регионе находится склад продавца по сделке 100003?
     expect_kind: answer
     reference_sql: "SELECT region_ru FROM v_deals WHERE deal_no = 100003"
-    checks: [{column: region_ru, match: text}]
+    checks: [{column: region_ru, match: text_ru}]
   - id: relative_previous_month
     lang: uz_latn
     question: Bugun 2026-yil 5-noyabr deb hisoblang. O‘tgan kalendar oyda, barcha holatlarni qo‘shib, nechta bitim tuzilgan?

@@ -17,24 +17,60 @@ def _kind(case, result):
     return result["kind"] == case["expect_kind"]
 
 
-def _word_matches(expected: str, answer_words: list[str]) -> bool:
-    """Letters-only words may differ in a short inflectional ending («Ферганская» ~ «Ферганской»);
-    anything with a digit (INN, deal number, code) must match exactly."""
-    if any(ch.isdigit() for ch in expected) or len(expected) <= 5:
-        return expected in answer_words
-    stem = expected[: len(expected) - 3]
-    return any(a.startswith(stem) and len(a) - len(stem) <= 4 for a in answer_words)
+# Russian adjective/noun endings, longest first. Only `match: text_ru` checks strip them.
+_RU_ENDINGS = sorted(
+    [
+        "ая",
+        "яя",
+        "ой",
+        "ей",
+        "ую",
+        "юю",
+        "ые",
+        "ие",
+        "ых",
+        "их",
+        "ым",
+        "им",
+        "ыми",
+        "ими",
+        "ого",
+        "его",
+        "ому",
+        "ему",
+        "ом",
+        "ем",
+        "ий",
+        "ый",
+        "ь",
+        "и",
+        "ы",
+        "а",
+        "я",
+        "у",
+        "ю",
+        "е",
+        "о",
+    ],
+    key=len,
+    reverse=True,
+)
 
 
-def _text_present(value: str, text: str, normalized: str) -> bool:
-    expected = name_key(value)
-    if not expected:
-        return False
-    if expected in normalized:
-        return True
-    answer_words = [k for k in (name_key(w) for w in re.findall(r"\w+", text)) if k]
-    words = [k for k in (name_key(w) for w in re.findall(r"\w+", value)) if k]
-    return bool(words) and all(_word_matches(w, answer_words) for w in words)
+def _ru_stem(word: str) -> str:
+    word = word.lower().replace("ё", "е")
+    for end in _RU_ENDINGS:
+        if word.endswith(end) and len(word) - len(end) >= 4:
+            return word[: -len(end)]
+    return word
+
+
+def _ru_text_present(value: str, text: str) -> bool:
+    """A Russian name in any grammatical case: «Ферганская область» ~ «в Ферганской области».
+    Every word of the value must appear in the answer with the same stem."""
+    expected = [_ru_stem(w) for w in re.findall(r"[А-Яа-яЁё]+", value)]
+    answer = {_ru_stem(w) for w in re.findall(r"[А-Яа-яЁё]+", text)}
+    return bool(expected) and all(stem in answer for stem in expected)
 
 
 def _values(case, result):
@@ -55,7 +91,11 @@ def _values(case, result):
                 if not any(is_grounded(number, [expected]) for number in numbers):
                     return False
             elif check["match"] == "text":
-                if not _text_present(str(value), result["text"], normalized):
+                expected = name_key(str(value))
+                if not expected or expected not in normalized:
+                    return False
+            elif check["match"] == "text_ru":
+                if not _ru_text_present(str(value), result["text"]):
                     return False
             else:
                 raise ValueError(f"Unknown check type: {check['match']}")
