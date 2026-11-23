@@ -62,7 +62,7 @@ cd ../web && bun install && NEXT_PUBLIC_API_BASE=http://localhost:8000 bun dev
 - Lint, format, types:
   - backend: `uv run ruff format src tests && uv run ruff check src tests && uv run ty check src`;
   - web: `bun run lint` (Biome), `bun run build`.
-- Deploy: push to `main` → GitHub Actions (`.github/workflows/images.yml`) builds `ghcr.io/cummanda-veka/uzexify-{backend,web}` for linux/amd64 (public packages, pulled anonymously). Then `scripts/deploy.sh user@host [--bot]` copies `compose.yaml`/`Caddyfile`/`.env`/`geo/`, pulls and starts the stack, and ingests + embeds on an empty DB (profiles: `app` = api/web/caddy, `bot` = bot). Restart `caddy` after editing `Caddyfile`.
+- Deploy: push to `main` → GitHub Actions (`.github/workflows/images.yml`) builds `ghcr.io/cummanda-veka/uzexify-{backend,web}` for linux/amd64 (public packages, pulled anonymously). Then `scripts/deploy.sh user@host [--bot]` copies `compose.yaml`/`Caddyfile`/`.env`/`geo/`, pulls and starts the stack, ingests on an empty DB (otherwise refreshes the `uzex_agent` role with `uzexify grant`), and embeds products that lack embeddings (profiles: `app` = api/web/caddy, `bot` = bot). Restart `caddy` after editing `Caddyfile`.
 
 ## Code Conventions & Common Patterns
 - Python 3.14; ruff line length 110; async everywhere (`async def`, async pool contexts). Settings come only through `get_settings()` (cached pydantic-settings; env var = upper-case field name, e.g. `ASKS_PER_MINUTE`).

@@ -31,12 +31,19 @@ send compose.yaml Caddyfile .env geo
 remote "chmod 600 .env && sudo docker compose ${profiles[*]} pull -q && \
   sudo docker compose ${profiles[*]} up -d --no-build --remove-orphans"
 
-if [[ "$(remote "sudo docker compose exec -T db psql -U uzex -d uzex -tAc \"SELECT to_regclass('deals') IS NOT NULL\"")" != "t" ]]; then
-  echo "empty database: loading CSVs and embeddings"
+psql() { remote "sudo docker compose exec -T db psql -U uzex -d uzex -tAc \"$1\""; }
+if [[ "$(psql "SELECT to_regclass('deals') IS NOT NULL")" != "t" ]]; then
+  echo "empty database: loading CSVs"
   send data/uzex_spot_data
   remote "sudo docker compose run --rm api uzexify ingest --data-dir /data"
-  remote "sudo docker compose run --rm api uzexify embed"
-  remote "sudo docker compose restart api"
+else
+  remote "sudo docker compose run --rm api uzexify grant"  # roles are not in dumps; cheap and idempotent
 fi
+if [[ "$(psql "SELECT count(*) FROM products WHERE embedding IS NULL")" != "0" ]]; then
+  echo "products without embeddings: computing them"
+  remote "sudo docker compose run --rm api uzexify embed" \
+    || echo "embedding failed; product search stays lexical until the next deploy" >&2
+fi
+remote "sudo docker compose restart api"
 
 remote "sudo docker image prune -f >/dev/null; sudo docker compose ps --format '{{.Name}} {{.Status}}'"

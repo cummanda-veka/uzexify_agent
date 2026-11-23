@@ -8,6 +8,7 @@ def main() -> None:
     sub = p.add_subparsers(dest="cmd", required=True)
     ing = sub.add_parser("ingest", help="load CSV data into Postgres")
     ing.add_argument("--data-dir", default="../data/uzex_spot_data")
+    sub.add_parser("grant", help="create or refresh the read-only agent DB role")
     sub.add_parser("embed", help="compute product embeddings")
     sub.add_parser("smoke", help="check LLM gateway models")
     ask = sub.add_parser("ask", help="ask the agent a question")
@@ -23,6 +24,10 @@ def main() -> None:
         from uzexify.ingest import ingest
 
         ingest(a.data_dir)
+    elif a.cmd == "grant":
+        from uzexify.ingest import grant
+
+        grant()
     elif a.cmd == "embed":
         from uzexify.embeddings import embed_products
 

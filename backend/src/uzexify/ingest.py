@@ -288,6 +288,33 @@ def load_file(conn, path, table, mapping):
                 copy.write_row(values)
 
 
+def setup_agent_role(conn, password):
+    """Create or refresh the read-only `uzex_agent` role. Idempotent; roles live outside pg_dump."""
+    exists = conn.execute("SELECT 1 FROM pg_roles WHERE rolname = 'uzex_agent'").fetchone()
+    if not exists:
+        conn.execute("CREATE ROLE uzex_agent LOGIN")
+    # set_config cannot set passwords; SQL literal quoting is provided by psycopg.
+    conn.execute(sql.SQL("ALTER ROLE uzex_agent WITH LOGIN PASSWORD {}").format(sql.Literal(password)))
+    db = conn.info.dbname
+    conn.execute(sql.SQL("GRANT CONNECT ON DATABASE {} TO uzex_agent").format(sql.Identifier(db)))
+    conn.execute("GRANT USAGE ON SCHEMA public TO uzex_agent")
+    conn.execute("GRANT SELECT ON ALL TABLES IN SCHEMA public TO uzex_agent")
+    conn.execute("ALTER ROLE uzex_agent SET default_transaction_read_only = on")
+    conn.execute("ALTER ROLE uzex_agent SET statement_timeout = '10s'")
+    conn.execute("ALTER ROLE uzex_agent SET search_path = public")
+    conn.execute(sql.SQL("REVOKE TEMP ON DATABASE {} FROM PUBLIC").format(sql.Identifier(db)))
+
+
+def grant():
+    """Refresh the agent role on an existing database (e.g. one restored from a dump)."""
+    settings = get_settings()
+    if not settings.agent_db_password:
+        raise ValueError("AGENT_DB_PASSWORD is required")
+    with psycopg.connect(settings.database_url) as conn, conn.transaction():
+        setup_agent_role(conn, settings.agent_db_password)
+    print("uzex_agent role ready")
+
+
 def ingest(data_dir):
     settings = get_settings()
     if not settings.agent_db_password:
@@ -332,23 +359,7 @@ def ingest(data_dir):
                 if count != expected:
                     raise ValueError(f"{table}: expected {expected}, got {count}")
                 counts[table] = count
-            exists = conn.execute("SELECT 1 FROM pg_roles WHERE rolname = 'uzex_agent'").fetchone()
-            if not exists:
-                conn.execute("CREATE ROLE uzex_agent LOGIN")
-            # set_config cannot set passwords; SQL literal quoting is provided by psycopg.
-            conn.execute(
-                sql.SQL("ALTER ROLE uzex_agent WITH LOGIN PASSWORD {}").format(
-                    sql.Literal(settings.agent_db_password)
-                )
-            )
-            db = conn.info.dbname
-            conn.execute(sql.SQL("GRANT CONNECT ON DATABASE {} TO uzex_agent").format(sql.Identifier(db)))
-            conn.execute("GRANT USAGE ON SCHEMA public TO uzex_agent")
-            conn.execute("GRANT SELECT ON ALL TABLES IN SCHEMA public TO uzex_agent")
-            conn.execute("ALTER ROLE uzex_agent SET default_transaction_read_only = on")
-            conn.execute("ALTER ROLE uzex_agent SET statement_timeout = '10s'")
-            conn.execute("ALTER ROLE uzex_agent SET search_path = public")
-            conn.execute(sql.SQL("REVOKE TEMP ON DATABASE {} FROM PUBLIC").format(sql.Identifier(db)))
+            setup_agent_role(conn, settings.agent_db_password)
             conn.execute("ANALYZE")
     for table, count in counts.items():
         print(f"{table} {count}")
