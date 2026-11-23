@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Geist"; font-weight: 400; src: url(assets/fonts/geist-400-latin.woff2) format("woff2"); }
+      @font-face { font-family: "Geist"; font-weight: 600; src: url(assets/fonts/geist-600-latin.woff2) format("woff2"); }
+      html,
+      body {
+        margin: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #07080d;
+      }
+      #root {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        font-family: "Geist", sans-serif;
+        color: #eef1f8;
+      }
+      #stage {
+        position: absolute;
+        inset: 0;
+      }
+      .glow {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(48% 60% at 18% 78%, rgba(47, 99, 231, 0.4), transparent 70%),
+          radial-gradient(26% 34% at 20% 98%, rgba(255, 153, 30, 0.22), transparent 70%),
+          radial-gradient(50% 50% at 92% 4%, rgba(127, 178, 255, 0.12), transparent 70%);
+      }
+      .grid {
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1.2px, transparent 1.4px);
+        background-size: 22px 22px;
+        mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.8));
+      }
+      .win {
+        position: absolute;
+        left: 210px;
+        top: 36px;
+        width: 1500px;
+        border-radius: 14px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: #0b0d14;
+        box-shadow: 0 40px 120px rgba(0, 0, 0, 0.65);
+      }
+      .bar {
+        height: 40px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 16px;
+        background: #11141d;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      }
+      .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.16);
+      }
+      .url {
+        margin: 0 auto;
+        padding: 5px 18px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.06);
+        color: #b9c0d0;
+        font-size: 15px;
+      }
+      .view {
+        position: relative;
+        width: 1500px;
+        height: 937px;
+        overflow: hidden;
+      }
+      .frame {
+        position: absolute;
+        inset: 0;
+        width: 1500px;
+        height: 937px;
+        object-fit: cover;
+        object-position: top center;
+        opacity: 0;
+      }
+      .cap {
+        position: absolute;
+        left: 50%;
+        bottom: 40px;
+        white-space: nowrap;
+        padding: 16px 26px;
+        border-radius: 14px;
+        background: rgba(10, 12, 20, 0.86);
+        border: 1px solid rgba(127, 178, 255, 0.35);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+        font-size: 32px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        opacity: 0;
+      }
+      .cap b {
+        color: #7fb2ff;
+        font-weight: 600;
+        margin-right: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- README demo: real captures of one question in the web chat, cross-faded with captions. 15 s, silent (rendered to GIF). -->
+    <div id="root" data-composition-id="main" data-start="0" data-duration="15" data-width="1920" data-height="1080">
+      <div id="stage" class="clip" data-start="0" data-duration="15" data-track-index="0">
+        <div class="glow"></div>
+        <div class="grid"></div>
+        <div class="win" id="win">
+          <div class="bar">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            <span class="url" data-layout-ignore>uzex.d3d.uz</span>
+          </div>
+          <div class="view">
+            <img id="f-empty" class="frame" src="assets/frames/01-empty.jpg" alt="" />
+            <img id="f-typed" class="frame" src="assets/frames/02-typed.jpg" alt="" />
+            <img id="f-work" class="frame" src="assets/frames/03-working.jpg" alt="" />
+            <img id="f-answer" class="frame" src="assets/frames/answer-top.jpg" alt="" />
+            <img id="f-chart" class="frame" src="assets/frames/answer.jpg" alt="" />
+            <img id="f-evidence" class="frame" src="assets/frames/evidence.jpg" alt="" />
+          </div>
+        </div>
+        <div id="c-ask" class="cap"><b>1</b>Ask in Russian or Uzbek</div>
+        <div id="c-work" class="cap"><b>2</b>It writes SQL and runs it</div>
+        <div id="c-answer" class="cap"><b>3</b>An answer whose every number is checked</div>
+        <div id="c-chart" class="cap"><b>4</b>A chart drawn from the query's rows</div>
+        <div id="c-evidence" class="cap"><b>5</b>The evidence: the SQL and every row</div>
+      </div>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const xf = 0.45;
+      // frame id, start, end
+      const frames = [
+        ["#f-empty", 0, 1.6],
+        ["#f-typed", 1.6, 3.4],
+        ["#f-work", 3.4, 6.0],
+        ["#f-answer", 6.0, 9.2],
+        ["#f-chart", 9.2, 12.2],
+        ["#f-evidence", 12.2, 15.0],
+      ];
+      frames.forEach(([id, start, end], i) => {
+        if (i === 0) tl.set(id, { opacity: 1 }, 0);
+        else tl.fromTo(id, { opacity: 0 }, { opacity: 1, duration: xf, ease: "power2.out" }, start);
+        if (i < frames.length - 1) tl.to(id, { opacity: 0, duration: 0.01 }, end + xf);
+      });
+      // slow push-in on the whole window
+      tl.fromTo("#win", { scale: 0.88 }, { scale: 0.9, duration: 15, ease: "none", transformOrigin: "50% 0%" }, 0);
+      // captions: id, in, out
+      const caps = [
+        ["#c-ask", 0.3, 3.2],
+        ["#c-work", 3.6, 5.9],
+        ["#c-answer", 6.2, 9.0],
+        ["#c-chart", 9.4, 12.0],
+        ["#c-evidence", 12.4, 14.85],
+      ];
+      caps.forEach(([id, a, b]) => {
+        tl.fromTo(id, { opacity: 0, y: 14, xPercent: -50 }, { opacity: 1, y: 0, xPercent: -50, duration: 0.35, ease: "power3.out" }, a);
+        tl.to(id, { opacity: 0, y: -8, duration: 0.25, ease: "power2.in" }, b - 0.25);
+      });
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

@@ -11,3 +11,5 @@ __pycache__/
 node_modules/
 .next/
 pre.env
+design/*/.hyperframes/artifacts/snapshots/
+design/readme-demo/out/
