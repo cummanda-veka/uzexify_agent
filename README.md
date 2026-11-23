@@ -1,51 +1,80 @@
 # UZEXify Agent
 
-ИИ-агент для ответов на русском и узбекском языках по реестру биржевых сделок. [Задание UZEX AI Hackathon](https://hackathon.uzex.uz/saralash/?lang=ru#task): ответы должны опираться на данные; если ответа в них нет, агент должен сообщить об этом.
+An AI agent that answers questions in Russian and Uzbek (Latin and Cyrillic) over a registry of **500,000** exchange deals (3 January 2022 – 30 October 2026). Built for the [UZEX AI Hackathon 2026 qualifier task](https://hackathon.uzex.uz/saralash/?lang=ru#task): every answer comes from the data, and when the data has no answer, the agent says so.
 
-## Стек
+Demo: <https://uzex.d3d.uz> (no sign-up). Solution write-up and quality numbers (in Russian): [`docs/solution.md`](docs/solution.md).
 
-- Веб: Next.js, React, shadcn/ui, Bun, Biome.
-- Telegram: aiogram.
-- Бэкенд: Python, FastAPI, uv, Ruff, ty.
-- База: PostgreSQL для данных и эмбеддингов (pgvector).
-- Запуск приложения: Docker Compose.
+The data in this repository is synthetic: the format mirrors the public deal registry, and any resemblance to real organisations is coincidental. See [`data/uzex_spot_data/README.md`](data/uzex_spot_data/README.md).
 
-Bun и uv настраиваются через `mise` (`mise install`).
+## What it does
 
-Прод: <https://uzex.d3d.uz>. Описание решения и результаты проверки — [`docs/solution.md`](docs/solution.md).
+- Counts deals and computes totals, volumes, average prices and shares for any period — by product, company, broker, region, trade type and deal status.
+- Finds companies and products across scripts and with typos; asks a follow-up question when several match.
+- Keeps a short conversation ("and by month?", "show it on a chart").
+- Draws charts only from rows of the executed SQL.
+- Converts USD deals to UZS at the exchange rate of the deal date.
+- Shows the basis of each answer: the SQL and its result rows.
 
-## Запуск локально
+## How an answer is produced
+
+1. The agent (Pydantic AI) resolves the companies, brokers and products mentioned in the question.
+2. It writes a single read-only `SELECT` against the registry tables; the SQL is validated before execution (`sqlguard`).
+3. Every number in the answer text is checked against the query result. If the check fails, the model must recompute the value with a query, and the user sees a warning.
+4. No answer without an executed query. If there is no data, the agent says so.
+
+Company and broker search is lexical (trigrams over a normalised name key, plus tax ID and broker code). Product search is hybrid: lexical + vector embeddings in pgvector, merged with Reciprocal Rank Fusion (RRF).
+
+## Stack
+
+| Part | Technology |
+|---|---|
+| Agent | Pydantic AI |
+| API | FastAPI |
+| Database | PostgreSQL + pgvector |
+| Web | Next.js, React, shadcn/ui, Bun |
+| Telegram | aiogram 3 |
+| Observability | Langfuse |
+| Deployment | Docker Compose, Caddy, mise (uv + Bun) |
+
+On a 42-question control set (34 answerable, 6 with no data, 2 requiring clarification; see `docs/solution.md`): the chosen model answered 33 of 34 correctly, invented 0 answers where data was missing, and matched the question language in 42 of 42. Run reports: `backend/evals/reports/`.
+
+## Running locally
 
 ```sh
-cp .env.example .env            # заполнить секреты
+cp .env.example .env            # fill in an OpenAI-compatible endpoint and keys
 docker compose up -d db
 cd backend
 uv sync
 uv run uzexify ingest --data-dir ../data/uzex_spot_data
-uv run uzexify embed            # векторы товаров (OpenRouter)
-uv run uzexify smoke            # проверка моделей шлюза
+uv run uzexify embed            # product embeddings (OpenRouter)
+uv run uzexify smoke            # check the configured models
 uv run uzexify ask "Сколько сделок было заключено в 2024 году?"
-uv run uzexify serve            # API на :8000
+uv run uzexify serve            # API on :8000
 cd ../web && bun install && NEXT_PUBLIC_API_BASE=http://localhost:8000 bun dev
 ```
 
-Бот: `uv run uzexify bot` (нужен `TELEGRAM_BOT_TOKEN`).
+Bot: `uv run uzexify bot` (requires `TELEGRAM_BOT_TOKEN`). Install Bun and uv with `mise install`.
 
-## Проверки
+## Checks
 
 ```sh
 cd backend
 uv run pytest
-uv run python -m evals.run --target local --label <имя>
+uv run python -m evals.run --target local --label <name>
 uv run python -m evals.retrieval --variants lexical,hybrid-gemini,hybrid-voyage,hybrid-gemini+rerank
 ```
 
-## Деплой
+## Deployment
 
-На VPS: `docker compose --profile app up -d --build`, затем
-`docker compose run --rm api uzexify ingest --data-dir /data && docker compose run --rm api uzexify embed`.
-Бот: `docker compose --profile app --profile bot up -d bot`.
+On a VPS: `docker compose --profile app up -d --build`, then
 
-## Данные
+```sh
+docker compose run --rm api uzexify ingest --data-dir /data
+docker compose run --rm api uzexify embed
+```
 
-Исходные CSV находятся в [`data/uzex_spot_data/`](data/uzex_spot_data/); описание полей и правил расчёта — в [README набора данных](data/uzex_spot_data/README.md). Данные вымышленные.
+Bot: `docker compose --profile app --profile bot up -d bot`.
+
+## Third-party data
+
+`geo/dbip-country-lite.mmdb` is the [DB-IP IP to Country Lite](https://db-ip.com/db/download/ip-to-country-lite) database, licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). IP Geolocation by [DB-IP](https://db-ip.com).
