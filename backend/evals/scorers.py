@@ -17,9 +17,13 @@ def _kind(case, result):
     return result["kind"] == case["expect_kind"]
 
 
-def _stem(word: str) -> str:
-    """Drop a short inflectional ending so «Ферганская область» matches «Ферганской области»."""
-    return word[: max(4, len(word) - 3)] if len(word) > 5 else word
+def _word_matches(expected: str, answer_words: list[str]) -> bool:
+    """Letters-only words may differ in a short inflectional ending («Ферганская» ~ «Ферганской»);
+    anything with a digit (INN, deal number, code) must match exactly."""
+    if any(ch.isdigit() for ch in expected) or len(expected) <= 5:
+        return expected in answer_words
+    stem = expected[: len(expected) - 3]
+    return any(a.startswith(stem) and len(a) - len(stem) <= 4 for a in answer_words)
 
 
 def _text_present(value: str, text: str, normalized: str) -> bool:
@@ -28,12 +32,9 @@ def _text_present(value: str, text: str, normalized: str) -> bool:
         return False
     if expected in normalized:
         return True
-    answer_words = [name_key(w) for w in re.findall(r"\w+", text)]
-    return all(
-        any(a.startswith(_stem(name_key(w))) for a in answer_words if a)
-        for w in re.findall(r"\w+", value)
-        if name_key(w)
-    )
+    answer_words = [k for k in (name_key(w) for w in re.findall(r"\w+", text)) if k]
+    words = [k for k in (name_key(w) for w in re.findall(r"\w+", value)) if k]
+    return bool(words) and all(_word_matches(w, answer_words) for w in words)
 
 
 def _values(case, result):
