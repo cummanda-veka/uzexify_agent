@@ -274,7 +274,13 @@ async def run(variants: list[str], output: Path) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--variants", default=",".join(VARIANTS), help="Comma-separated retrieval variants")
+    configured = [f"hybrid-{key}" for key, model in MODELS.items() if model == get_settings().embedding_model]
+    parser.add_argument(
+        "--variants",
+        default=",".join(["lexical", *configured]),
+        help="Comma-separated retrieval variants; embedding variants must match EMBEDDING_BASE_URL's provider "
+        "(default: lexical plus the configured EMBEDDING_MODEL)",
+    )
     parser.add_argument("--output", type=Path, default=HERE / "reports" / "retrieval.json")
     args = parser.parse_args()
     variants = list(dict.fromkeys(part.strip() for part in args.variants.split(",") if part.strip()))
