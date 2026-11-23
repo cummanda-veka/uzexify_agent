@@ -27,7 +27,7 @@ services:
   api:
     profiles: [app]
     build: ./backend
-    image: ghcr.io/d3d0n/uzexify-backend:latest
+    image: ghcr.io/cummanda-veka/uzexify-backend:latest
     <<: *backend-env
     volumes:
       - ./data/uzex_spot_data:/data:ro
@@ -39,7 +39,7 @@ services:
 
   bot:
     profiles: [bot]
-    image: ghcr.io/d3d0n/uzexify-backend:latest
+    image: ghcr.io/cummanda-veka/uzexify-backend:latest
     <<: *backend-env
     command: ["uzexify", "bot"]
     depends_on: [api]
@@ -51,7 +51,7 @@ services:
       context: ./web
       args:
         NEXT_PUBLIC_API_BASE: ""
-    image: ghcr.io/d3d0n/uzexify-web:latest
+    image: ghcr.io/cummanda-veka/uzexify-web:latest
     restart: unless-stopped
 
   caddy:
