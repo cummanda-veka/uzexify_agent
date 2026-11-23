@@ -59,7 +59,7 @@ The data in this repository is synthetic. It mirrors the format of the public re
     </td>
     <td width="50%" valign="top">
       <img src="docs/assets/readme/evidence.png" alt="The evidence panel with the executed SQL and the result table" width="100%"><br>
-      <sub><strong>Receipts, not vibes.</strong> Open the evidence to see the exact SQL and every row it returned.</sub>
+      <sub><strong>Evidence.</strong> The exact SQL and every row it returned.</sub>
     </td>
   </tr>
   <tr>
@@ -88,7 +88,7 @@ Most chat-over-data demos trust the model to copy numbers correctly. This one do
 
 ---
 
-## Measured, not vibed
+## Quality
 
 On a 42-question control set in three scripts (34 answerable, 6 with no data, 2 that need clarification); reference values are computed by SQL at check time:
 
@@ -147,7 +147,7 @@ Telegram bot: `uv run uzexify bot` with `TELEGRAM_BOT_TOKEN` set.
 
 ### I want my own server
 
-One command from your machine. It copies the sources and `.env` over SSH, builds and starts the stack on the host, and loads the data on first run:
+GitHub Actions builds the images on every push to `main`. One command copies the config and `.env` to the host over SSH, pulls the images, starts the stack and loads the data on first run:
 
 ```sh
 scripts/deploy.sh user@host          # add --bot for the Telegram bot
@@ -187,7 +187,7 @@ The API streams `step` events (each tool call and result), then one `answer` or 
 
 **Quality** (`backend/evals/`) — golden, dialog, style and retrieval evals with YAML datasets
 
-**Design** (`design/`) — HyperFrames projects for the bot banner and these README pictures
+**Design** (`design/`) — HyperFrames projects: bot banner, README images
 
 </details>
 
@@ -224,20 +224,13 @@ uv run python -m evals.retrieval --variants lexical,hybrid-gemini
 
 </details>
 
-<details>
-<summary><strong>README pictures</strong></summary>
-
-The screenshots are real captures of the web chat; framing and the demo animation are [HyperFrames](https://hyperframes.heygen.com) projects in `design/readme/` and `design/readme-demo/`.
-
-</details>
-
 ---
 
 ## What it is not
 
 - Not a text-to-SQL toy. The SQL is the evidence, and the answer is checked against it.
 - Not a forecaster. It reports what the registry says, for the dates the registry covers.
-- Not finished. The control set is 42 questions; real users will find the 43rd.
+- Not a replacement for the official registry: the data here is synthetic.
 
 ---
 
