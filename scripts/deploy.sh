@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 # Deploy to a Docker host over SSH. Images are built by GitHub Actions (.github/workflows/images.yml)
-# and published to GHCR; the host only pulls them.
+# and published to GHCR as public packages; the host only pulls them.
 #
 #   scripts/deploy.sh user@host [--bot]
 #
-# Copies compose.yaml, Caddyfile, .env and geo/, logs the host into ghcr.io with GHCR_TOKEN from .env
-# (a PAT with read:packages; needed once), pulls and starts the stack, and on an empty database loads
-# the CSVs and computes product embeddings. Safe to re-run. DEPLOY_DIR sets the remote directory
+# Copies compose.yaml, Caddyfile, .env and geo/, pulls and starts the stack, and on an empty database
+# loads the CSVs and computes product embeddings. Safe to re-run. DEPLOY_DIR sets the remote directory
 # (default: uzexify).
 set -euo pipefail
 
@@ -27,13 +26,6 @@ grep -q '^PUBLIC_HOST=.' .env || { echo "set PUBLIC_HOST in .env" >&2; exit 1; }
 
 remote() { ssh -o BatchMode=yes "$host" "mkdir -p '$dir' && cd '$dir' && $*"; }
 send() { COPYFILE_DISABLE=1 tar czf - --no-xattrs "$@" | remote "tar xzf -"; }
-
-if ! remote "sudo test -f /root/.docker/config.json && sudo grep -q ghcr.io /root/.docker/config.json"; then
-  token=$(grep '^GHCR_TOKEN=' .env | cut -d= -f2-)
-  [[ -n $token ]] || { echo "set GHCR_TOKEN (PAT with read:packages) in .env" >&2; exit 1; }
-  owner=$(sed -nE 's#^ +image: ghcr.io/([^/]+)/.*#\1#p' compose.yaml | head -1)
-  printf '%s' "$token" | remote "sudo docker login ghcr.io -u '$owner' --password-stdin >/dev/null"
-fi
 
 send compose.yaml Caddyfile .env geo
 remote "chmod 600 .env && sudo docker compose ${profiles[*]} pull -q && \
