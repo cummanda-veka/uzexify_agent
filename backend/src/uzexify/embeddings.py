@@ -4,7 +4,7 @@ import asyncio
 import logging
 
 import psycopg
-from openai import AsyncOpenAI
+from openai import AsyncOpenAI, RateLimitError
 from pgvector.psycopg import register_vector
 
 from uzexify.settings import get_settings
@@ -36,7 +36,8 @@ class Embedder:
 
     async def _call(self, texts: list[str]) -> list[list[float]]:
         r = await self.client.embeddings.create(model=self.model, input=texts)
-        vecs = [d.embedding for d in sorted(r.data, key=lambda d: d.index)]
+        # Gemini's OpenAI-compatible endpoint omits `index` when it is 0 (observed: [None, 1, 2, 3, 4]).
+        vecs = [d.embedding for d in sorted(r.data, key=lambda d: d.index or 0)]
         if len(vecs) != len(texts):
             raise RuntimeError(f"embedding count mismatch: {len(vecs)} != {len(texts)}")
         return vecs
@@ -51,11 +52,16 @@ class Embedder:
 
         async def one(chunk: list[str]) -> list[list[float]]:
             async with sem:
-                for attempt in range(3):
+                for attempt in range(8):
                     try:
                         return await self._call(chunk)
+                    except RateLimitError:
+                        # Free tiers meter inputs per minute; wait for the window to roll over.
+                        if attempt == 7:
+                            raise
+                        await asyncio.sleep(40)
                     except Exception:
-                        if attempt == 2:
+                        if attempt >= 2:
                             raise
                         await asyncio.sleep(1 + attempt)
                 raise AssertionError
