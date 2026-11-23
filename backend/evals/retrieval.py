@@ -22,8 +22,15 @@ from uzexify.settings import get_settings
 from uzexify.text import name_key, product_key, to_latin
 
 HERE = Path(__file__).resolve().parent
-VARIANTS = ("lexical", "hybrid-gemini", "hybrid-voyage", "hybrid-gemini+rerank")
-MODELS = {"gemini": "google/gemini-embedding-2", "voyage": "mongodb/voyage-4-large"}
+# Embedding variants call EMBEDDING_BASE_URL with the model below; run each provider with its own env.
+MODELS = {
+    "gemini": "google/gemini-embedding-2",
+    "voyage": "mongodb/voyage-4-large",
+    "gemini-direct": "gemini-embedding-2-preview",
+    "cf-bge-m3": "@cf/baai/bge-m3",
+    "cf-qwen3": "@cf/qwen/qwen3-embedding-0.6b",
+}
+VARIANTS = ("lexical", *(f"hybrid-{key}" for key in MODELS), "hybrid-gemini+rerank")
 NEGATIVES = [
     "Qirxam Zolbex MCHJ",
     "Vunqoz Pellixa XK",
@@ -166,11 +173,9 @@ async def run(variants: list[str], output: Path) -> None:
             for kind in ("script_swap", "lowercase", "no_legal_form", "typo")
         }
 
-        models_needed = set()
-        if any(v in variants for v in ("hybrid-gemini", "hybrid-gemini+rerank")):
-            models_needed.add("gemini")
-        if "hybrid-voyage" in variants:
-            models_needed.add("voyage")
+        models_needed = {
+            v.removeprefix("hybrid-").removesuffix("+rerank") for v in variants if v.startswith("hybrid-")
+        }
         vectors = {}
         embedders = {}
         model_errors = {}
