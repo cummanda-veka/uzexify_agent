@@ -1,3 +1,12 @@
+{
+	servers {
+		# Cloudflare proxies the domain: take the client IP from CF-Connecting-IP, but only on requests
+		# that really come from Cloudflare (https://www.cloudflare.com/ips/). Direct hits keep the peer IP.
+		trusted_proxies static 173.245.48.0/20 103.21.244.0/22 103.22.200.0/22 103.31.4.0/22 141.101.64.0/18 108.162.192.0/18 190.93.240.0/20 188.114.96.0/20 197.234.240.0/22 198.41.128.0/17 162.158.0.0/15 104.16.0.0/13 104.24.0.0/14 172.64.0.0/13 131.0.72.0/22 2400:cb00::/32 2606:4700::/32 2803:f800::/32 2405:b500::/32 2405:8100::/32 2a06:98c0::/29 2c0f:f248::/32
+		client_ip_headers CF-Connecting-IP
+	}
+}
+
 {$PUBLIC_HOST} {
 	encode zstd gzip
 
@@ -9,11 +18,14 @@
 
 	handle {
 		# Country gate (backend /internal/geo): 204 passes, otherwise its redirect or 403 is returned.
+		# X-Forwarded-For is overwritten with the resolved client IP, so a client cannot inject one.
 		forward_auth api:8000 {
 			uri /internal/geo
+			header_up X-Forwarded-For {client_ip}
 		}
 		handle /api/* {
 			reverse_proxy api:8000 {
+				header_up X-Forwarded-For {client_ip}
 				flush_interval -1
 			}
 		}

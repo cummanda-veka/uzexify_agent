@@ -17,6 +17,25 @@ def _kind(case, result):
     return result["kind"] == case["expect_kind"]
 
 
+def _stem(word: str) -> str:
+    """Drop a short inflectional ending so «Ферганская область» matches «Ферганской области»."""
+    return word[: max(4, len(word) - 3)] if len(word) > 5 else word
+
+
+def _text_present(value: str, text: str, normalized: str) -> bool:
+    expected = name_key(value)
+    if not expected:
+        return False
+    if expected in normalized:
+        return True
+    answer_words = [name_key(w) for w in re.findall(r"\w+", text)]
+    return all(
+        any(a.startswith(_stem(name_key(w))) for a in answer_words if a)
+        for w in re.findall(r"\w+", value)
+        if name_key(w)
+    )
+
+
 def _values(case, result):
     if case["expect_kind"] != "answer":
         return True
@@ -35,8 +54,7 @@ def _values(case, result):
                 if not any(is_grounded(number, [expected]) for number in numbers):
                     return False
             elif check["match"] == "text":
-                expected = name_key(str(value))
-                if not expected or expected not in normalized:
+                if not _text_present(str(value), result["text"], normalized):
                     return False
             else:
                 raise ValueError(f"Unknown check type: {check['match']}")

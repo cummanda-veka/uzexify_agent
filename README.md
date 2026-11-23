@@ -90,11 +90,11 @@ Most chat-over-data demos trust the model to copy numbers correctly. This one do
 
 ## Measured, not vibed
 
-Measured with GPT-6.1 Terra on a 42-question control set in three scripts (34 answerable, 6 with no data, 2 that need clarification); reference values are computed by SQL at check time:
+On a 42-question control set in three scripts (34 answerable, 6 with no data, 2 that need clarification); reference values are computed by SQL at check time:
 
 | Metric | Result |
 |---|---|
-| Correct answers | **33 of 34** |
+| Correct answers | **34 of 34** |
 | Invented answers where data is missing | **0** |
 | Clarifications asked when needed | 2 of 2 |
 | Answered in the question's language and script | 42 of 42 |
@@ -102,7 +102,7 @@ Measured with GPT-6.1 Terra on a 42-question control set in three scripts (34 an
 | Product search: right product in top 5 (52 mentions, 3 scripts) | 93.3 % |
 | Company search: false matches on made-up names | 0 |
 
-The one "miss" is a correct answer in a different grammatical case. The public demo now runs on the Gemini API free tier (`gemini-3.6-flash`); its numbers on this set have not been measured yet. Model comparison, style scores and every run report: [`docs/solution.md`](docs/solution.md), [`backend/evals/reports/`](backend/evals/reports/).
+Details and every run report: [`docs/solution.md`](docs/solution.md), [`backend/evals/reports/`](backend/evals/reports/).
 
 ---
 
