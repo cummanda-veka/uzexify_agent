@@ -153,7 +153,7 @@ GitHub Actions builds the images on every push to `main`. One command copies the
 scripts/deploy.sh user@host          # add --bot for the Telegram bot
 ```
 
-Set `PUBLIC_HOST` in `.env`, point its DNS at the host and open ports 80/443; Caddy gets the certificate.
+Set `PUBLIC_HOST` in `.env` and point its DNS at the host. HTTPS comes from a shared Caddy on the host that owns ports 80/443 (`/opt/edge`: `compose.yaml` with an external `edge` network, a `Caddyfile` importing `sites/*.caddy`); the deploy installs `uzexify.caddy` there and reloads it, and Caddy gets the certificate.
 
 ---
 

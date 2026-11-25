@@ -62,7 +62,7 @@ cd ../web && bun install && NEXT_PUBLIC_API_BASE=http://localhost:8000 bun dev
 - Lint, format, types:
   - backend: `uv run ruff format src tests && uv run ruff check src tests && uv run ty check src`;
   - web: `bun run lint` (Biome), `bun run build`.
-- Deploy: push to `main` → GitHub Actions (`.github/workflows/images.yml`) builds `ghcr.io/cummanda-veka/uzexify-{backend,web}` for linux/amd64 (public packages, pulled anonymously). Then `scripts/deploy.sh user@host [--bot]` copies `compose.yaml`/`Caddyfile`/`.env`/`geo/`, pulls and starts the stack, ingests on an empty DB (otherwise refreshes the `uzex_agent` role with `uzexify grant`), embeds products that lack embeddings, and restarts `api` and `caddy` (profiles: `app` = api/web/caddy, `bot` = bot).
+- Deploy: push to `main` → GitHub Actions (`.github/workflows/images.yml`) builds `ghcr.io/cummanda-veka/uzexify-{backend,web}` for linux/amd64 (public packages, pulled anonymously). Then `scripts/deploy.sh user@host [--bot]` copies `compose.yaml`/`uzexify.caddy`/`.env`/`geo/`, pulls and starts the stack, installs the site into the host's shared edge Caddy (`/opt/edge`, owns 80/443; `api`/`web` join its external `edge` network as `uzexify-api`/`uzexify-web`) and reloads it, ingests on an empty DB (otherwise refreshes the `uzex_agent` role with `uzexify grant`), embeds products that lack embeddings, and restarts `api` (profiles: `app` = api/web, `bot` = bot).
 
 ## Code Conventions & Common Patterns
 - Python 3.14; ruff line length 110; async everywhere (`async def`, async pool contexts). Settings come only through `get_settings()` (cached pydantic-settings; env var = upper-case field name, e.g. `ASKS_PER_MINUTE`).
@@ -79,7 +79,7 @@ cd ../web && bun install && NEXT_PUBLIC_API_BASE=http://localhost:8000 bun dev
   - `backend/src/uzexify/bot/__init__.py` (`run_bot`);
   - `web/src/app/page.tsx`.
 - Config:
-  - `compose.yaml`, `Caddyfile`;
+  - `compose.yaml`, `uzexify.caddy` (site for the host's edge Caddy);
   - `backend/pyproject.toml` (deps pinned);
   - `backend/src/uzexify/settings.py`;
   - `.env.example`;

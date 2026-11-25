@@ -35,6 +35,10 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      default:
+      edge:
+        aliases: [uzexify-api]
     restart: unless-stopped
 
   bot:
@@ -52,24 +56,16 @@ services:
       args:
         NEXT_PUBLIC_API_BASE: ""
     image: ghcr.io/cummanda-veka/uzexify-web:latest
+    networks:
+      default:
+      edge:
+        aliases: [uzexify-web]
     restart: unless-stopped
 
-  caddy:
-    profiles: [app]
-    image: caddy:2
-    environment:
-      PUBLIC_HOST: ${PUBLIC_HOST}
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
-    depends_on: [api, web]
-    restart: unless-stopped
+# HTTPS comes from the host's shared edge Caddy (/opt/edge on the server); see uzexify.caddy.
+networks:
+  edge:
+    external: true
 
 volumes:
   pgdata:
-  caddy_data:
-  caddy_config:

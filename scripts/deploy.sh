@@ -4,8 +4,9 @@
 #
 #   scripts/deploy.sh user@host [--bot]
 #
-# Copies compose.yaml, Caddyfile, .env and geo/, pulls and starts the stack, and on an empty database
-# loads the CSVs and computes product embeddings. Safe to re-run. DEPLOY_DIR sets the remote directory
+# Copies compose.yaml, uzexify.caddy, .env and geo/, pulls and starts the stack, installs the site
+# into the host's shared edge Caddy (/opt/edge, must already run), and on an empty database loads the
+# CSVs and computes product embeddings. Safe to re-run. DEPLOY_DIR sets the remote directory
 # (default: uzexify).
 set -euo pipefail
 
@@ -27,9 +28,15 @@ grep -q '^PUBLIC_HOST=.' .env || { echo "set PUBLIC_HOST in .env" >&2; exit 1; }
 remote() { ssh -o BatchMode=yes "$host" "mkdir -p '$dir' && cd '$dir' && $*"; }
 send() { COPYFILE_DISABLE=1 tar czf - --no-xattrs "$@" | remote "tar xzf -"; }
 
-send compose.yaml Caddyfile .env geo
+send compose.yaml uzexify.caddy .env geo
 remote "chmod 600 .env && sudo docker compose ${profiles[*]} pull -q && \
   sudo docker compose ${profiles[*]} up -d --no-build --remove-orphans"
+
+# The site joins the host's shared edge Caddy (/opt/edge): install it with the real host name and
+# reload; caddy validates the whole config first and keeps the old one on error.
+public_host=$(sed -n 's/^PUBLIC_HOST=//p' .env)
+remote "sed 's/^PUBLIC_HOST {/$public_host {/' uzexify.caddy | sudo tee /opt/edge/sites/uzexify.caddy >/dev/null && \
+  sudo docker compose -f /opt/edge/compose.yaml exec -T caddy caddy reload --config /etc/caddy/Caddyfile"
 
 psql() { remote "sudo docker compose exec -T db psql -U uzex -d uzex -tAc \"$1\""; }
 if [[ "$(psql "SELECT to_regclass('deals') IS NOT NULL")" != "t" ]]; then
@@ -44,6 +51,6 @@ if [[ "$(psql "SELECT count(*) FROM products WHERE embedding IS NULL")" != "0" ]
   remote "sudo docker compose run --rm api uzexify embed" \
     || echo "embedding failed; product search stays lexical until the next deploy" >&2
 fi
-remote "sudo docker compose restart api caddy"  # pick up new data and a changed Caddyfile
+remote "sudo docker compose restart api"  # pick up new data
 
 remote "sudo docker image prune -f >/dev/null; sudo docker compose ps --format '{{.Name}} {{.Status}}'"
